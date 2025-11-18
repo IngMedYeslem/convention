@@ -1,0 +1,18 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "convention",
+    "buildTool": "maven",
+    "clientFramework": "angular",
+    "devDatabaseType": "mysql",
+    "enableTranslation": true,
+    "entities": [],
+    "jhipsterVersion": "8.10.0",
+    "jwtSecretKey": "NGQxYmE4Nzc2Zjk0MTlkZTNkZDBkNmRhMDdkMGE4NDAyMmZiNDk1ZjYwODU0OTIzZTE0N2UwMjg5ZWIzOWQ5MTI1ODE0ZDE1YTdjNTEwMzg2NTZhNzM1N2FkYmE5ZGRkMTMxNGNmOGU5NzM4MWVkY2ZiZjU4ZjBiYTBiMjA3MWY=",
+    "languages": ["fr"],
+    "nativeLanguage": "fr",
+    "packageName": "com.convention",
+    "prodDatabaseType": "mysql"
+  }
+}

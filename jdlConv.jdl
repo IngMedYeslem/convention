@@ -1,0 +1,75 @@
+application {
+  config {
+    baseName convention
+    applicationType monolith
+    packageName com.convention
+    authenticationType jwt
+
+    prodDatabaseType mysql
+    devDatabaseType mysql
+
+    buildTool maven
+
+    enableTranslation true
+    nativeLanguage fr
+    languages [fr]
+
+    clientFramework angular
+  }
+}
+
+entity Clients {
+  numClient Long required,
+  nomClient String required,
+  adresseClient String,
+  emailClient String,
+  whatsClient String,
+  obsClient String
+}
+
+entity Convention {
+  numConvention Long required,
+  dateSignConv LocalDate,
+  dateDebutConv LocalDate,
+  echeanceConv LocalDate,
+  redvence BigDecimal,
+  nomClient String,
+  nomResponsable String
+}
+
+entity DetailleConv {
+  nDetailleConv Long required,
+  designationCon String,
+  pu BigDecimal,
+  qt Integer,
+  obs String,
+  dateDetailleConv LocalDate
+}
+
+entity Facture {
+  numFacture Long required,
+  dateFacture LocalDate,
+  obsFacture String,
+  nomClient String,
+  ancienRef String,
+  typeFacture String
+}
+
+entity DetailleFacture {
+  nDetailleFacture Long required,
+  designationFacture String,
+  prixUnitaire BigDecimal,
+  quantite Integer,
+  obs String
+}
+
+relationship ManyToOne {
+  Convention { client } to Clients,
+  DetailleConv { convention } to Convention,
+  Facture { client } to Clients,
+  DetailleFacture { facture } to Facture
+}
+
+dto * with mapstruct
+service * with serviceClass
+paginate * with pagination
