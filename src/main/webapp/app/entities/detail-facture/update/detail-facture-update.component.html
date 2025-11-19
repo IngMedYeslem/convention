@@ -1,0 +1,223 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-detail-facture-heading"
+        data-cy="DetailFactureCreateUpdateHeading"
+        jhiTranslate="conventionApp.detailFacture.home.createOrEditLabel"
+      >
+        Créer ou éditer un Detail Facture
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="conventionApp.detailFacture.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let designationRef = editForm.get('designation')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_designation" jhiTranslate="conventionApp.detailFacture.designation">Designation</label>
+          <input
+            type="text"
+            class="form-control"
+            name="designation"
+            id="field_designation"
+            data-cy="designation"
+            formControlName="designation"
+          />
+          @if (designationRef.invalid && (designationRef.dirty || designationRef.touched)) {
+            <div>
+              @if (editForm.get('designation')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('designation')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Ce champ doit faire moins de 200 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let prixUnitaireRef = editForm.get('prixUnitaire')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_prixUnitaire" jhiTranslate="conventionApp.detailFacture.prixUnitaire">Prix Unitaire</label>
+          <input
+            type="number"
+            class="form-control"
+            name="prixUnitaire"
+            id="field_prixUnitaire"
+            data-cy="prixUnitaire"
+            formControlName="prixUnitaire"
+          />
+          @if (prixUnitaireRef.invalid && (prixUnitaireRef.dirty || prixUnitaireRef.touched)) {
+            <div>
+              @if (editForm.get('prixUnitaire')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('prixUnitaire')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Ce champ doit être supérieur à 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('prixUnitaire')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let quantiteRef = editForm.get('quantite')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_quantite" jhiTranslate="conventionApp.detailFacture.quantite">Quantite</label>
+          <input type="number" class="form-control" name="quantite" id="field_quantite" data-cy="quantite" formControlName="quantite" />
+          @if (quantiteRef.invalid && (quantiteRef.dirty || quantiteRef.touched)) {
+            <div>
+              @if (editForm.get('quantite')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('quantite')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
+                  >Ce champ doit être supérieur à 1.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('quantite')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_montantHT" jhiTranslate="conventionApp.detailFacture.montantHT">Montant HT</label>
+          <input type="number" class="form-control" name="montantHT" id="field_montantHT" data-cy="montantHT" formControlName="montantHT" />
+        </div>
+
+        @let tauxTVARef = editForm.get('tauxTVA')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_tauxTVA" jhiTranslate="conventionApp.detailFacture.tauxTVA">Taux TVA</label>
+          <input type="number" class="form-control" name="tauxTVA" id="field_tauxTVA" data-cy="tauxTVA" formControlName="tauxTVA" />
+          @if (tauxTVARef.invalid && (tauxTVARef.dirty || tauxTVARef.touched)) {
+            <div>
+              @if (editForm.get('tauxTVA')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Ce champ doit être supérieur à 0.</small
+                >
+              }
+              @if (editForm.get('tauxTVA')?.errors?.max) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
+                  >Ce champ doit être inférieur à 100.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('tauxTVA')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_montantTVA" jhiTranslate="conventionApp.detailFacture.montantTVA">Montant TVA</label>
+          <input
+            type="number"
+            class="form-control"
+            name="montantTVA"
+            id="field_montantTVA"
+            data-cy="montantTVA"
+            formControlName="montantTVA"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_montantTTC" jhiTranslate="conventionApp.detailFacture.montantTTC">Montant TTC</label>
+          <input
+            type="number"
+            class="form-control"
+            name="montantTTC"
+            id="field_montantTTC"
+            data-cy="montantTTC"
+            formControlName="montantTTC"
+          />
+        </div>
+
+        @let observationsRef = editForm.get('observations')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_observations" jhiTranslate="conventionApp.detailFacture.observations">Observations</label>
+          <input
+            type="text"
+            class="form-control"
+            name="observations"
+            id="field_observations"
+            data-cy="observations"
+            formControlName="observations"
+          />
+          @if (observationsRef.invalid && (observationsRef.dirty || observationsRef.touched)) {
+            <div>
+              @if (editForm.get('observations')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Ce champ doit faire moins de 500 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_facture" jhiTranslate="conventionApp.detailFacture.facture">Facture</label>
+          <select
+            class="form-control"
+            id="field_facture"
+            data-cy="facture"
+            name="facture"
+            formControlName="facture"
+            [compareWith]="compareFacture"
+          >
+            @if (!editForm.get('facture')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (factureOption of facturesSharedCollection; track $index) {
+              <option [ngValue]="factureOption">{{ factureOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['facture'])!.invalid && (editForm.get(['facture'])!.dirty || editForm.get(['facture'])!.touched)) {
+          <div>
+            @if (editForm.get(['facture'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

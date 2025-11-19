@@ -1,0 +1,11 @@
+{
+  "conventionApp": {
+    "TypeFacture": {
+      "null": "",
+      "NORMALE": "NORMALE",
+      "AVOIR": "AVOIR",
+      "ACOMPTE": "ACOMPTE",
+      "SOLDE": "SOLDE"
+    }
+  }
+}

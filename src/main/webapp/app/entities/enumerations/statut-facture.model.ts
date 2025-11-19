@@ -1,0 +1,11 @@
+export enum StatutFacture {
+  BROUILLON = 'BROUILLON',
+
+  EMISE = 'EMISE',
+
+  PAYEE = 'PAYEE',
+
+  ANNULEE = 'ANNULEE',
+
+  IMPAYEE = 'IMPAYEE',
+}

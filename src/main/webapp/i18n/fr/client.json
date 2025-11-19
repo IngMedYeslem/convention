@@ -1,0 +1,31 @@
+{
+  "conventionApp": {
+    "client": {
+      "home": {
+        "title": "Clients",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Client",
+        "createOrEditLabel": "Créer ou éditer un Client",
+        "notFound": "Aucun Client trouvé"
+      },
+      "created": "Un nouveau Client a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Client avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Client avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Client {{ id }} ?"
+      },
+      "detail": {
+        "title": "Client"
+      },
+      "id": "ID",
+      "numClient": "Num Client",
+      "nomClient": "Nom Client",
+      "adresseClient": "Adresse Client",
+      "emailClient": "Email Client",
+      "whatsClient": "Whats Client",
+      "obsClient": "Obs Client",
+      "dateCreation": "Date Creation",
+      "actif": "Actif"
+    }
+  }
+}

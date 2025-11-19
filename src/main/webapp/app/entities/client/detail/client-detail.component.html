@@ -1,0 +1,62 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (client(); as clientRef) {
+      <div>
+        <h2 data-cy="clientDetailsHeading"><span jhiTranslate="conventionApp.client.detail.title">Client</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ clientRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.client.numClient">Num Client</span></dt>
+          <dd>
+            <span>{{ clientRef.numClient }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.client.nomClient">Nom Client</span></dt>
+          <dd>
+            <span>{{ clientRef.nomClient }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.client.adresseClient">Adresse Client</span></dt>
+          <dd>
+            <span>{{ clientRef.adresseClient }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.client.emailClient">Email Client</span></dt>
+          <dd>
+            <span>{{ clientRef.emailClient }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.client.whatsClient">Whats Client</span></dt>
+          <dd>
+            <span>{{ clientRef.whatsClient }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.client.obsClient">Obs Client</span></dt>
+          <dd>
+            <span>{{ clientRef.obsClient }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.client.dateCreation">Date Creation</span></dt>
+          <dd>
+            <span>{{ clientRef.dateCreation | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.client.actif">Actif</span></dt>
+          <dd>
+            <span>{{ clientRef.actif }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/client', clientRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

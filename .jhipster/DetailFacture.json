@@ -1,0 +1,65 @@
+{
+  "annotations": {
+    "changelogDate": "20251118195135"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "designation",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "200"
+    },
+    {
+      "fieldName": "prixUnitaire",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "quantite",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "1"
+    },
+    {
+      "fieldName": "montantHT",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "tauxTVA",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["min", "max"],
+      "fieldValidateRulesMax": "100",
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "montantTVA",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "montantTTC",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "observations",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    }
+  ],
+  "name": "DetailFacture",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "facture",
+      "relationshipName": "facture",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

@@ -1,0 +1,78 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (convention(); as conventionRef) {
+      <div>
+        <h2 data-cy="conventionDetailsHeading"><span jhiTranslate="conventionApp.convention.detail.title">Convention</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ conventionRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.numConvention">Num Convention</span></dt>
+          <dd>
+            <span>{{ conventionRef.numConvention }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.dateSignConv">Date Sign Conv</span></dt>
+          <dd>
+            <span>{{ conventionRef.dateSignConv | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.dateDebutConv">Date Debut Conv</span></dt>
+          <dd>
+            <span>{{ conventionRef.dateDebutConv | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.echeanceConv">Echeance Conv</span></dt>
+          <dd>
+            <span>{{ conventionRef.echeanceConv | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.redevance">Redevance</span></dt>
+          <dd>
+            <span>{{ conventionRef.redevance }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.nomResponsable">Nom Responsable</span></dt>
+          <dd>
+            <span>{{ conventionRef.nomResponsable }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.statut">Statut</span></dt>
+          <dd>
+            <span [jhiTranslate]="'conventionApp.StatutConvention.' + (conventionRef.statut ?? 'null')">{{
+              { null: '', BROUILLON: 'BROUILLON', ACTIVE: 'ACTIVE', SUSPENDUE: 'SUSPENDUE', TERMINEE: 'TERMINEE', ANNULEE: 'ANNULEE' }[
+                conventionRef.statut ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.dateCreation">Date Creation</span></dt>
+          <dd>
+            <span>{{ conventionRef.dateCreation | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.dateModification">Date Modification</span></dt>
+          <dd>
+            <span>{{ conventionRef.dateModification | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.convention.client">Client</span></dt>
+          <dd>
+            @if (convention()!.client) {
+              <div>
+                <a [routerLink]="['/client', convention()!.client?.id, 'view']">{{ conventionRef.client?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/convention', conventionRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

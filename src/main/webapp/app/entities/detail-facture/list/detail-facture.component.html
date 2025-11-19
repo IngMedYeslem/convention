@@ -1,0 +1,153 @@
+<div>
+  <h2 id="page-heading" data-cy="DetailFactureHeading">
+    <span jhiTranslate="conventionApp.detailFacture.home.title">DetailFactures</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="conventionApp.detailFacture.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-detail-facture"
+        [routerLink]="['/detail-facture/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="conventionApp.detailFacture.home.createLabel">Créer un nouveau Detail Facture</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (detailFactures().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="conventionApp.detailFacture.home.notFound">Aucun Detail Facture trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="designation">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailFacture.designation">Designation</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="prixUnitaire">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailFacture.prixUnitaire">Prix Unitaire</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="quantite">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailFacture.quantite">Quantite</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="montantHT">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailFacture.montantHT">Montant HT</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="tauxTVA">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailFacture.tauxTVA">Taux TVA</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="montantTVA">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailFacture.montantTVA">Montant TVA</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="montantTTC">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailFacture.montantTTC">Montant TTC</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="observations">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailFacture.observations">Observations</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="facture.id">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailFacture.facture">Facture</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody infinite-scroll (scrolled)="loadNextPage()" [infiniteScrollDisabled]="!hasMorePage()" [infiniteScrollDistance]="0">
+          @for (detailFacture of detailFactures(); track trackId(detailFacture)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/detail-facture', detailFacture.id, 'view']">{{ detailFacture.id }}</a>
+              </td>
+              <td>{{ detailFacture.designation }}</td>
+              <td>{{ detailFacture.prixUnitaire }}</td>
+              <td>{{ detailFacture.quantite }}</td>
+              <td>{{ detailFacture.montantHT }}</td>
+              <td>{{ detailFacture.tauxTVA }}</td>
+              <td>{{ detailFacture.montantTVA }}</td>
+              <td>{{ detailFacture.montantTTC }}</td>
+              <td>{{ detailFacture.observations }}</td>
+              <td>
+                @if (detailFacture.facture) {
+                  <div>
+                    <a [routerLink]="['/facture', detailFacture.facture.id, 'view']">{{ detailFacture.facture.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/detail-facture', detailFacture.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/detail-facture', detailFacture.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(detailFacture)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,96 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (facture(); as factureRef) {
+      <div>
+        <h2 data-cy="factureDetailsHeading"><span jhiTranslate="conventionApp.facture.detail.title">Facture</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ factureRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.numFacture">Num Facture</span></dt>
+          <dd>
+            <span>{{ factureRef.numFacture }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.dateFacture">Date Facture</span></dt>
+          <dd>
+            <span>{{ factureRef.dateFacture | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.montantTotal">Montant Total</span></dt>
+          <dd>
+            <span>{{ factureRef.montantTotal }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.montantTTC">Montant TTC</span></dt>
+          <dd>
+            <span>{{ factureRef.montantTTC }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.tva">Tva</span></dt>
+          <dd>
+            <span>{{ factureRef.tva }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.observations">Observations</span></dt>
+          <dd>
+            <span>{{ factureRef.observations }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.ancienneRef">Ancienne Ref</span></dt>
+          <dd>
+            <span>{{ factureRef.ancienneRef }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.typeFacture">Type Facture</span></dt>
+          <dd>
+            <span [jhiTranslate]="'conventionApp.TypeFacture.' + (factureRef.typeFacture ?? 'null')">{{
+              { null: '', NORMALE: 'NORMALE', AVOIR: 'AVOIR', ACOMPTE: 'ACOMPTE', SOLDE: 'SOLDE' }[factureRef.typeFacture ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.statut">Statut</span></dt>
+          <dd>
+            <span [jhiTranslate]="'conventionApp.StatutFacture.' + (factureRef.statut ?? 'null')">{{
+              { null: '', BROUILLON: 'BROUILLON', EMISE: 'EMISE', PAYEE: 'PAYEE', ANNULEE: 'ANNULEE', IMPAYEE: 'IMPAYEE' }[
+                factureRef.statut ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.dateEcheance">Date Echeance</span></dt>
+          <dd>
+            <span>{{ factureRef.dateEcheance | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.dateCreation">Date Creation</span></dt>
+          <dd>
+            <span>{{ factureRef.dateCreation | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.client">Client</span></dt>
+          <dd>
+            @if (facture()!.client) {
+              <div>
+                <a [routerLink]="['/client', facture()!.client?.id, 'view']">{{ factureRef.client?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="conventionApp.facture.convention">Convention</span></dt>
+          <dd>
+            @if (facture()!.convention) {
+              <div>
+                <a [routerLink]="['/convention', facture()!.convention?.id, 'view']">{{ factureRef.convention?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/facture', factureRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,6 +1,6 @@
 package com.convention.service;
 
-import com.convention.domain.User;
+import com.convention.domain.UserEntity;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
@@ -82,11 +82,11 @@ public class MailService {
     }
 
     @Async
-    public void sendEmailFromTemplate(User user, String templateName, String titleKey) {
+    public void sendEmailFromTemplate(UserEntity user, String templateName, String titleKey) {
         sendEmailFromTemplateSync(user, templateName, titleKey);
     }
 
-    private void sendEmailFromTemplateSync(User user, String templateName, String titleKey) {
+    private void sendEmailFromTemplateSync(UserEntity user, String templateName, String titleKey) {
         if (user.getEmail() == null) {
             LOG.debug("Email doesn't exist for user '{}'", user.getLogin());
             return;
@@ -101,19 +101,19 @@ public class MailService {
     }
 
     @Async
-    public void sendActivationEmail(User user) {
+    public void sendActivationEmail(UserEntity user) {
         LOG.debug("Sending activation email to '{}'", user.getEmail());
         sendEmailFromTemplateSync(user, "mail/activationEmail", "email.activation.title");
     }
 
     @Async
-    public void sendCreationEmail(User user) {
+    public void sendCreationEmail(UserEntity user) {
         LOG.debug("Sending creation email to '{}'", user.getEmail());
         sendEmailFromTemplateSync(user, "mail/creationEmail", "email.activation.title");
     }
 
     @Async
-    public void sendPasswordResetMail(User user) {
+    public void sendPasswordResetMail(UserEntity user) {
         LOG.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplateSync(user, "mail/passwordResetEmail", "email.reset.title");
     }

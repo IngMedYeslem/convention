@@ -6,9 +6,14 @@
       "home": "Accueil",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
+        "adminAuthority": "Autorité",
         "main": "Entités",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "adminAuthority": "Authority"
+        "client": "Client",
+        "convention": "Convention",
+        "detailConvention": "Detail Convention",
+        "facture": "Facture",
+        "detailFacture": "Detail Facture"
       },
       "account": {
         "main": "Compte",

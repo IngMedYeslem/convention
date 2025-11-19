@@ -1,0 +1,70 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (detailFacture(); as detailFactureRef) {
+      <div>
+        <h2 data-cy="detailFactureDetailsHeading"><span jhiTranslate="conventionApp.detailFacture.detail.title">Detail Facture</span></h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ detailFactureRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailFacture.designation">Designation</span></dt>
+          <dd>
+            <span>{{ detailFactureRef.designation }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailFacture.prixUnitaire">Prix Unitaire</span></dt>
+          <dd>
+            <span>{{ detailFactureRef.prixUnitaire }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailFacture.quantite">Quantite</span></dt>
+          <dd>
+            <span>{{ detailFactureRef.quantite }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailFacture.montantHT">Montant HT</span></dt>
+          <dd>
+            <span>{{ detailFactureRef.montantHT }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailFacture.tauxTVA">Taux TVA</span></dt>
+          <dd>
+            <span>{{ detailFactureRef.tauxTVA }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailFacture.montantTVA">Montant TVA</span></dt>
+          <dd>
+            <span>{{ detailFactureRef.montantTVA }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailFacture.montantTTC">Montant TTC</span></dt>
+          <dd>
+            <span>{{ detailFactureRef.montantTTC }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailFacture.observations">Observations</span></dt>
+          <dd>
+            <span>{{ detailFactureRef.observations }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailFacture.facture">Facture</span></dt>
+          <dd>
+            @if (detailFacture()!.facture) {
+              <div>
+                <a [routerLink]="['/facture', detailFacture()!.facture?.id, 'view']">{{ detailFactureRef.facture?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/detail-facture', detailFactureRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

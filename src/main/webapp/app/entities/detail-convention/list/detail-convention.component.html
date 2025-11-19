@@ -1,0 +1,145 @@
+<div>
+  <h2 id="page-heading" data-cy="DetailConventionHeading">
+    <span jhiTranslate="conventionApp.detailConvention.home.title">DetailConventions</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="conventionApp.detailConvention.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-detail-convention"
+        [routerLink]="['/detail-convention/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="conventionApp.detailConvention.home.createLabel">Créer un nouveau Detail Convention</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  @if (detailConventions().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="conventionApp.detailConvention.home.notFound">Aucun Detail Convention trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="designation">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailConvention.designation">Designation</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="prixUnitaire">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailConvention.prixUnitaire">Prix Unitaire</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="quantite">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailConvention.quantite">Quantite</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="montantTotal">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailConvention.montantTotal">Montant Total</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="observations">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailConvention.observations">Observations</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateCreation">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailConvention.dateCreation">Date Creation</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="convention.id">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.detailConvention.convention">Convention</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody infinite-scroll (scrolled)="loadNextPage()" [infiniteScrollDisabled]="!hasMorePage()" [infiniteScrollDistance]="0">
+          @for (detailConvention of detailConventions(); track trackId(detailConvention)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/detail-convention', detailConvention.id, 'view']">{{ detailConvention.id }}</a>
+              </td>
+              <td>{{ detailConvention.designation }}</td>
+              <td>{{ detailConvention.prixUnitaire }}</td>
+              <td>{{ detailConvention.quantite }}</td>
+              <td>{{ detailConvention.montantTotal }}</td>
+              <td>{{ detailConvention.observations }}</td>
+              <td>{{ detailConvention.dateCreation | formatMediumDate }}</td>
+              <td>
+                @if (detailConvention.convention) {
+                  <div>
+                    <a [routerLink]="['/convention', detailConvention.convention.id, 'view']">{{ detailConvention.convention.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a
+                    [routerLink]="['/detail-convention', detailConvention.id, 'view']"
+                    class="btn btn-info btn-sm"
+                    data-cy="entityDetailsButton"
+                  >
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a
+                    [routerLink]="['/detail-convention', detailConvention.id, 'edit']"
+                    class="btn btn-primary btn-sm"
+                    data-cy="entityEditButton"
+                  >
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(detailConvention)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

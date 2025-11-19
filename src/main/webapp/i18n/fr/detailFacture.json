@@ -1,0 +1,32 @@
+{
+  "conventionApp": {
+    "detailFacture": {
+      "home": {
+        "title": "DetailFactures",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Detail Facture",
+        "createOrEditLabel": "Créer ou éditer un Detail Facture",
+        "notFound": "Aucun Detail Facture trouvé"
+      },
+      "created": "Un nouveau Detail Facture a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Detail Facture avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Detail Facture avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Detail Facture {{ id }} ?"
+      },
+      "detail": {
+        "title": "Detail Facture"
+      },
+      "id": "ID",
+      "designation": "Designation",
+      "prixUnitaire": "Prix Unitaire",
+      "quantite": "Quantite",
+      "montantHT": "Montant HT",
+      "tauxTVA": "Taux TVA",
+      "montantTVA": "Montant TVA",
+      "montantTTC": "Montant TTC",
+      "observations": "Observations",
+      "facture": "Facture"
+    }
+  }
+}

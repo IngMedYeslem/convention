@@ -1,0 +1,11 @@
+export enum StatutConvention {
+  BROUILLON = 'BROUILLON',
+
+  ACTIVE = 'ACTIVE',
+
+  SUSPENDUE = 'SUSPENDUE',
+
+  TERMINEE = 'TERMINEE',
+
+  ANNULEE = 'ANNULEE',
+}

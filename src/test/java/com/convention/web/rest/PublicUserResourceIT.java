@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.convention.IntegrationTest;
-import com.convention.domain.User;
+import com.convention.domain.UserEntity;
 import com.convention.repository.UserRepository;
 import com.convention.security.AuthoritiesConstants;
 import com.convention.service.UserService;
@@ -43,7 +43,7 @@ class PublicUserResourceIT {
     @Autowired
     private MockMvc restUserMockMvc;
 
-    private User user;
+    private UserEntity user;
     private Long numberOfUsers;
 
     @BeforeEach

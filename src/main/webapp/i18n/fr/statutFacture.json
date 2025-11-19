@@ -1,0 +1,12 @@
+{
+  "conventionApp": {
+    "StatutFacture": {
+      "null": "",
+      "BROUILLON": "BROUILLON",
+      "EMISE": "EMISE",
+      "PAYEE": "PAYEE",
+      "ANNULEE": "ANNULEE",
+      "IMPAYEE": "IMPAYEE"
+    }
+  }
+}

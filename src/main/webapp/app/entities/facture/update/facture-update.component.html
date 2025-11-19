@@ -1,0 +1,301 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-facture-heading" data-cy="FactureCreateUpdateHeading" jhiTranslate="conventionApp.facture.home.createOrEditLabel">
+        Créer ou éditer un Facture
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="conventionApp.facture.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let numFactureRef = editForm.get('numFacture')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_numFacture" jhiTranslate="conventionApp.facture.numFacture">Num Facture</label>
+          <input
+            type="number"
+            class="form-control"
+            name="numFacture"
+            id="field_numFacture"
+            data-cy="numFacture"
+            formControlName="numFacture"
+          />
+          @if (numFactureRef.invalid && (numFactureRef.dirty || numFactureRef.touched)) {
+            <div>
+              @if (editForm.get('numFacture')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('numFacture')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let dateFactureRef = editForm.get('dateFacture')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_dateFacture" jhiTranslate="conventionApp.facture.dateFacture">Date Facture</label>
+          <div class="input-group">
+            <input
+              id="field_dateFacture"
+              data-cy="dateFacture"
+              type="text"
+              class="form-control"
+              name="dateFacture"
+              ngbDatepicker
+              #dateFactureDp="ngbDatepicker"
+              formControlName="dateFacture"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dateFactureDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+          @if (dateFactureRef.invalid && (dateFactureRef.dirty || dateFactureRef.touched)) {
+            <div>
+              @if (editForm.get('dateFacture')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let montantTotalRef = editForm.get('montantTotal')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_montantTotal" jhiTranslate="conventionApp.facture.montantTotal">Montant Total</label>
+          <input
+            type="number"
+            class="form-control"
+            name="montantTotal"
+            id="field_montantTotal"
+            data-cy="montantTotal"
+            formControlName="montantTotal"
+          />
+          @if (montantTotalRef.invalid && (montantTotalRef.dirty || montantTotalRef.touched)) {
+            <div>
+              @if (editForm.get('montantTotal')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('montantTotal')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Ce champ doit être supérieur à 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('montantTotal')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_montantTTC" jhiTranslate="conventionApp.facture.montantTTC">Montant TTC</label>
+          <input
+            type="number"
+            class="form-control"
+            name="montantTTC"
+            id="field_montantTTC"
+            data-cy="montantTTC"
+            formControlName="montantTTC"
+          />
+        </div>
+
+        @let tvaRef = editForm.get('tva')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_tva" jhiTranslate="conventionApp.facture.tva">Tva</label>
+          <input type="number" class="form-control" name="tva" id="field_tva" data-cy="tva" formControlName="tva" />
+          @if (tvaRef.invalid && (tvaRef.dirty || tvaRef.touched)) {
+            <div>
+              @if (editForm.get('tva')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Ce champ doit être supérieur à 0.</small
+                >
+              }
+              @if (editForm.get('tva')?.errors?.max) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
+                  >Ce champ doit être inférieur à 100.</small
+                >
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('tva')?.errors?.number" jhiTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_observations" jhiTranslate="conventionApp.facture.observations">Observations</label>
+          <textarea
+            class="form-control"
+            name="observations"
+            id="field_observations"
+            data-cy="observations"
+            formControlName="observations"
+          ></textarea>
+        </div>
+
+        @let ancienneRefRef = editForm.get('ancienneRef')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_ancienneRef" jhiTranslate="conventionApp.facture.ancienneRef">Ancienne Ref</label>
+          <input
+            type="text"
+            class="form-control"
+            name="ancienneRef"
+            id="field_ancienneRef"
+            data-cy="ancienneRef"
+            formControlName="ancienneRef"
+          />
+          @if (ancienneRefRef.invalid && (ancienneRefRef.dirty || ancienneRefRef.touched)) {
+            <div>
+              @if (editForm.get('ancienneRef')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                  >Ce champ doit faire moins de 50 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let typeFactureRef = editForm.get('typeFacture')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_typeFacture" jhiTranslate="conventionApp.facture.typeFacture">Type Facture</label>
+          <select class="form-control" name="typeFacture" formControlName="typeFacture" id="field_typeFacture" data-cy="typeFacture">
+            <option [ngValue]="null">{{ 'conventionApp.TypeFacture.null' | translate }}</option>
+            @for (typeFacture of typeFactureValues; track $index) {
+              <option [value]="typeFacture">{{ 'conventionApp.TypeFacture.' + typeFacture | translate }}</option>
+            }
+          </select>
+          @if (typeFactureRef.invalid && (typeFactureRef.dirty || typeFactureRef.touched)) {
+            <div>
+              @if (editForm.get('typeFacture')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let statutRef = editForm.get('statut')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_statut" jhiTranslate="conventionApp.facture.statut">Statut</label>
+          <select class="form-control" name="statut" formControlName="statut" id="field_statut" data-cy="statut">
+            <option [ngValue]="null">{{ 'conventionApp.StatutFacture.null' | translate }}</option>
+            @for (statutFacture of statutFactureValues; track $index) {
+              <option [value]="statutFacture">{{ 'conventionApp.StatutFacture.' + statutFacture | translate }}</option>
+            }
+          </select>
+          @if (statutRef.invalid && (statutRef.dirty || statutRef.touched)) {
+            <div>
+              @if (editForm.get('statut')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dateEcheance" jhiTranslate="conventionApp.facture.dateEcheance">Date Echeance</label>
+          <div class="input-group">
+            <input
+              id="field_dateEcheance"
+              data-cy="dateEcheance"
+              type="text"
+              class="form-control"
+              name="dateEcheance"
+              ngbDatepicker
+              #dateEcheanceDp="ngbDatepicker"
+              formControlName="dateEcheance"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dateEcheanceDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dateCreation" jhiTranslate="conventionApp.facture.dateCreation">Date Creation</label>
+          <div class="d-flex">
+            <input
+              id="field_dateCreation"
+              data-cy="dateCreation"
+              type="datetime-local"
+              class="form-control"
+              name="dateCreation"
+              formControlName="dateCreation"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_client" jhiTranslate="conventionApp.facture.client">Client</label>
+          <select
+            class="form-control"
+            id="field_client"
+            data-cy="client"
+            name="client"
+            formControlName="client"
+            [compareWith]="compareClient"
+          >
+            @if (!editForm.get('client')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (clientOption of clientsSharedCollection; track $index) {
+              <option [ngValue]="clientOption">{{ clientOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['client'])!.invalid && (editForm.get(['client'])!.dirty || editForm.get(['client'])!.touched)) {
+          <div>
+            @if (editForm.get(['client'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_convention" jhiTranslate="conventionApp.facture.convention">Convention</label>
+          <select
+            class="form-control"
+            id="field_convention"
+            data-cy="convention"
+            name="convention"
+            formControlName="convention"
+            [compareWith]="compareConvention"
+          >
+            <option [ngValue]="null"></option>
+            @for (conventionOption of conventionsSharedCollection; track $index) {
+              <option [ngValue]="conventionOption">{{ conventionOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

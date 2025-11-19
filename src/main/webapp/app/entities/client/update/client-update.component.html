@@ -1,0 +1,175 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-client-heading" data-cy="ClientCreateUpdateHeading" jhiTranslate="conventionApp.client.home.createOrEditLabel">
+        Créer ou éditer un Client
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="conventionApp.client.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let numClientRef = editForm.get('numClient')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_numClient" jhiTranslate="conventionApp.client.numClient">Num Client</label>
+          <input type="number" class="form-control" name="numClient" id="field_numClient" data-cy="numClient" formControlName="numClient" />
+          @if (numClientRef.invalid && (numClientRef.dirty || numClientRef.touched)) {
+            <div>
+              @if (editForm.get('numClient')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('numClient')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let nomClientRef = editForm.get('nomClient')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_nomClient" jhiTranslate="conventionApp.client.nomClient">Nom Client</label>
+          <input type="text" class="form-control" name="nomClient" id="field_nomClient" data-cy="nomClient" formControlName="nomClient" />
+          @if (nomClientRef.invalid && (nomClientRef.dirty || nomClientRef.touched)) {
+            <div>
+              @if (editForm.get('nomClient')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('nomClient')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Ce champ doit faire moins de 100 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let adresseClientRef = editForm.get('adresseClient')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_adresseClient" jhiTranslate="conventionApp.client.adresseClient">Adresse Client</label>
+          <input
+            type="text"
+            class="form-control"
+            name="adresseClient"
+            id="field_adresseClient"
+            data-cy="adresseClient"
+            formControlName="adresseClient"
+          />
+          @if (adresseClientRef.invalid && (adresseClientRef.dirty || adresseClientRef.touched)) {
+            <div>
+              @if (editForm.get('adresseClient')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '255' }"
+                  >Ce champ doit faire moins de 255 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let emailClientRef = editForm.get('emailClient')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_emailClient" jhiTranslate="conventionApp.client.emailClient">Email Client</label>
+          <input
+            type="text"
+            class="form-control"
+            name="emailClient"
+            id="field_emailClient"
+            data-cy="emailClient"
+            formControlName="emailClient"
+          />
+          @if (emailClientRef.invalid && (emailClientRef.dirty || emailClientRef.touched)) {
+            <div>
+              @if (editForm.get('emailClient')?.errors?.pattern) {
+                <small
+                  class="form-text text-danger"
+                  jhiTranslate="entity.validation.pattern"
+                  [translateValues]="{ pattern: 'Email Client' }"
+                  >Ce champ doit suivre l&apos;expression régulière Email Client.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let whatsClientRef = editForm.get('whatsClient')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_whatsClient" jhiTranslate="conventionApp.client.whatsClient">Whats Client</label>
+          <input
+            type="text"
+            class="form-control"
+            name="whatsClient"
+            id="field_whatsClient"
+            data-cy="whatsClient"
+            formControlName="whatsClient"
+          />
+          @if (whatsClientRef.invalid && (whatsClientRef.dirty || whatsClientRef.touched)) {
+            <div>
+              @if (editForm.get('whatsClient')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                  >Ce champ doit faire moins de 20 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_obsClient" jhiTranslate="conventionApp.client.obsClient">Obs Client</label>
+          <textarea class="form-control" name="obsClient" id="field_obsClient" data-cy="obsClient" formControlName="obsClient"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dateCreation" jhiTranslate="conventionApp.client.dateCreation">Date Creation</label>
+          <div class="d-flex">
+            <input
+              id="field_dateCreation"
+              data-cy="dateCreation"
+              type="datetime-local"
+              class="form-control"
+              name="dateCreation"
+              formControlName="dateCreation"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        @let actifRef = editForm.get('actif')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_actif" jhiTranslate="conventionApp.client.actif">Actif</label>
+          <input type="checkbox" class="form-check" name="actif" id="field_actif" data-cy="actif" formControlName="actif" />
+          @if (actifRef.invalid && (actifRef.dirty || actifRef.touched)) {
+            <div>
+              @if (editForm.get('actif')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import com.convention.IntegrationTest;
-import com.convention.domain.User;
+import com.convention.domain.UserEntity;
 import com.convention.repository.UserRepository;
 import com.convention.service.UserService;
 import java.util.Locale;
@@ -42,8 +42,8 @@ class DomainUserDetailsServiceIT {
     @Qualifier("userDetailsService")
     private UserDetailsService domainUserDetailsService;
 
-    public User getUserOne() {
-        User userOne = new User();
+    public UserEntity getUserOne() {
+        UserEntity userOne = new UserEntity();
         userOne.setLogin(USER_ONE_LOGIN);
         userOne.setPassword(RandomStringUtils.insecure().nextAlphanumeric(60));
         userOne.setActivated(true);
@@ -54,8 +54,8 @@ class DomainUserDetailsServiceIT {
         return userOne;
     }
 
-    public User getUserTwo() {
-        User userTwo = new User();
+    public UserEntity getUserTwo() {
+        UserEntity userTwo = new UserEntity();
         userTwo.setLogin(USER_TWO_LOGIN);
         userTwo.setPassword(RandomStringUtils.insecure().nextAlphanumeric(60));
         userTwo.setActivated(true);
@@ -66,8 +66,8 @@ class DomainUserDetailsServiceIT {
         return userTwo;
     }
 
-    public User getUserThree() {
-        User userThree = new User();
+    public UserEntity getUserThree() {
+        UserEntity userThree = new UserEntity();
         userThree.setLogin(USER_THREE_LOGIN);
         userThree.setPassword(RandomStringUtils.insecure().nextAlphanumeric(60));
         userThree.setActivated(false);

@@ -1,0 +1,86 @@
+{
+  "annotations": {
+    "changelogDate": "20251118195134"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "numFacture",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "dateFacture",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "montantTotal",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "montantTTC",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "tva",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["min", "max"],
+      "fieldValidateRulesMax": "100",
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "observations",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "ancienneRef",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "typeFacture",
+      "fieldType": "TypeFacture",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "NORMALE,AVOIR,ACOMPTE,SOLDE"
+    },
+    {
+      "fieldName": "statut",
+      "fieldType": "StatutFacture",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "BROUILLON,EMISE,PAYEE,ANNULEE,IMPAYEE"
+    },
+    {
+      "fieldName": "dateEcheance",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "dateCreation",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Facture",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "client",
+      "relationshipName": "client",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityName": "convention",
+      "relationshipName": "convention",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

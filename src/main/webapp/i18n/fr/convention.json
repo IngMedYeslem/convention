@@ -1,0 +1,33 @@
+{
+  "conventionApp": {
+    "convention": {
+      "home": {
+        "title": "Conventions",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Convention",
+        "createOrEditLabel": "Créer ou éditer un Convention",
+        "notFound": "Aucun Convention trouvé"
+      },
+      "created": "Un nouveau Convention a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Convention avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Convention avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Convention {{ id }} ?"
+      },
+      "detail": {
+        "title": "Convention"
+      },
+      "id": "ID",
+      "numConvention": "Num Convention",
+      "dateSignConv": "Date Sign Conv",
+      "dateDebutConv": "Date Debut Conv",
+      "echeanceConv": "Echeance Conv",
+      "redevance": "Redevance",
+      "nomResponsable": "Nom Responsable",
+      "statut": "Statut",
+      "dateCreation": "Date Creation",
+      "dateModification": "Date Modification",
+      "client": "Client"
+    }
+  }
+}

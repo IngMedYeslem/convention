@@ -2,7 +2,7 @@ package com.convention.service.dto;
 
 import com.convention.config.Constants;
 import com.convention.domain.Authority;
-import com.convention.domain.User;
+import com.convention.domain.UserEntity;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -55,7 +55,7 @@ public class AdminUserDTO implements Serializable {
         // Empty constructor needed for Jackson.
     }
 
-    public AdminUserDTO(User user) {
+    public AdminUserDTO(UserEntity user) {
         this.id = user.getId();
         this.login = user.getLogin();
         this.firstName = user.getFirstName();

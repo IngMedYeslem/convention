@@ -47,9 +47,14 @@ public class CacheConfiguration {
         return cm -> {
             createCache(cm, com.convention.repository.UserRepository.USERS_BY_LOGIN_CACHE);
             createCache(cm, com.convention.repository.UserRepository.USERS_BY_EMAIL_CACHE);
-            createCache(cm, com.convention.domain.User.class.getName());
+            createCache(cm, com.convention.domain.UserEntity.class.getName());
             createCache(cm, com.convention.domain.Authority.class.getName());
-            createCache(cm, com.convention.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.convention.domain.UserEntity.class.getName() + ".authorities");
+            createCache(cm, com.convention.domain.ClientEntity.class.getName());
+            createCache(cm, com.convention.domain.ConventionEntity.class.getName());
+            createCache(cm, com.convention.domain.DetailConventionEntity.class.getName());
+            createCache(cm, com.convention.domain.FactureEntity.class.getName());
+            createCache(cm, com.convention.domain.DetailFactureEntity.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

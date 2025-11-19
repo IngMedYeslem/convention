@@ -1,6 +1,6 @@
 package com.convention.service.dto;
 
-import com.convention.domain.User;
+import com.convention.domain.UserEntity;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ public class UserDTO implements Serializable {
         // Empty constructor needed for Jackson.
     }
 
-    public UserDTO(User user) {
+    public UserDTO(UserEntity user) {
         this.id = user.getId();
         // Customize it here if you need, or not, firstName/lastName/etc
         this.login = user.getLogin();

@@ -1,0 +1,194 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-detail-convention-heading"
+        data-cy="DetailConventionCreateUpdateHeading"
+        jhiTranslate="conventionApp.detailConvention.home.createOrEditLabel"
+      >
+        Créer ou éditer un Detail Convention
+      </h2>
+
+      <div>
+        <jhi-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="conventionApp.detailConvention.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let designationRef = editForm.get('designation')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_designation" jhiTranslate="conventionApp.detailConvention.designation">Designation</label>
+          <input
+            type="text"
+            class="form-control"
+            name="designation"
+            id="field_designation"
+            data-cy="designation"
+            formControlName="designation"
+          />
+          @if (designationRef.invalid && (designationRef.dirty || designationRef.touched)) {
+            <div>
+              @if (editForm.get('designation')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('designation')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Ce champ doit faire moins de 200 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let prixUnitaireRef = editForm.get('prixUnitaire')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_prixUnitaire" jhiTranslate="conventionApp.detailConvention.prixUnitaire"
+            >Prix Unitaire</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="prixUnitaire"
+            id="field_prixUnitaire"
+            data-cy="prixUnitaire"
+            formControlName="prixUnitaire"
+          />
+          @if (prixUnitaireRef.invalid && (prixUnitaireRef.dirty || prixUnitaireRef.touched)) {
+            <div>
+              @if (editForm.get('prixUnitaire')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('prixUnitaire')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Ce champ doit être supérieur à 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('prixUnitaire')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let quantiteRef = editForm.get('quantite')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_quantite" jhiTranslate="conventionApp.detailConvention.quantite">Quantite</label>
+          <input type="number" class="form-control" name="quantite" id="field_quantite" data-cy="quantite" formControlName="quantite" />
+          @if (quantiteRef.invalid && (quantiteRef.dirty || quantiteRef.touched)) {
+            <div>
+              @if (editForm.get('quantite')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('quantite')?.errors?.min) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
+                  >Ce champ doit être supérieur à 1.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('quantite')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_montantTotal" jhiTranslate="conventionApp.detailConvention.montantTotal"
+            >Montant Total</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="montantTotal"
+            id="field_montantTotal"
+            data-cy="montantTotal"
+            formControlName="montantTotal"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_observations" jhiTranslate="conventionApp.detailConvention.observations">Observations</label>
+          <textarea
+            class="form-control"
+            name="observations"
+            id="field_observations"
+            data-cy="observations"
+            formControlName="observations"
+          ></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dateCreation" jhiTranslate="conventionApp.detailConvention.dateCreation"
+            >Date Creation</label
+          >
+          <div class="input-group">
+            <input
+              id="field_dateCreation"
+              data-cy="dateCreation"
+              type="text"
+              class="form-control"
+              name="dateCreation"
+              ngbDatepicker
+              #dateCreationDp="ngbDatepicker"
+              formControlName="dateCreation"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dateCreationDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_convention" jhiTranslate="conventionApp.detailConvention.convention">Convention</label>
+          <select
+            class="form-control"
+            id="field_convention"
+            data-cy="convention"
+            name="convention"
+            formControlName="convention"
+            [compareWith]="compareConvention"
+          >
+            @if (!editForm.get('convention')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (conventionOption of conventionsSharedCollection; track $index) {
+              <option [ngValue]="conventionOption">{{ conventionOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['convention'])!.invalid && (editForm.get(['convention'])!.dirty || editForm.get(['convention'])!.touched)) {
+          <div>
+            @if (editForm.get(['convention'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

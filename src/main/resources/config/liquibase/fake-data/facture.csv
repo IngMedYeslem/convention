@@ -1,0 +1,11 @@
+id;num_facture;date_facture;montant_total;montant_ttc;tva;observations;ancienne_ref;type_facture;statut;date_echeance;date_creation;client_id
+1;18200;2025-11-18;10416.81;31725.62;63.41;../fake-data/blob/hipster.txt;parce que sauf;AVOIR;EMISE;2025-11-18;2025-11-18T14:51:48;1
+2;21836;2025-11-17;16551.13;6330.29;92.86;../fake-data/blob/hipster.txt;de manière à;NORMALE;EMISE;2025-11-18;2025-11-18T16:44:46;2
+3;28360;2025-11-17;10211.78;25270.19;15.43;../fake-data/blob/hipster.txt;vorace;NORMALE;BROUILLON;2025-11-18;2025-11-18T05:49:44;3
+4;31718;2025-11-18;23658.97;22141.74;91.13;../fake-data/blob/hipster.txt;en bas de aigre;SOLDE;ANNULEE;2025-11-18;2025-11-18T07:45:33;4
+5;21831;2025-11-18;31490.29;9035.05;18.65;../fake-data/blob/hipster.txt;alors commis commis;NORMALE;EMISE;2025-11-18;2025-11-18T11:31:18;5
+6;2834;2025-11-18;9050.25;21299.31;74.71;../fake-data/blob/hipster.txt;dès avant que;SOLDE;BROUILLON;2025-11-18;2025-11-18T14:57:25;6
+7;24154;2025-11-18;4036.37;13983.59;92.41;../fake-data/blob/hipster.txt;moderne au-dessous;NORMALE;BROUILLON;2025-11-18;2025-11-18T01:56:48;7
+8;13657;2025-11-18;4187.63;7290.48;81.18;../fake-data/blob/hipster.txt;habiter;SOLDE;BROUILLON;2025-11-18;2025-11-17T21:55:25;8
+9;14286;2025-11-18;12486.26;2573.85;1.29;../fake-data/blob/hipster.txt;envahir avant que fidèle;NORMALE;ANNULEE;2025-11-18;2025-11-18T07:33:37;9
+10;17270;2025-11-18;11654.93;15509.51;36.78;../fake-data/blob/hipster.txt;renverser insolite avant que;AVOIR;EMISE;2025-11-18;2025-11-18T10:16:56;10

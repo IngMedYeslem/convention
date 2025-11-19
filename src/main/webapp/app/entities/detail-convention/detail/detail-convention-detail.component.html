@@ -1,0 +1,64 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (detailConvention(); as detailConventionRef) {
+      <div>
+        <h2 data-cy="detailConventionDetailsHeading">
+          <span jhiTranslate="conventionApp.detailConvention.detail.title">Detail Convention</span>
+        </h2>
+
+        <hr />
+
+        <jhi-alert-error />
+
+        <jhi-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ detailConventionRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailConvention.designation">Designation</span></dt>
+          <dd>
+            <span>{{ detailConventionRef.designation }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailConvention.prixUnitaire">Prix Unitaire</span></dt>
+          <dd>
+            <span>{{ detailConventionRef.prixUnitaire }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailConvention.quantite">Quantite</span></dt>
+          <dd>
+            <span>{{ detailConventionRef.quantite }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailConvention.montantTotal">Montant Total</span></dt>
+          <dd>
+            <span>{{ detailConventionRef.montantTotal }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailConvention.observations">Observations</span></dt>
+          <dd>
+            <span>{{ detailConventionRef.observations }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailConvention.dateCreation">Date Creation</span></dt>
+          <dd>
+            <span>{{ detailConventionRef.dateCreation | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="conventionApp.detailConvention.convention">Convention</span></dt>
+          <dd>
+            @if (detailConvention()!.convention) {
+              <div>
+                <a [routerLink]="['/convention', detailConvention()!.convention?.id, 'view']">{{ detailConventionRef.convention?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/detail-convention', detailConventionRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

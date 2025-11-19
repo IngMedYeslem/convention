@@ -1,0 +1,188 @@
+<div>
+  <h2 id="page-heading" data-cy="ConventionHeading">
+    <span jhiTranslate="conventionApp.convention.home.title">Conventions</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="conventionApp.convention.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-convention"
+        [routerLink]="['/convention/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="conventionApp.convention.home.createLabel">Créer un nouveau Convention</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error />
+
+  <jhi-alert />
+
+  <jhi-filter [filters]="filters" />
+
+  @if (conventions().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="conventionApp.convention.home.notFound">Aucun Convention trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="numConvention">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.numConvention">Num Convention</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateSignConv">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.dateSignConv">Date Sign Conv</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateDebutConv">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.dateDebutConv">Date Debut Conv</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="echeanceConv">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.echeanceConv">Echeance Conv</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="redevance">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.redevance">Redevance</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="nomResponsable">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.nomResponsable">Nom Responsable</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="statut">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.statut">Statut</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateCreation">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.dateCreation">Date Creation</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateModification">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.dateModification">Date Modification</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="client.id">
+              <div class="d-flex">
+                <span jhiTranslate="conventionApp.convention.client">Client</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (convention of conventions(); track trackId(convention)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/convention', convention.id, 'view']">{{ convention.id }}</a>
+              </td>
+              <td>{{ convention.numConvention }}</td>
+              <td>{{ convention.dateSignConv | formatMediumDate }}</td>
+              <td>{{ convention.dateDebutConv | formatMediumDate }}</td>
+              <td>{{ convention.echeanceConv | formatMediumDate }}</td>
+              <td>{{ convention.redevance }}</td>
+              <td>{{ convention.nomResponsable }}</td>
+              <td [jhiTranslate]="'conventionApp.StatutConvention.' + (convention.statut ?? 'null')">
+                {{
+                  { null: '', BROUILLON: 'BROUILLON', ACTIVE: 'ACTIVE', SUSPENDUE: 'SUSPENDUE', TERMINEE: 'TERMINEE', ANNULEE: 'ANNULEE' }[
+                    convention.statut ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ convention.dateCreation | formatMediumDatetime }}</td>
+              <td>{{ convention.dateModification | formatMediumDatetime }}</td>
+              <td>
+                @if (convention.client) {
+                  <div>
+                    <a [routerLink]="['/client', convention.client.id, 'view']">{{ convention.client.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/convention', convention.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/convention', convention.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(convention)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (conventions().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

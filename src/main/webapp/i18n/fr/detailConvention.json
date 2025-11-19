@@ -1,0 +1,30 @@
+{
+  "conventionApp": {
+    "detailConvention": {
+      "home": {
+        "title": "DetailConventions",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Detail Convention",
+        "createOrEditLabel": "Créer ou éditer un Detail Convention",
+        "notFound": "Aucun Detail Convention trouvé"
+      },
+      "created": "Un nouveau Detail Convention a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Detail Convention avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Detail Convention avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Detail Convention {{ id }} ?"
+      },
+      "detail": {
+        "title": "Detail Convention"
+      },
+      "id": "ID",
+      "designation": "Designation",
+      "prixUnitaire": "Prix Unitaire",
+      "quantite": "Quantite",
+      "montantTotal": "Montant Total",
+      "observations": "Observations",
+      "dateCreation": "Date Creation",
+      "convention": "Convention"
+    }
+  }
+}

@@ -4,72 +4,115 @@ application {
     applicationType monolith
     packageName com.convention
     authenticationType jwt
-
+    
+    clientFramework angular
+    clientTheme none
+    clientPackageManager npm
+    
     prodDatabaseType mysql
     devDatabaseType mysql
-
+    databaseType sql
+    
     buildTool maven
-
+    serverPort 8080
+    
     enableTranslation true
     nativeLanguage fr
     languages [fr]
-
-    clientFramework angular
+    
+    enableSwaggerCodegen true
+    enableHibernateCache true
+    cacheProvider ehcache
+    
+    testFrameworks [gatling, cucumber]
+    
+    jhiPrefix jhi
+    entitySuffix Entity
+    dtoSuffix DTO
   }
 }
 
-entity Clients {
-  numClient Long required,
-  nomClient String required,
-  adresseClient String,
-  emailClient String,
-  whatsClient String,
-  obsClient String
+entity Client {
+  numClient Long required unique,
+  nomClient String required maxlength(100),
+  adresseClient String maxlength(255),
+  emailClient String pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
+  whatsClient String maxlength(20),
+  obsClient TextBlob,
+  dateCreation Instant,
+  actif Boolean required
 }
 
 entity Convention {
-  numConvention Long required,
-  dateSignConv LocalDate,
-  dateDebutConv LocalDate,
-  echeanceConv LocalDate,
-  redvence BigDecimal,
-  nomClient String,
-  nomResponsable String
+  numConvention Long required unique,
+  dateSignConv LocalDate required,
+  dateDebutConv LocalDate required,
+  echeanceConv LocalDate required,
+  redevance BigDecimal required min(0),
+  nomResponsable String required maxlength(100),
+  statut StatutConvention required,
+  dateCreation Instant,
+  dateModification Instant
 }
 
-entity DetailleConv {
-  nDetailleConv Long required,
-  designationCon String,
-  pu BigDecimal,
-  qt Integer,
-  obs String,
-  dateDetailleConv LocalDate
+entity DetailConvention {
+  designation String required maxlength(200),
+  prixUnitaire BigDecimal required min(0),
+  quantite Integer required min(1),
+  montantTotal BigDecimal,
+  observations TextBlob,
+  dateCreation LocalDate
 }
 
 entity Facture {
-  numFacture Long required,
-  dateFacture LocalDate,
-  obsFacture String,
-  nomClient String,
-  ancienRef String,
-  typeFacture String
+  numFacture Long required unique,
+  dateFacture LocalDate required,
+  montantTotal BigDecimal required min(0),
+  montantTTC BigDecimal,
+  tva BigDecimal min(0) max(100),
+  observations TextBlob,
+  ancienneRef String maxlength(50),
+  typeFacture TypeFacture required,
+  statut StatutFacture required,
+  dateEcheance LocalDate,
+  dateCreation Instant
 }
 
-entity DetailleFacture {
-  nDetailleFacture Long required,
-  designationFacture String,
-  prixUnitaire BigDecimal,
-  quantite Integer,
-  obs String
+entity DetailFacture {
+  designation String required maxlength(200),
+  prixUnitaire BigDecimal required min(0),
+  quantite Integer required min(1),
+  montantHT BigDecimal,
+  tauxTVA BigDecimal min(0) max(100),
+  montantTVA BigDecimal,
+  montantTTC BigDecimal,
+  observations String maxlength(500)
+}
+
+enum StatutConvention {
+  BROUILLON, ACTIVE, SUSPENDUE, TERMINEE, ANNULEE
+}
+
+enum TypeFacture {
+  NORMALE, AVOIR, ACOMPTE, SOLDE
+}
+
+enum StatutFacture {
+  BROUILLON, EMISE, PAYEE, ANNULEE, IMPAYEE
 }
 
 relationship ManyToOne {
-  Convention { client } to Clients,
-  DetailleConv { convention } to Convention,
-  Facture { client } to Clients,
-  DetailleFacture { facture } to Facture
+  Convention{client required} to Client,
+  DetailConvention{convention required} to Convention,
+  Facture{client required} to Client,
+  Facture{convention} to Convention,
+  DetailFacture{facture required} to Facture
 }
 
 dto * with mapstruct
-service * with serviceClass
-paginate * with pagination
+service * with serviceImpl
+paginate Client, Convention, Facture with pagination
+paginate DetailConvention, DetailFacture with infinite-scroll
+
+filter Client, Convention, Facture
+search Client, Convention, Facture with elasticsearch
