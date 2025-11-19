@@ -34,6 +34,16 @@ const routes: Routes = [
     title: 'login.title',
   },
   {
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+    title: 'Tableau de bord',
+  },
+  {
+    path: 'statistiques',
+    loadComponent: () => import('./statistiques/statistiques.component').then(m => m.StatistiquesComponent),
+    title: 'Statistiques',
+  },
+  {
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },

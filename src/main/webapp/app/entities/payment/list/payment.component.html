@@ -1,0 +1,70 @@
+<div class="container-fluid">
+  <div class="row mb-3">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">Gestion des Paiements</h2>
+      <button class="btn btn-success btn-lg" (click)="createPayment()"><fa-icon icon="plus"></fa-icon> Nouveau Paiement</button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Numéro</th>
+          <th>Date</th>
+          <th>Montant</th>
+          <th>Mode</th>
+          <th>Référence</th>
+          <th>Facture</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of payments">
+          <td>
+            <strong>{{ payment.id }}</strong>
+          </td>
+          <td>
+            <span class="badge bg-secondary">{{ payment.numPaiement }}</span>
+          </td>
+          <td>{{ payment.datePaiement | date: 'dd/MM/yyyy' }}</td>
+          <td>
+            <strong class="text-success">{{ payment.montant | currency: 'MRU' }}</strong>
+          </td>
+          <td>
+            <span
+              class="badge"
+              [ngClass]="{
+                'bg-success': payment.modePaiement === 'VIREMENT',
+                'bg-info': payment.modePaiement === 'CARTE_BANCAIRE',
+                'bg-warning': payment.modePaiement === 'CHEQUE',
+                'bg-secondary': payment.modePaiement === 'ESPECES',
+              }"
+              >{{ payment.modePaiement }}</span
+            >
+          </td>
+          <td>{{ payment.reference || 'N/A' }}</td>
+          <td>
+            <span class="badge bg-primary">{{ payment.facture?.numFacture }}</span>
+          </td>
+          <td>
+            <div class="btn-group-vertical btn-group-sm">
+              <div class="btn-group btn-group-sm mb-1">
+                <button class="btn btn-info btn-sm" (click)="viewPayment(payment.id)" title="Voir les détails">
+                  <fa-icon icon="eye"></fa-icon> Voir
+                </button>
+                <button class="btn btn-primary btn-sm" (click)="editPayment(payment.id)" title="Éditer le paiement">
+                  <fa-icon icon="edit"></fa-icon> Éditer
+                </button>
+              </div>
+              <button class="btn btn-danger btn-sm" (click)="deletePayment(payment.id)" title="Supprimer le paiement">
+                <fa-icon icon="trash"></fa-icon> Supprimer
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

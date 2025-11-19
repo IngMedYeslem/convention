@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20251118200000-1" author="jhipster">
+        <createTable tableName="payment">
+            <column name="id" type="bigint" autoIncrement="true" startWith="1">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="num_paiement" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="date_paiement" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="montant" type="decimal(21,2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="mode_paiement" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="reference" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="observations" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+            <column name="date_creation" type="${datetimeType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="facture_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20251118200000-2" author="jhipster">
+        <addForeignKeyConstraint baseColumnNames="facture_id"
+                                 baseTableName="payment"
+                                 constraintName="fk_payment__facture_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="facture"/>
+    </changeSet>
+</databaseChangeLog>

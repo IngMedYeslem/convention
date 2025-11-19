@@ -143,21 +143,48 @@
                 }
               </td>
               <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/convention', convention.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
-                  </a>
+                <div class="btn-group-vertical btn-group-sm mb-2">
+                  <!-- Actions principales -->
+                  <div class="btn-group btn-group-sm mb-1">
+                    <a [routerLink]="['/convention', convention.id, 'view']" class="btn btn-info btn-sm">
+                      <fa-icon icon="eye"></fa-icon> Voir
+                    </a>
+                    <a [routerLink]="['/convention', convention.id, 'edit']" class="btn btn-primary btn-sm">
+                      <fa-icon icon="pencil-alt"></fa-icon> Éditer
+                    </a>
+                  </div>
 
-                  <a [routerLink]="['/convention', convention.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
-                  </a>
+                  <!-- Boutons de workflow -->
+                  <div class="btn-group btn-group-sm mb-1">
+                    @if (convention.statut === 'BROUILLON') {
+                      <button (click)="activateConvention(convention.id!)" class="btn btn-success btn-sm">
+                        <fa-icon icon="play"></fa-icon> Activer
+                      </button>
+                    }
+                    @if (convention.statut === 'ACTIVE') {
+                      <button (click)="suspendConvention(convention.id!)" class="btn btn-warning btn-sm">
+                        <fa-icon icon="pause"></fa-icon> Suspendre
+                      </button>
+                      <button (click)="generateInvoice(convention.id!)" class="btn btn-info btn-sm">
+                        <fa-icon icon="file-invoice"></fa-icon> Générer Facture
+                      </button>
+                    }
+                    @if (convention.statut === 'SUSPENDUE') {
+                      <button (click)="reactivateConvention(convention.id!)" class="btn btn-success btn-sm">
+                        <fa-icon icon="play"></fa-icon> Réactiver
+                      </button>
+                    }
+                  </div>
 
-                  <button type="submit" (click)="delete(convention)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
-                  </button>
+                  <!-- Actions secondaires -->
+                  <div class="btn-group btn-group-sm">
+                    <button (click)="downloadPdf(convention.id!)" class="btn btn-outline-primary btn-sm">
+                      <fa-icon icon="file-pdf"></fa-icon> Télécharger PDF
+                    </button>
+                    <button type="submit" (click)="delete(convention)" class="btn btn-danger btn-sm">
+                      <fa-icon icon="times"></fa-icon> Supprimer
+                    </button>
+                  </div>
                 </div>
               </td>
             </tr>

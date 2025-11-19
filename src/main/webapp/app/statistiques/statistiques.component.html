@@ -1,0 +1,67 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Tableau de bord</h2>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Total Conventions</h5>
+          <h3 class="text-primary">{{ statistics.totalConventions || 0 }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Conventions Actives</h5>
+          <h3 class="text-success">{{ statistics.conventionsActives || 0 }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Chiffre d'Affaires</h5>
+          <h3 class="text-info">{{ statistics.chiffresAffaires || 0 | currency: 'MRU' }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Montant Impayé</h5>
+          <h3 class="text-warning">{{ statistics.montantImpaye || 0 | currency: 'MRU' }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5>Conventions par mois</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="conventionsChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5>Chiffre d'affaires par mois</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="chiffresAffairesChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

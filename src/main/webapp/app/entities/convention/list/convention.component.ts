@@ -16,6 +16,7 @@ import { IConvention } from '../convention.model';
 
 import { ConventionService, EntityArrayResponseType } from '../service/convention.service';
 import { ConventionDeleteDialogComponent } from '../delete/convention-delete-dialog.component';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'jhi-convention',
@@ -50,6 +51,7 @@ export class ConventionComponent implements OnInit {
   protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+  protected http = inject(HttpClient);
 
   trackId = (item: IConvention): number => this.conventionService.getConventionIdentifier(item);
 
@@ -146,5 +148,71 @@ export class ConventionComponent implements OnInit {
         queryParams: queryParamsObj,
       });
     });
+  }
+
+  // Méthodes pour le workflow des conventions
+  activateConvention(id: number): void {
+    this.http.put(`/api/convention-workflow/${id}/activate`, {}).subscribe(() => {
+      this.load();
+    });
+  }
+
+  suspendConvention(id: number): void {
+    this.http.put(`/api/convention-workflow/${id}/suspend`, {}).subscribe(() => {
+      this.load();
+    });
+  }
+
+  reactivateConvention(id: number): void {
+    this.http.put(`/api/convention-workflow/${id}/reactivate`, {}).subscribe(() => {
+      this.load();
+    });
+  }
+
+  // Génération de facture
+  generateInvoice(id: number): void {
+    this.http.post(`/api/facture-generation/convention/${id}`, {}).subscribe({
+      next: (response: any) => {
+        // Notification plus discrète
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+          <strong>Succès!</strong> Facture N° ${response.numFacture || 'générée'} créée
+          <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+        `;
+        document.body.appendChild(notification);
+
+        // Supprimer automatiquement après 3 secondes
+        setTimeout(() => {
+          if (notification.parentElement) {
+            notification.remove();
+          }
+        }, 3000);
+      },
+      error: error => {
+        console.error('Erreur génération facture:', error);
+        alert('Erreur lors de la génération de la facture');
+      },
+    });
+  }
+
+  // Téléchargement PDF
+  downloadPdf(id: number): void {
+    this.http
+      .get(`/api/pdf/convention/${id}`, {
+        responseType: 'blob',
+      })
+      .subscribe({
+        next: blob => {
+          const url = window.URL.createObjectURL(blob);
+          window.open(url, '_blank');
+          setTimeout(() => window.URL.revokeObjectURL(url), 100);
+        },
+        error: error => {
+          console.error('Erreur téléchargement PDF:', error);
+          alert('Erreur lors du téléchargement du PDF');
+        },
+      });
   }
 }

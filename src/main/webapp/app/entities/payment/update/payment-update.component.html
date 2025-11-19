@@ -1,0 +1,63 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2>Créer un nouveau Paiement</h2>
+
+      <div>
+        <div class="mb-3">
+          <label class="form-label" for="field_numPaiement">Numéro de Paiement</label>
+          <input type="text" class="form-control" name="numPaiement" id="field_numPaiement" formControlName="numPaiement" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_datePaiement">Date de Paiement</label>
+          <input type="date" class="form-control" name="datePaiement" id="field_datePaiement" formControlName="datePaiement" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_montant">Montant</label>
+          <input type="number" class="form-control" name="montant" id="field_montant" formControlName="montant" step="0.01" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_modePaiement">Mode de Paiement</label>
+          <select class="form-control" name="modePaiement" formControlName="modePaiement" id="field_modePaiement" required>
+            <option value="">Sélectionner un mode</option>
+            <option value="ESPECES">Espèces</option>
+            <option value="CHEQUE">Chèque</option>
+            <option value="VIREMENT">Virement</option>
+            <option value="CARTE_BANCAIRE">Carte Bancaire</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_reference">Référence</label>
+          <input type="text" class="form-control" name="reference" id="field_reference" formControlName="reference" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_facture">Facture</label>
+          <select class="form-control" name="facture" formControlName="facture" id="field_facture" required>
+            <option value="">Sélectionner une facture</option>
+            <option *ngFor="let facture of factures" [ngValue]="facture">
+              Facture N° {{ facture.numFacture }} - {{ facture.montantTTC | currency: 'MRU' }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_observations">Observations</label>
+          <textarea class="form-control" name="observations" id="field_observations" formControlName="observations" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" class="btn btn-secondary me-2" (click)="previousState()"><fa-icon icon="ban"></fa-icon> Annuler</button>
+
+        <button type="submit" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+          <fa-icon icon="save"></fa-icon> Sauvegarder
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -31,6 +31,11 @@ const routes: Routes = [
     data: { pageTitle: 'conventionApp.detailFacture.home.title' },
     loadChildren: () => import('./detail-facture/detail-facture.routes'),
   },
+  {
+    path: 'payment',
+    data: { pageTitle: 'Paiements' },
+    loadChildren: () => import('./payment/payment.routes'),
+  },
   /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
 ];
 
