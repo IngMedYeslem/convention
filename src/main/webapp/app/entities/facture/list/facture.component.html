@@ -1,193 +1,167 @@
-<div>
-  <h2 id="page-heading" data-cy="FactureHeading">
-    <span jhiTranslate="conventionApp.facture.home.title">Factures</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span jhiTranslate="conventionApp.facture.home.refreshListLabel">Actualiser la liste</span>
-      </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-facture"
-        [routerLink]="['/facture/new']"
-      >
-        <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="conventionApp.facture.home.createLabel">Créer un nouveau Facture</span>
-      </button>
+<div class="entity-list-page">
+  <!-- En-tête -->
+  <div class="entity-list-header d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="mb-0 fw-bold">
+        <fa-icon icon="file-invoice-dollar" class="me-2 text-primary"></fa-icon>
+        Factures
+      </h4>
+      <small class="text-muted">{{ totalItems }} facture{{ totalItems > 1 ? 's' : '' }}</small>
     </div>
-  </h2>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary btn-sm" [routerLink]="['/facture/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouvelle facture
+      </a>
+    </div>
+  </div>
 
   <jhi-alert-error />
-
   <jhi-alert />
-
   <jhi-filter [filters]="filters" />
 
   @if (factures().length === 0) {
-    <div class="alert alert-warning" id="no-result">
-      <span jhiTranslate="conventionApp.facture.home.notFound">Aucun Facture trouvé</span>
+    <div class="entity-empty text-center py-5">
+      <fa-icon icon="file-invoice" class="text-muted fa-3x mb-3 d-block"></fa-icon>
+      <p class="text-muted mb-0">Aucune facture enregistrée.</p>
+      <a [routerLink]="['/facture/new']" class="btn btn-primary btn-sm mt-3">
+        <fa-icon icon="plus" class="me-1"></fa-icon> Créer la première
+      </a>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
+    <div class="table-responsive rounded-3 shadow-sm" id="entities">
+      <table class="table table-sm table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-dark">
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="numFacture">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.numFacture">Num Facture</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="dateFacture">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.dateFacture">Date Facture</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="montantTotal">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.montantTotal">Montant Total</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="montantTTC">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.montantTTC">Montant TTC</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="tva">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.tva">Tva</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="observations">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.observations">Observations</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="ancienneRef">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.ancienneRef">Ancienne Ref</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="typeFacture">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.typeFacture">Type Facture</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="statut">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.statut">Statut</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="dateEcheance">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.dateEcheance">Date Echeance</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="dateCreation">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.dateCreation">Date Creation</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="client.id">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.client">Client</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="convention.id">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.facture.convention">Convention</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
+            <th scope="col" class="ps-3" jhiSortBy="numFacture">N° Facture <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="dateFacture">Date <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="typeFacture">Type <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="client.id">Partenaire <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="convention.id">Convention <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="montantTTC" class="text-end">Montant TTC (MRU) <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="dateEcheance">Échéance <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="statut" class="text-center">Statut <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" class="text-end pe-3">Actions</th>
           </tr>
         </thead>
         <tbody>
           @for (facture of factures(); track trackId(facture)) {
             <tr data-cy="entityTable">
+              <td class="ps-3">
+                <a [routerLink]="['/facture', facture.id, 'view']" class="fw-semibold text-dark text-decoration-none">
+                  {{ facture.numFacture ? 'F-' + facture.numFacture : '#' + facture.id }}
+                </a>
+              </td>
+              <td class="small">
+                @if (facture.dateFacture) {
+                  {{ facture.dateFacture | formatMediumDate }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
               <td>
-                <a [routerLink]="['/facture', facture.id, 'view']">{{ facture.id }}</a>
+                @switch (facture.typeFacture) {
+                  @case ('NORMALE') {
+                    <span class="badge bg-primary">Normale</span>
+                  }
+                  @case ('AVOIR') {
+                    <span class="badge bg-warning text-dark">Avoir</span>
+                  }
+                  @case ('ACOMPTE') {
+                    <span class="badge bg-info">Acompte</span>
+                  }
+                  @case ('SOLDE') {
+                    <span class="badge bg-dark">Solde</span>
+                  }
+                  @default {
+                    <span class="badge bg-light text-muted border">—</span>
+                  }
+                }
               </td>
-              <td>{{ facture.numFacture }}</td>
-              <td>{{ facture.dateFacture | formatMediumDate }}</td>
-              <td>{{ facture.montantTotal }}</td>
-              <td>{{ facture.montantTTC }}</td>
-              <td>{{ facture.tva }}</td>
-              <td>{{ facture.observations }}</td>
-              <td>{{ facture.ancienneRef }}</td>
-              <td [jhiTranslate]="'conventionApp.TypeFacture.' + (facture.typeFacture ?? 'null')">
-                {{ { null: '', NORMALE: 'NORMALE', AVOIR: 'AVOIR', ACOMPTE: 'ACOMPTE', SOLDE: 'SOLDE' }[facture.typeFacture ?? 'null'] }}
-              </td>
-              <td [jhiTranslate]="'conventionApp.StatutFacture.' + (facture.statut ?? 'null')">
-                {{
-                  { null: '', BROUILLON: 'BROUILLON', EMISE: 'EMISE', PAYEE: 'PAYEE', ANNULEE: 'ANNULEE', IMPAYEE: 'IMPAYEE' }[
-                    facture.statut ?? 'null'
-                  ]
-                }}
-              </td>
-              <td>{{ facture.dateEcheance | formatMediumDate }}</td>
-              <td>{{ facture.dateCreation | formatMediumDatetime }}</td>
-              <td>
+              <td class="small">
                 @if (facture.client) {
-                  <div>
-                    <a [routerLink]="['/client', facture.client.id, 'view']">{{ facture.client.id }}</a>
-                  </div>
+                  <a [routerLink]="['/client', facture.client.id, 'view']" class="text-decoration-none">
+                    {{ facture.client.id }}
+                  </a>
+                } @else {
+                  <span class="text-muted">—</span>
                 }
               </td>
-              <td>
+              <td class="small">
                 @if (facture.convention) {
-                  <div>
-                    <a [routerLink]="['/convention', facture.convention.id, 'view']">{{ facture.convention.id }}</a>
-                  </div>
+                  <a [routerLink]="['/convention', facture.convention.id, 'view']" class="text-decoration-none">
+                    Conv. #{{ facture.convention.id }}
+                  </a>
+                } @else {
+                  <span class="text-muted">—</span>
                 }
               </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/facture', facture.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+              <td class="text-end fw-semibold">
+                @if (facture.montantTTC != null) {
+                  {{ facture.montantTTC | number: '1.0-2' }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="small">
+                @if (facture.dateEcheance) {
+                  {{ facture.dateEcheance | formatMediumDate }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-center">
+                @switch (facture.statut) {
+                  @case ('BROUILLON') {
+                    <span class="badge bg-secondary">Brouillon</span>
+                  }
+                  @case ('EMISE') {
+                    <span class="badge bg-primary">Émise</span>
+                  }
+                  @case ('PAYEE') {
+                    <span class="badge bg-success">Payée</span>
+                  }
+                  @case ('IMPAYEE') {
+                    <span class="badge bg-danger">Impayée</span>
+                  }
+                  @case ('ANNULEE') {
+                    <span class="badge bg-dark">Annulée</span>
+                  }
+                  @default {
+                    <span class="badge bg-light text-muted border">—</span>
+                  }
+                }
+              </td>
+              <td class="text-end pe-3">
+                <div class="btn-group btn-group-sm flex-nowrap">
+                  <a
+                    [routerLink]="['/facture', facture.id, 'view']"
+                    class="btn btn-outline-secondary"
+                    title="Voir"
+                    data-cy="entityDetailsButton"
+                  >
                     <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
                   </a>
-
-                  <a [routerLink]="['/facture', facture.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                  <a
+                    [routerLink]="['/facture', facture.id, 'edit']"
+                    class="btn btn-outline-primary"
+                    title="Éditer"
+                    data-cy="entityEditButton"
+                  >
                     <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
                   </a>
-
-                  <button type="submit" (click)="delete(facture)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                  <button
+                    type="button"
+                    (click)="delete(facture)"
+                    class="btn btn-outline-danger"
+                    title="Supprimer"
+                    data-cy="entityDeleteButton"
+                  >
                     <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
                   </button>
                 </div>
               </td>
@@ -196,24 +170,18 @@
         </tbody>
       </table>
     </div>
-  }
-  @if (factures().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }" />
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
     </div>
   }
 </div>

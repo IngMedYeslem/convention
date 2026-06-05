@@ -30,6 +30,11 @@ const conventionRoute: Routes = [
     canActivate: [UserRouteAccessService],
   },
   {
+    path: 'scan',
+    loadComponent: () => import('./scan/convention-scan.component').then(m => m.ConventionScanComponent),
+    canActivate: [UserRouteAccessService],
+  },
+  {
     path: ':id/edit',
     loadComponent: () => import('./update/convention-update.component').then(m => m.ConventionUpdateComponent),
     resolve: {

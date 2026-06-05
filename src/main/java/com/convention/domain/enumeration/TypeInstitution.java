@@ -1,0 +1,13 @@
+package com.convention.domain.enumeration;
+
+public enum TypeInstitution {
+    MINISTERE,
+    ETABLISSEMENT_PUBLIC_ADMINISTRATIF,
+    ETABLISSEMENT_PUBLIC_COMMERCIAL,
+    COLLECTIVITE_LOCALE,
+    SECTEUR_PRIVE,
+    ORGANISATION_INTERNATIONALE,
+    ONG,
+    UNIVERSITE,
+    AUTRE,
+}

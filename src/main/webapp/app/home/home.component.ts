@@ -15,6 +15,7 @@ import { Account } from 'app/core/auth/account.model';
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
+  currentYear = new Date().getFullYear();
 
   private readonly destroy$ = new Subject<void>();
 

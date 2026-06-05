@@ -1,272 +1,273 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
+<div class="form-page">
+  <div class="form-card-wrapper form-card-wrapper--xl">
     <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-convention-heading"
-        data-cy="ConventionCreateUpdateHeading"
-        jhiTranslate="conventionApp.convention.home.createOrEditLabel"
-      >
-        Créer ou éditer un Convention
-      </h2>
-
-      <div>
-        <jhi-alert-error />
-
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" jhiTranslate="conventionApp.convention.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+      <!-- En-tête carte -->
+      <div class="form-card-header">
+        <div class="d-flex align-items-center gap-3">
+          <div class="form-card-icon">
+            <fa-icon icon="file-contract" class="fa-lg"></fa-icon>
           </div>
-        }
-
-        @let numConventionRef = editForm.get('numConvention')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_numConvention" jhiTranslate="conventionApp.convention.numConvention">Num Convention</label>
-          <input
-            type="number"
-            class="form-control"
-            name="numConvention"
-            id="field_numConvention"
-            data-cy="numConvention"
-            formControlName="numConvention"
-          />
-          @if (numConventionRef.invalid && (numConventionRef.dirty || numConventionRef.touched)) {
-            <div>
-              @if (editForm.get('numConvention')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('numConvention')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
-        </div>
-
-        @let dateSignConvRef = editForm.get('dateSignConv')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_dateSignConv" jhiTranslate="conventionApp.convention.dateSignConv">Date Sign Conv</label>
-          <div class="input-group">
-            <input
-              id="field_dateSignConv"
-              data-cy="dateSignConv"
-              type="text"
-              class="form-control"
-              name="dateSignConv"
-              ngbDatepicker
-              #dateSignConvDp="ngbDatepicker"
-              formControlName="dateSignConv"
-            />
-            <button type="button" class="btn btn-secondary" (click)="dateSignConvDp.toggle()" title="Ouvrir le calendrier">
-              <fa-icon icon="calendar-alt"></fa-icon>
-            </button>
-          </div>
-          @if (dateSignConvRef.invalid && (dateSignConvRef.dirty || dateSignConvRef.touched)) {
-            <div>
-              @if (editForm.get('dateSignConv')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        @let dateDebutConvRef = editForm.get('dateDebutConv')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_dateDebutConv" jhiTranslate="conventionApp.convention.dateDebutConv">Date Debut Conv</label>
-          <div class="input-group">
-            <input
-              id="field_dateDebutConv"
-              data-cy="dateDebutConv"
-              type="text"
-              class="form-control"
-              name="dateDebutConv"
-              ngbDatepicker
-              #dateDebutConvDp="ngbDatepicker"
-              formControlName="dateDebutConv"
-            />
-            <button type="button" class="btn btn-secondary" (click)="dateDebutConvDp.toggle()" title="Ouvrir le calendrier">
-              <fa-icon icon="calendar-alt"></fa-icon>
-            </button>
-          </div>
-          @if (dateDebutConvRef.invalid && (dateDebutConvRef.dirty || dateDebutConvRef.touched)) {
-            <div>
-              @if (editForm.get('dateDebutConv')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        @let echeanceConvRef = editForm.get('echeanceConv')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_echeanceConv" jhiTranslate="conventionApp.convention.echeanceConv">Echeance Conv</label>
-          <div class="input-group">
-            <input
-              id="field_echeanceConv"
-              data-cy="echeanceConv"
-              type="text"
-              class="form-control"
-              name="echeanceConv"
-              ngbDatepicker
-              #echeanceConvDp="ngbDatepicker"
-              formControlName="echeanceConv"
-            />
-            <button type="button" class="btn btn-secondary" (click)="echeanceConvDp.toggle()" title="Ouvrir le calendrier">
-              <fa-icon icon="calendar-alt"></fa-icon>
-            </button>
-          </div>
-          @if (echeanceConvRef.invalid && (echeanceConvRef.dirty || echeanceConvRef.touched)) {
-            <div>
-              @if (editForm.get('echeanceConv')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        @let redevanceRef = editForm.get('redevance')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_redevance" jhiTranslate="conventionApp.convention.redevance">Redevance</label>
-          <input type="number" class="form-control" name="redevance" id="field_redevance" data-cy="redevance" formControlName="redevance" />
-          @if (redevanceRef.invalid && (redevanceRef.dirty || redevanceRef.touched)) {
-            <div>
-              @if (editForm.get('redevance')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('redevance')?.errors?.min) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
-                  >Ce champ doit être supérieur à 0.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('redevance')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
-        </div>
-
-        @let nomResponsableRef = editForm.get('nomResponsable')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_nomResponsable" jhiTranslate="conventionApp.convention.nomResponsable"
-            >Nom Responsable</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            name="nomResponsable"
-            id="field_nomResponsable"
-            data-cy="nomResponsable"
-            formControlName="nomResponsable"
-          />
-          @if (nomResponsableRef.invalid && (nomResponsableRef.dirty || nomResponsableRef.touched)) {
-            <div>
-              @if (editForm.get('nomResponsable')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('nomResponsable')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
-                  >Ce champ doit faire moins de 100 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        @let statutRef = editForm.get('statut')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_statut" jhiTranslate="conventionApp.convention.statut">Statut</label>
-          <select class="form-control" name="statut" formControlName="statut" id="field_statut" data-cy="statut">
-            <option [ngValue]="null">{{ 'conventionApp.StatutConvention.null' | translate }}</option>
-            @for (statutConvention of statutConventionValues; track $index) {
-              <option [value]="statutConvention">{{ 'conventionApp.StatutConvention.' + statutConvention | translate }}</option>
-            }
-          </select>
-          @if (statutRef.invalid && (statutRef.dirty || statutRef.touched)) {
-            <div>
-              @if (editForm.get('statut')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_dateCreation" jhiTranslate="conventionApp.convention.dateCreation">Date Creation</label>
-          <div class="d-flex">
-            <input
-              id="field_dateCreation"
-              data-cy="dateCreation"
-              type="datetime-local"
-              class="form-control"
-              name="dateCreation"
-              formControlName="dateCreation"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_dateModification" jhiTranslate="conventionApp.convention.dateModification"
-            >Date Modification</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_dateModification"
-              data-cy="dateModification"
-              type="datetime-local"
-              class="form-control"
-              name="dateModification"
-              formControlName="dateModification"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_client" jhiTranslate="conventionApp.convention.client">Client</label>
-          <select
-            class="form-control"
-            id="field_client"
-            data-cy="client"
-            name="client"
-            formControlName="client"
-            [compareWith]="compareClient"
-          >
-            @if (!editForm.get('client')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
-            @for (clientOption of clientsSharedCollection; track $index) {
-              <option [ngValue]="clientOption">{{ clientOption.id }}</option>
-            }
-          </select>
-        </div>
-        @if (editForm.get(['client'])!.invalid && (editForm.get(['client'])!.dirty || editForm.get(['client'])!.touched)) {
           <div>
-            @if (editForm.get(['client'])?.errors?.required) {
-              <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
+            <h5 class="mb-0 fw-bold">
+              {{ editForm.controls.id.value !== null ? 'Éditer la convention' : 'Nouvelle convention' }}
+            </h5>
+            <small class="opacity-75">Compléter toutes les sections pour finaliser la convention</small>
           </div>
-        }
+        </div>
+        <button type="button" class="btn btn-outline-light btn-sm" (click)="previousState()">
+          <fa-icon icon="arrow-left" class="me-1"></fa-icon> Retour
+        </button>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
-        </button>
+      <!-- Corps -->
+      <div class="form-card-body">
+        <jhi-alert-error />
 
+        <!-- Section : Identification -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="hashtag" class="me-2 text-primary"></fa-icon>
+            Identification de la convention
+          </div>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label" for="field_numConvention">N° Convention <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="field_numConvention" formControlName="numConvention" placeholder="2025001" />
+              @if (editForm.get('numConvention')?.invalid && editForm.get('numConvention')?.touched) {
+                <div class="invalid-feedback d-block">Obligatoire.</div>
+              }
+            </div>
+            <div class="col-md-5">
+              <label class="form-label" for="field_typeConvention">Type de convention</label>
+              <select class="form-select" id="field_typeConvention" formControlName="typeConvention">
+                <option value="">— Sélectionner —</option>
+                <option value="COOPERATION">Coopération</option>
+                <option value="PARTENARIAT">Partenariat</option>
+                <option value="PRESTATION_SERVICE">Prestation de service</option>
+                <option value="FINANCEMENT">Financement</option>
+                <option value="ECHANGE">Échange</option>
+                <option value="CADRE">Convention cadre</option>
+                <option value="AUTRE">Autre</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="field_statut">Statut <span class="text-danger">*</span></label>
+              <select class="form-select" id="field_statut" formControlName="statut">
+                <option value="BROUILLON">Brouillon</option>
+                <option value="ACTIVE">Active</option>
+                <option value="SUSPENDUE">Suspendue</option>
+                <option value="TERMINEE">Terminée</option>
+                <option value="ANNULEE">Annulée</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="field_objet">Objet de la convention</label>
+              <textarea
+                class="form-control"
+                id="field_objet"
+                formControlName="objet"
+                rows="3"
+                placeholder="Décrire précisément l'objet de la convention…"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Parties -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="handshake" class="me-2 text-primary"></fa-icon>
+            Parties et responsables
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="field_client">Partenaire <span class="text-danger">*</span></label>
+              <select class="form-select" id="field_client" formControlName="client">
+                <option [ngValue]="null">— Sélectionner un partenaire —</option>
+                @for (option of clientsSharedCollection; track option.id) {
+                  <option [ngValue]="option">{{ option.nomClient }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_nomResponsable">Responsable interne <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="field_nomResponsable" formControlName="nomResponsable" placeholder="Prénom Nom" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_directionResponsable">Direction responsable</label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_directionResponsable"
+                formControlName="directionResponsable"
+                placeholder="Ex: DSI"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Dates -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="calendar-alt" class="me-2 text-primary"></fa-icon>
+            Dates
+          </div>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label" for="field_dateSignConv">Date de signature <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" id="field_dateSignConv" formControlName="dateSignConv" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_dateDebutConv">Date de début <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" id="field_dateDebutConv" formControlName="dateDebutConv" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_echeanceConv">Échéance <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" id="field_echeanceConv" formControlName="echeanceConv" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_dateVisaControleur">Visa contrôleur financier</label>
+              <input type="date" class="form-control" id="field_dateVisaControleur" formControlName="dateVisaControleur" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Financier -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="money-bill-wave" class="me-2 text-primary"></fa-icon>
+            Aspects financiers
+          </div>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label" for="field_valeurTotale">Valeur totale</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="field_valeurTotale" formControlName="valeurTotale" placeholder="0" />
+                <span class="input-group-text fw-semibold">MRU</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="field_redevance">Redevance périodique <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="field_redevance" formControlName="redevance" placeholder="0" />
+                <span class="input-group-text fw-semibold">MRU</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="field_numeroEngagement">N° Engagement budgétaire</label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_numeroEngagement"
+                formControlName="numeroEngagement"
+                placeholder="ENG-2025-XXX"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Juridique -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="gavel" class="me-2 text-primary"></fa-icon>
+            Aspects juridiques
+          </div>
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label" for="field_referenceJuridique">Référence juridique</label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_referenceJuridique"
+                formControlName="referenceJuridique"
+                placeholder="Ex: Décret n°XX-XX du JJ/MM/AAAA"
+              />
+            </div>
+            <div class="col-md-2 d-flex align-items-end pb-1">
+              <div class="form-check form-switch">
+                <input type="checkbox" class="form-check-input" id="field_renouvelable" formControlName="renouvelable" role="switch" />
+                <label class="form-check-label fw-semibold" for="field_renouvelable">Renouvelable</label>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label" for="field_nombreRenouvellements">Renouvellements max</label>
+              <input
+                type="number"
+                class="form-control"
+                id="field_nombreRenouvellements"
+                formControlName="nombreRenouvellements"
+                placeholder="0"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="field_conditionsResiliation">Conditions de résiliation</label>
+              <textarea
+                class="form-control"
+                id="field_conditionsResiliation"
+                formControlName="conditionsResiliation"
+                rows="3"
+                placeholder="Décrire les conditions de résiliation…"
+              ></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="field_penalites">Pénalités / Garanties</label>
+              <textarea
+                class="form-control"
+                id="field_penalites"
+                formControlName="penalites"
+                rows="3"
+                placeholder="Décrire les pénalités applicables…"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Approbation -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="check-double" class="me-2 text-primary"></fa-icon>
+            Circuit d'approbation
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="field_etapeApprobation">Étape actuelle</label>
+              <select class="form-select" id="field_etapeApprobation" formControlName="etapeApprobation">
+                <option value="">— Sélectionner —</option>
+                <option value="REDACTION">Rédaction</option>
+                <option value="REVUE_JURIDIQUE">Revue juridique</option>
+                <option value="VISA_FINANCIER">Visa financier</option>
+                <option value="SIGNATURE_DIRECTION">Signature direction</option>
+                <option value="PUBLIE">Publié / Actif</option>
+                <option value="REJETE">Rejeté</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="field_commentaireRejet">Commentaire / Motif de rejet</label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_commentaireRejet"
+                formControlName="commentaireRejet"
+                placeholder="Renseigner si rejeté…"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pied de carte -->
+      <div class="form-card-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Annuler</span>
+        </button>
         <button
           type="submit"
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          class="btn btn-primary px-4"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Sauvegarder</span>
         </button>
       </div>
     </form>

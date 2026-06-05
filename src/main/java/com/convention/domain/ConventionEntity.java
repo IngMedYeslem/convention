@@ -1,6 +1,8 @@
 package com.convention.domain;
 
+import com.convention.domain.enumeration.EtapeApprobation;
 import com.convention.domain.enumeration.StatutConvention;
+import com.convention.domain.enumeration.TypeConvention;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -62,6 +64,55 @@ public class ConventionEntity implements Serializable {
 
     @Column(name = "date_modification")
     private Instant dateModification;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_convention")
+    private TypeConvention typeConvention;
+
+    @Size(max = 500)
+    @Column(name = "objet", length = 500)
+    private String objet;
+
+    @Size(max = 200)
+    @Column(name = "direction_responsable", length = 200)
+    private String directionResponsable;
+
+    @Size(max = 200)
+    @Column(name = "reference_juridique", length = 200)
+    private String referenceJuridique;
+
+    @Size(max = 100)
+    @Column(name = "numero_engagement", length = 100)
+    private String numeroEngagement;
+
+    @Column(name = "date_visa_controleur")
+    private LocalDate dateVisaControleur;
+
+    @DecimalMin(value = "0")
+    @Column(name = "valeur_totale", precision = 21, scale = 2)
+    private java.math.BigDecimal valeurTotale;
+
+    @Column(name = "renouvelable")
+    private Boolean renouvelable;
+
+    @Column(name = "nombre_renouvellements")
+    private Integer nombreRenouvellements;
+
+    @Lob
+    @Column(name = "conditions_resiliation")
+    private String conditionsResiliation;
+
+    @Lob
+    @Column(name = "penalites")
+    private String penalites;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "etape_approbation")
+    private EtapeApprobation etapeApprobation;
+
+    @Size(max = 500)
+    @Column(name = "commentaire_rejet", length = 500)
+    private String commentaireRejet;
 
     @ManyToOne(optional = false)
     @NotNull
@@ -210,6 +261,110 @@ public class ConventionEntity implements Serializable {
     public ConventionEntity client(ClientEntity client) {
         this.setClient(client);
         return this;
+    }
+
+    public TypeConvention getTypeConvention() {
+        return typeConvention;
+    }
+
+    public void setTypeConvention(TypeConvention typeConvention) {
+        this.typeConvention = typeConvention;
+    }
+
+    public String getObjet() {
+        return objet;
+    }
+
+    public void setObjet(String objet) {
+        this.objet = objet;
+    }
+
+    public String getDirectionResponsable() {
+        return directionResponsable;
+    }
+
+    public void setDirectionResponsable(String directionResponsable) {
+        this.directionResponsable = directionResponsable;
+    }
+
+    public String getReferenceJuridique() {
+        return referenceJuridique;
+    }
+
+    public void setReferenceJuridique(String referenceJuridique) {
+        this.referenceJuridique = referenceJuridique;
+    }
+
+    public String getNumeroEngagement() {
+        return numeroEngagement;
+    }
+
+    public void setNumeroEngagement(String numeroEngagement) {
+        this.numeroEngagement = numeroEngagement;
+    }
+
+    public LocalDate getDateVisaControleur() {
+        return dateVisaControleur;
+    }
+
+    public void setDateVisaControleur(LocalDate dateVisaControleur) {
+        this.dateVisaControleur = dateVisaControleur;
+    }
+
+    public java.math.BigDecimal getValeurTotale() {
+        return valeurTotale;
+    }
+
+    public void setValeurTotale(java.math.BigDecimal valeurTotale) {
+        this.valeurTotale = valeurTotale;
+    }
+
+    public Boolean getRenouvelable() {
+        return renouvelable;
+    }
+
+    public void setRenouvelable(Boolean renouvelable) {
+        this.renouvelable = renouvelable;
+    }
+
+    public Integer getNombreRenouvellements() {
+        return nombreRenouvellements;
+    }
+
+    public void setNombreRenouvellements(Integer nombreRenouvellements) {
+        this.nombreRenouvellements = nombreRenouvellements;
+    }
+
+    public String getConditionsResiliation() {
+        return conditionsResiliation;
+    }
+
+    public void setConditionsResiliation(String conditionsResiliation) {
+        this.conditionsResiliation = conditionsResiliation;
+    }
+
+    public String getPenalites() {
+        return penalites;
+    }
+
+    public void setPenalites(String penalites) {
+        this.penalites = penalites;
+    }
+
+    public EtapeApprobation getEtapeApprobation() {
+        return etapeApprobation;
+    }
+
+    public void setEtapeApprobation(EtapeApprobation etapeApprobation) {
+        this.etapeApprobation = etapeApprobation;
+    }
+
+    public String getCommentaireRejet() {
+        return commentaireRejet;
+    }
+
+    public void setCommentaireRejet(String commentaireRejet) {
+        this.commentaireRejet = commentaireRejet;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

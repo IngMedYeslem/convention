@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260605000001-1" author="convention">
+        <addColumn tableName="client">
+            <column name="type_institution" type="varchar(100)"/>
+            <column name="nif" type="varchar(50)"/>
+            <column name="rc" type="varchar(50)"/>
+            <column name="nom_representant" type="varchar(150)"/>
+            <column name="fonction_representant" type="varchar(100)"/>
+            <column name="qualite_signature" type="varchar(50)"/>
+            <column name="wilaya" type="varchar(100)"/>
+            <column name="commune" type="varchar(100)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

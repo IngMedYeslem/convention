@@ -1,5 +1,7 @@
 package com.convention.domain;
 
+import com.convention.domain.enumeration.QualiteSignature;
+import com.convention.domain.enumeration.TypeInstitution;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -54,6 +56,38 @@ public class ClientEntity implements Serializable {
     @NotNull
     @Column(name = "actif", nullable = false)
     private Boolean actif;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_institution")
+    private TypeInstitution typeInstitution;
+
+    @Size(max = 50)
+    @Column(name = "nif", length = 50)
+    private String nif;
+
+    @Size(max = 50)
+    @Column(name = "rc", length = 50)
+    private String rc;
+
+    @Size(max = 150)
+    @Column(name = "nom_representant", length = 150)
+    private String nomRepresentant;
+
+    @Size(max = 100)
+    @Column(name = "fonction_representant", length = 100)
+    private String fonctionRepresentant;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "qualite_signature")
+    private QualiteSignature qualiteSignature;
+
+    @Size(max = 100)
+    @Column(name = "wilaya", length = 100)
+    private String wilaya;
+
+    @Size(max = 100)
+    @Column(name = "commune", length = 100)
+    private String commune;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -172,6 +206,70 @@ public class ClientEntity implements Serializable {
 
     public void setActif(Boolean actif) {
         this.actif = actif;
+    }
+
+    public TypeInstitution getTypeInstitution() {
+        return typeInstitution;
+    }
+
+    public void setTypeInstitution(TypeInstitution typeInstitution) {
+        this.typeInstitution = typeInstitution;
+    }
+
+    public String getNif() {
+        return nif;
+    }
+
+    public void setNif(String nif) {
+        this.nif = nif;
+    }
+
+    public String getRc() {
+        return rc;
+    }
+
+    public void setRc(String rc) {
+        this.rc = rc;
+    }
+
+    public String getNomRepresentant() {
+        return nomRepresentant;
+    }
+
+    public void setNomRepresentant(String nomRepresentant) {
+        this.nomRepresentant = nomRepresentant;
+    }
+
+    public String getFonctionRepresentant() {
+        return fonctionRepresentant;
+    }
+
+    public void setFonctionRepresentant(String fonctionRepresentant) {
+        this.fonctionRepresentant = fonctionRepresentant;
+    }
+
+    public QualiteSignature getQualiteSignature() {
+        return qualiteSignature;
+    }
+
+    public void setQualiteSignature(QualiteSignature qualiteSignature) {
+        this.qualiteSignature = qualiteSignature;
+    }
+
+    public String getWilaya() {
+        return wilaya;
+    }
+
+    public void setWilaya(String wilaya) {
+        this.wilaya = wilaya;
+    }
+
+    public String getCommune() {
+        return commune;
+    }
+
+    public void setCommune(String commune) {
+        this.commune = commune;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

@@ -1,7 +1,7 @@
 import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { Observable, Subscription, combineLatest, filter, tap } from 'rxjs';
+import { Observable, Subscription, combineLatest, filter, finalize, switchMap, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import SharedModule from 'app/shared/shared.module';
@@ -59,9 +59,15 @@ export class ConventionComponent implements OnInit {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-        tap(() => this.load()),
+        switchMap(() => {
+          this.isLoading = true;
+          return this.conventionService.query(this.buildQuery()).pipe(finalize(() => (this.isLoading = false)));
+        }),
       )
-      .subscribe();
+      .subscribe({
+        next: res => this.onResponseSuccess(res),
+        error: () => (this.isLoading = false),
+      });
 
     this.filters.filterChanges.subscribe(filterOptions => this.handleNavigation(1, this.sortState(), filterOptions));
   }
@@ -82,6 +88,9 @@ export class ConventionComponent implements OnInit {
     this.queryBackend().subscribe({
       next: (res: EntityArrayResponseType) => {
         this.onResponseSuccess(res);
+      },
+      error: () => {
+        this.isLoading = false;
       },
     });
   }
@@ -115,20 +124,19 @@ export class ConventionComponent implements OnInit {
     this.totalItems = Number(headers.get(TOTAL_COUNT_RESPONSE_HEADER));
   }
 
-  protected queryBackend(): Observable<EntityArrayResponseType> {
-    const { page, filters } = this;
-
-    this.isLoading = true;
-    const pageToLoad: number = page;
-    const queryObject: any = {
-      page: pageToLoad - 1,
+  protected buildQuery(): any {
+    const q: any = {
+      page: this.page - 1,
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
-    filters.filterOptions.forEach(filterOption => {
-      queryObject[filterOption.name] = filterOption.values;
-    });
-    return this.conventionService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
+    this.filters.filterOptions.forEach(f => (q[f.name] = f.values));
+    return q;
+  }
+
+  protected queryBackend(): Observable<EntityArrayResponseType> {
+    this.isLoading = true;
+    return this.conventionService.query(this.buildQuery()).pipe(finalize(() => (this.isLoading = false)));
   }
 
   protected handleNavigation(page: number, sortState: SortState, filterOptions?: IFilterOption[]): void {

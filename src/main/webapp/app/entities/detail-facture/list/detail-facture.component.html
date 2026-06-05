@@ -1,146 +1,121 @@
-<div>
-  <h2 id="page-heading" data-cy="DetailFactureHeading">
-    <span jhiTranslate="conventionApp.detailFacture.home.title">DetailFactures</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span jhiTranslate="conventionApp.detailFacture.home.refreshListLabel">Actualiser la liste</span>
-      </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-detail-facture"
-        [routerLink]="['/detail-facture/new']"
-      >
-        <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="conventionApp.detailFacture.home.createLabel">Créer un nouveau Detail Facture</span>
-      </button>
+<div class="entity-list-page">
+  <!-- En-tête -->
+  <div class="entity-list-header d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="mb-0 fw-bold">
+        <fa-icon icon="receipt" class="me-2 text-primary"></fa-icon>
+        Lignes de Facture
+      </h4>
+      <small class="text-muted">Détails et prestations rattachés aux factures</small>
     </div>
-  </h2>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary btn-sm" [routerLink]="['/detail-facture/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouvelle ligne
+      </a>
+    </div>
+  </div>
 
   <jhi-alert-error />
-
   <jhi-alert />
 
   @if (detailFactures().length === 0) {
-    <div class="alert alert-warning" id="no-result">
-      <span jhiTranslate="conventionApp.detailFacture.home.notFound">Aucun Detail Facture trouvé</span>
+    <div class="entity-empty text-center py-5">
+      <fa-icon icon="receipt" class="text-muted fa-3x mb-3 d-block"></fa-icon>
+      <p class="text-muted mb-0">Aucune ligne de facture enregistrée.</p>
+      <a [routerLink]="['/detail-facture/new']" class="btn btn-primary btn-sm mt-3">
+        <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter la première
+      </a>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
+    <div class="table-responsive rounded-3 shadow-sm" id="entities">
+      <table class="table table-sm table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-dark">
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="designation">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.detailFacture.designation">Designation</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="prixUnitaire">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.detailFacture.prixUnitaire">Prix Unitaire</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="quantite">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.detailFacture.quantite">Quantite</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="montantHT">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.detailFacture.montantHT">Montant HT</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="tauxTVA">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.detailFacture.tauxTVA">Taux TVA</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="montantTVA">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.detailFacture.montantTVA">Montant TVA</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="montantTTC">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.detailFacture.montantTTC">Montant TTC</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="observations">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.detailFacture.observations">Observations</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="facture.id">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.detailFacture.facture">Facture</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
+            <th scope="col" class="ps-3" jhiSortBy="id">#</th>
+            <th scope="col" jhiSortBy="facture.id">Facture <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="designation">Désignation <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="prixUnitaire" class="text-end">P.U. (MRU) <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="quantite" class="text-center">Qté <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="montantHT" class="text-end">HT (MRU) <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="tauxTVA" class="text-center">TVA % <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="montantTTC" class="text-end">TTC (MRU) <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" class="text-end pe-3">Actions</th>
           </tr>
         </thead>
         <tbody infinite-scroll (scrolled)="loadNextPage()" [infiniteScrollDisabled]="!hasMorePage()" [infiniteScrollDistance]="0">
           @for (detailFacture of detailFactures(); track trackId(detailFacture)) {
             <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/detail-facture', detailFacture.id, 'view']">{{ detailFacture.id }}</a>
-              </td>
-              <td>{{ detailFacture.designation }}</td>
-              <td>{{ detailFacture.prixUnitaire }}</td>
-              <td>{{ detailFacture.quantite }}</td>
-              <td>{{ detailFacture.montantHT }}</td>
-              <td>{{ detailFacture.tauxTVA }}</td>
-              <td>{{ detailFacture.montantTVA }}</td>
-              <td>{{ detailFacture.montantTTC }}</td>
-              <td>{{ detailFacture.observations }}</td>
+              <td class="ps-3 text-muted small">{{ detailFacture.id }}</td>
               <td>
                 @if (detailFacture.facture) {
-                  <div>
-                    <a [routerLink]="['/facture', detailFacture.facture.id, 'view']">{{ detailFacture.facture.id }}</a>
-                  </div>
+                  <a [routerLink]="['/facture', detailFacture.facture.id, 'view']" class="text-decoration-none small">
+                    F-{{ detailFacture.facture.id }}
+                  </a>
+                } @else {
+                  <span class="text-muted">—</span>
                 }
               </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/detail-facture', detailFacture.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+              <td class="fw-semibold">{{ detailFacture.designation ?? '—' }}</td>
+              <td class="text-end small">
+                @if (detailFacture.prixUnitaire != null) {
+                  {{ detailFacture.prixUnitaire | number: '1.0-2' }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-center">{{ detailFacture.quantite ?? '—' }}</td>
+              <td class="text-end small">
+                @if (detailFacture.montantHT != null) {
+                  {{ detailFacture.montantHT | number: '1.0-2' }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-center">
+                @if (detailFacture.tauxTVA != null) {
+                  <span class="badge bg-light text-dark border">{{ detailFacture.tauxTVA }}%</span>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-end fw-semibold">
+                @if (detailFacture.montantTTC != null) {
+                  {{ detailFacture.montantTTC | number: '1.0-2' }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-end pe-3">
+                <div class="btn-group btn-group-sm flex-nowrap">
+                  <a
+                    [routerLink]="['/detail-facture', detailFacture.id, 'view']"
+                    class="btn btn-outline-secondary"
+                    title="Voir"
+                    data-cy="entityDetailsButton"
+                  >
                     <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
                   </a>
-
-                  <a [routerLink]="['/detail-facture', detailFacture.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                  <a
+                    [routerLink]="['/detail-facture', detailFacture.id, 'edit']"
+                    class="btn btn-outline-primary"
+                    title="Éditer"
+                    data-cy="entityEditButton"
+                  >
                     <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
                   </a>
-
-                  <button type="submit" (click)="delete(detailFacture)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                  <button
+                    type="button"
+                    (click)="delete(detailFacture)"
+                    class="btn btn-outline-danger"
+                    title="Supprimer"
+                    data-cy="entityDeleteButton"
+                  >
                     <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
                   </button>
                 </div>
               </td>

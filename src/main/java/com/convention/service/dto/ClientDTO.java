@@ -1,5 +1,7 @@
 package com.convention.service.dto;
 
+import com.convention.domain.enumeration.QualiteSignature;
+import com.convention.domain.enumeration.TypeInstitution;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -37,6 +39,28 @@ public class ClientDTO implements Serializable {
 
     @NotNull
     private Boolean actif;
+
+    private TypeInstitution typeInstitution;
+
+    @Size(max = 50)
+    private String nif;
+
+    @Size(max = 50)
+    private String rc;
+
+    @Size(max = 150)
+    private String nomRepresentant;
+
+    @Size(max = 100)
+    private String fonctionRepresentant;
+
+    private QualiteSignature qualiteSignature;
+
+    @Size(max = 100)
+    private String wilaya;
+
+    @Size(max = 100)
+    private String commune;
 
     public Long getId() {
         return id;
@@ -108,6 +132,70 @@ public class ClientDTO implements Serializable {
 
     public void setActif(Boolean actif) {
         this.actif = actif;
+    }
+
+    public TypeInstitution getTypeInstitution() {
+        return typeInstitution;
+    }
+
+    public void setTypeInstitution(TypeInstitution typeInstitution) {
+        this.typeInstitution = typeInstitution;
+    }
+
+    public String getNif() {
+        return nif;
+    }
+
+    public void setNif(String nif) {
+        this.nif = nif;
+    }
+
+    public String getRc() {
+        return rc;
+    }
+
+    public void setRc(String rc) {
+        this.rc = rc;
+    }
+
+    public String getNomRepresentant() {
+        return nomRepresentant;
+    }
+
+    public void setNomRepresentant(String nomRepresentant) {
+        this.nomRepresentant = nomRepresentant;
+    }
+
+    public String getFonctionRepresentant() {
+        return fonctionRepresentant;
+    }
+
+    public void setFonctionRepresentant(String fonctionRepresentant) {
+        this.fonctionRepresentant = fonctionRepresentant;
+    }
+
+    public QualiteSignature getQualiteSignature() {
+        return qualiteSignature;
+    }
+
+    public void setQualiteSignature(QualiteSignature qualiteSignature) {
+        this.qualiteSignature = qualiteSignature;
+    }
+
+    public String getWilaya() {
+        return wilaya;
+    }
+
+    public void setWilaya(String wilaya) {
+        this.wilaya = wilaya;
+    }
+
+    public String getCommune() {
+        return commune;
+    }
+
+    public void setCommune(String commune) {
+        this.commune = commune;
     }
 
     @Override

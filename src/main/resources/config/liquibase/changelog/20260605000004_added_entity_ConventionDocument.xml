@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260605000004-1" author="convention">
+        <createTable tableName="convention_document">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nom_fichier" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type_document" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_type" type="varchar(100)"/>
+            <column name="chemin_fichier" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="taille_fichier" type="bigint"/>
+            <column name="date_depot" type="${datetimeType}"/>
+            <column name="depose_par" type="varchar(255)"/>
+            <column name="observations" type="varchar(500)"/>
+            <column name="convention_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260605000004-2" author="convention">
+        <addForeignKeyConstraint
+            baseColumnNames="convention_id"
+            baseTableName="convention_document"
+            constraintName="fk_convention_document_convention_id"
+            referencedColumnNames="id"
+            referencedTableName="convention"/>
+    </changeSet>
+
+</databaseChangeLog>

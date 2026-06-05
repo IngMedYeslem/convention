@@ -1,4 +1,5 @@
 import dayjs from 'dayjs/esm';
+import { TypeInstitution } from 'app/entities/enumerations/type-institution.model';
 
 export interface IClient {
   id: number;
@@ -10,6 +11,14 @@ export interface IClient {
   obsClient?: string | null;
   dateCreation?: dayjs.Dayjs | null;
   actif?: boolean | null;
+  typeInstitution?: keyof typeof TypeInstitution | null;
+  nif?: string | null;
+  rc?: string | null;
+  nomRepresentant?: string | null;
+  fonctionRepresentant?: string | null;
+  qualiteSignature?: string | null;
+  wilaya?: string | null;
+  commune?: string | null;
 }
 
 export type NewClient = Omit<IClient, 'id'> & { id: null };

@@ -1,190 +1,159 @@
 <div>
   <h2 id="page-heading" data-cy="ConventionHeading">
-    <span jhiTranslate="conventionApp.convention.home.title">Conventions</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span jhiTranslate="conventionApp.convention.home.refreshListLabel">Actualiser la liste</span>
+    <span>Conventions</span>
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-info btn-sm" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon> Actualiser
       </button>
-
+      <button type="button" class="btn btn-outline-success btn-sm" [routerLink]="['/convention/scan']">
+        <fa-icon icon="file-pdf"></fa-icon> Scanner PDF
+      </button>
       <button
+        type="button"
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-convention"
+        class="btn btn-primary btn-sm"
         [routerLink]="['/convention/new']"
       >
-        <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="conventionApp.convention.home.createLabel">Créer un nouveau Convention</span>
+        <fa-icon icon="plus"></fa-icon> Nouvelle Convention
       </button>
     </div>
   </h2>
 
   <jhi-alert-error />
-
   <jhi-alert />
-
   <jhi-filter [filters]="filters" />
 
   @if (conventions().length === 0) {
     <div class="alert alert-warning" id="no-result">
-      <span jhiTranslate="conventionApp.convention.home.notFound">Aucun Convention trouvé</span>
+      <span>Aucune convention trouvée</span>
     </div>
   } @else {
     <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
+      <table class="table table-striped table-sm align-middle" aria-describedby="page-heading">
+        <thead class="table-dark">
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
             <th scope="col" jhiSortBy="numConvention">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.numConvention">Num Convention</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
+              <div class="d-flex">N° Conv <fa-icon class="p-1" icon="sort"></fa-icon></div>
             </th>
+            <th scope="col">Partenaire</th>
+            <th scope="col" jhiSortBy="statut">
+              <div class="d-flex">Statut <fa-icon class="p-1" icon="sort"></fa-icon></div>
+            </th>
+            <th scope="col">Type</th>
             <th scope="col" jhiSortBy="dateSignConv">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.dateSignConv">Date Sign Conv</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="dateDebutConv">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.dateDebutConv">Date Debut Conv</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
+              <div class="d-flex">Signature <fa-icon class="p-1" icon="sort"></fa-icon></div>
             </th>
             <th scope="col" jhiSortBy="echeanceConv">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.echeanceConv">Echeance Conv</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="redevance">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.redevance">Redevance</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
+              <div class="d-flex">Échéance <fa-icon class="p-1" icon="sort"></fa-icon></div>
             </th>
             <th scope="col" jhiSortBy="nomResponsable">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.nomResponsable">Nom Responsable</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
+              <div class="d-flex">Responsable <fa-icon class="p-1" icon="sort"></fa-icon></div>
             </th>
-            <th scope="col" jhiSortBy="statut">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.statut">Statut</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
+            <th scope="col" class="text-end" jhiSortBy="redevance">
+              <div class="d-flex justify-content-end">Redevance (MRU) <fa-icon class="p-1" icon="sort"></fa-icon></div>
             </th>
-            <th scope="col" jhiSortBy="dateCreation">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.dateCreation">Date Creation</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="dateModification">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.dateModification">Date Modification</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="client.id">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.convention.client">Client</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
+            <th scope="col" class="text-end">Actions</th>
           </tr>
         </thead>
         <tbody>
           @for (convention of conventions(); track trackId(convention)) {
             <tr data-cy="entityTable">
               <td>
-                <a [routerLink]="['/convention', convention.id, 'view']">{{ convention.id }}</a>
+                <a [routerLink]="['/convention', convention.id, 'view']" class="fw-semibold text-decoration-none">
+                  {{ convention.numConvention ?? '#' + convention.id }}
+                </a>
               </td>
-              <td>{{ convention.numConvention }}</td>
-              <td>{{ convention.dateSignConv | formatMediumDate }}</td>
-              <td>{{ convention.dateDebutConv | formatMediumDate }}</td>
-              <td>{{ convention.echeanceConv | formatMediumDate }}</td>
-              <td>{{ convention.redevance }}</td>
-              <td>{{ convention.nomResponsable }}</td>
-              <td [jhiTranslate]="'conventionApp.StatutConvention.' + (convention.statut ?? 'null')">
-                {{
-                  { null: '', BROUILLON: 'BROUILLON', ACTIVE: 'ACTIVE', SUSPENDUE: 'SUSPENDUE', TERMINEE: 'TERMINEE', ANNULEE: 'ANNULEE' }[
-                    convention.statut ?? 'null'
-                  ]
-                }}
-              </td>
-              <td>{{ convention.dateCreation | formatMediumDatetime }}</td>
-              <td>{{ convention.dateModification | formatMediumDatetime }}</td>
+              <td>{{ convention.client?.nomClient ?? '—' }}</td>
               <td>
-                @if (convention.client) {
-                  <div>
-                    <a [routerLink]="['/client', convention.client.id, 'view']">{{ convention.client.id }}</a>
-                  </div>
+                @switch (convention.statut) {
+                  @case ('ACTIVE') {
+                    <span class="badge bg-success">Active</span>
+                  }
+                  @case ('BROUILLON') {
+                    <span class="badge bg-secondary">Brouillon</span>
+                  }
+                  @case ('SUSPENDUE') {
+                    <span class="badge bg-warning text-dark">Suspendue</span>
+                  }
+                  @case ('TERMINEE') {
+                    <span class="badge bg-info text-dark">Terminée</span>
+                  }
+                  @case ('ANNULEE') {
+                    <span class="badge bg-danger">Annulée</span>
+                  }
+                  @default {
+                    <span class="badge bg-light text-muted border">—</span>
+                  }
+                }
+              </td>
+              <td>
+                <small class="text-muted">{{ convention.typeConvention ?? '—' }}</small>
+              </td>
+              <td>
+                @if (convention.dateSignConv) {
+                  {{ convention.dateSignConv | formatMediumDate }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td>
+                @if (convention.echeanceConv) {
+                  {{ convention.echeanceConv | formatMediumDate }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td>{{ convention.nomResponsable ?? '—' }}</td>
+              <td class="text-end fw-semibold">
+                @if (convention.redevance != null) {
+                  {{ convention.redevance | number: '1.0-0' }}
+                } @else {
+                  <span class="text-muted">—</span>
                 }
               </td>
               <td class="text-end">
-                <div class="btn-group-vertical btn-group-sm mb-2">
-                  <!-- Actions principales -->
-                  <div class="btn-group btn-group-sm mb-1">
-                    <a [routerLink]="['/convention', convention.id, 'view']" class="btn btn-info btn-sm">
-                      <fa-icon icon="eye"></fa-icon> Voir
-                    </a>
-                    <a [routerLink]="['/convention', convention.id, 'edit']" class="btn btn-primary btn-sm">
-                      <fa-icon icon="pencil-alt"></fa-icon> Éditer
-                    </a>
-                  </div>
-
-                  <!-- Boutons de workflow -->
-                  <div class="btn-group btn-group-sm mb-1">
-                    @if (convention.statut === 'BROUILLON') {
-                      <button (click)="activateConvention(convention.id!)" class="btn btn-success btn-sm">
-                        <fa-icon icon="play"></fa-icon> Activer
-                      </button>
-                    }
-                    @if (convention.statut === 'ACTIVE') {
-                      <button (click)="suspendConvention(convention.id!)" class="btn btn-warning btn-sm">
-                        <fa-icon icon="pause"></fa-icon> Suspendre
-                      </button>
-                      <button (click)="generateInvoice(convention.id!)" class="btn btn-info btn-sm">
-                        <fa-icon icon="file-invoice"></fa-icon> Générer Facture
-                      </button>
-                    }
-                    @if (convention.statut === 'SUSPENDUE') {
-                      <button (click)="reactivateConvention(convention.id!)" class="btn btn-success btn-sm">
-                        <fa-icon icon="play"></fa-icon> Réactiver
-                      </button>
-                    }
-                  </div>
-
-                  <!-- Actions secondaires -->
-                  <div class="btn-group btn-group-sm">
-                    <button (click)="downloadPdf(convention.id!)" class="btn btn-outline-primary btn-sm">
-                      <fa-icon icon="file-pdf"></fa-icon> Télécharger PDF
+                <div class="btn-group btn-group-sm flex-nowrap">
+                  <a [routerLink]="['/convention', convention.id, 'view']" class="btn btn-outline-info btn-sm" title="Voir">
+                    <fa-icon icon="eye"></fa-icon>
+                  </a>
+                  <a [routerLink]="['/convention', convention.id, 'edit']" class="btn btn-outline-primary btn-sm" title="Éditer">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                  </a>
+                  @if (convention.statut === 'BROUILLON') {
+                    <button type="button" (click)="activateConvention(convention.id!)" class="btn btn-success btn-sm" title="Activer">
+                      <fa-icon icon="play"></fa-icon>
                     </button>
-                    <button type="submit" (click)="delete(convention)" class="btn btn-danger btn-sm">
-                      <fa-icon icon="times"></fa-icon> Supprimer
+                  }
+                  @if (convention.statut === 'ACTIVE') {
+                    <button type="button" (click)="suspendConvention(convention.id!)" class="btn btn-warning btn-sm" title="Suspendre">
+                      <fa-icon icon="pause"></fa-icon>
                     </button>
-                  </div>
+                    <button
+                      type="button"
+                      (click)="generateInvoice(convention.id!)"
+                      class="btn btn-outline-info btn-sm"
+                      title="Générer Facture"
+                    >
+                      <fa-icon icon="file-invoice"></fa-icon>
+                    </button>
+                  }
+                  @if (convention.statut === 'SUSPENDUE') {
+                    <button type="button" (click)="reactivateConvention(convention.id!)" class="btn btn-success btn-sm" title="Réactiver">
+                      <fa-icon icon="play"></fa-icon>
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    (click)="downloadPdf(convention.id!)"
+                    class="btn btn-outline-secondary btn-sm"
+                    title="Télécharger PDF"
+                  >
+                    <fa-icon icon="file-pdf"></fa-icon>
+                  </button>
+                  <button type="button" (click)="delete(convention)" class="btn btn-outline-danger btn-sm" title="Supprimer">
+                    <fa-icon icon="times"></fa-icon>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -193,12 +162,12 @@
       </table>
     </div>
   }
+
   @if (conventions().length > 0) {
-    <div>
+    <div class="mt-3">
       <div class="d-flex justify-content-center">
         <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }" />
       </div>
-
       <div class="d-flex justify-content-center">
         <ngb-pagination
           [collectionSize]="totalItems"

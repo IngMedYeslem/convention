@@ -1,0 +1,10 @@
+export const TypeAvenant = {
+  PROLONGATION: 'PROLONGATION',
+  REVISION_MONTANT: 'REVISION_MONTANT',
+  MODIFICATION_CLAUSES: 'MODIFICATION_CLAUSES',
+  RESILIATION_ANTICIPEE: 'RESILIATION_ANTICIPEE',
+  SUSPENSION: 'SUSPENSION',
+  AUTRE: 'AUTRE',
+} as const;
+
+export type TypeAvenant = (typeof TypeAvenant)[keyof typeof TypeAvenant];

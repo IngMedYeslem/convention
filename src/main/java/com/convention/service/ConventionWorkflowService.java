@@ -1,17 +1,16 @@
 package com.convention.service;
 
 import com.convention.domain.ConventionEntity;
+import com.convention.domain.enumeration.EtapeApprobation;
 import com.convention.domain.enumeration.StatutConvention;
 import com.convention.repository.ConventionRepository;
 import java.time.Instant;
+import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service for managing convention workflow.
- */
 @Service
 @Transactional
 public class ConventionWorkflowService {
@@ -24,95 +23,126 @@ public class ConventionWorkflowService {
         this.conventionRepository = conventionRepository;
     }
 
-    /**
-     * Activate a convention (BROUILLON -> ACTIVE).
-     *
-     * @param conventionId the convention ID
-     * @return the updated convention
-     */
-    public ConventionEntity activateConvention(Long conventionId) {
-        LOG.debug("Activating convention: {}", conventionId);
+    // ─── Workflow d'approbation ──────────────────────────────────────────────
 
-        ConventionEntity convention = conventionRepository
-            .findById(conventionId)
-            .orElseThrow(() -> new RuntimeException("Convention not found: " + conventionId));
-
-        if (convention.getStatut() != StatutConvention.BROUILLON) {
-            throw new RuntimeException("Convention must be in BROUILLON status to be activated");
-        }
-
-        convention.setStatut(StatutConvention.ACTIVE);
-        convention.setDateModification(Instant.now());
-
-        return conventionRepository.save(convention);
+    /** Étape 1 : soumettre à la revue juridique (REDACTION → REVUE_JURIDIQUE) */
+    public ConventionEntity soumettrePourRevueJuridique(Long id) {
+        LOG.debug("Soumission revue juridique: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        validerEtape(c, EtapeApprobation.REDACTION, "REDACTION");
+        c.setEtapeApprobation(EtapeApprobation.REVUE_JURIDIQUE);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
     }
 
-    /**
-     * Suspend a convention (ACTIVE -> SUSPENDUE).
-     *
-     * @param conventionId the convention ID
-     * @return the updated convention
-     */
-    public ConventionEntity suspendConvention(Long conventionId) {
-        LOG.debug("Suspending convention: {}", conventionId);
-
-        ConventionEntity convention = conventionRepository
-            .findById(conventionId)
-            .orElseThrow(() -> new RuntimeException("Convention not found: " + conventionId));
-
-        if (convention.getStatut() != StatutConvention.ACTIVE) {
-            throw new RuntimeException("Convention must be ACTIVE to be suspended");
-        }
-
-        convention.setStatut(StatutConvention.SUSPENDUE);
-        convention.setDateModification(Instant.now());
-
-        return conventionRepository.save(convention);
+    /** Étape 2 : valider la revue juridique → demande de visa financier */
+    public ConventionEntity validerRevueJuridique(Long id) {
+        LOG.debug("Validation revue juridique: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        validerEtape(c, EtapeApprobation.REVUE_JURIDIQUE, "REVUE_JURIDIQUE");
+        c.setEtapeApprobation(EtapeApprobation.VISA_FINANCIER);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
     }
 
-    /**
-     * Reactivate a suspended convention (SUSPENDUE -> ACTIVE).
-     *
-     * @param conventionId the convention ID
-     * @return the updated convention
-     */
-    public ConventionEntity reactivateConvention(Long conventionId) {
-        LOG.debug("Reactivating convention: {}", conventionId);
-
-        ConventionEntity convention = conventionRepository
-            .findById(conventionId)
-            .orElseThrow(() -> new RuntimeException("Convention not found: " + conventionId));
-
-        if (convention.getStatut() != StatutConvention.SUSPENDUE) {
-            throw new RuntimeException("Convention must be SUSPENDED to be reactivated");
-        }
-
-        convention.setStatut(StatutConvention.ACTIVE);
-        convention.setDateModification(Instant.now());
-
-        return conventionRepository.save(convention);
+    /** Étape 3 : apposer le visa du contrôleur financier */
+    public ConventionEntity apposerVisaFinancier(Long id, LocalDate dateVisa) {
+        LOG.debug("Visa financier: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        validerEtape(c, EtapeApprobation.VISA_FINANCIER, "VISA_FINANCIER");
+        c.setDateVisaControleur(dateVisa);
+        c.setEtapeApprobation(EtapeApprobation.SIGNATURE_DIRECTION);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
     }
 
-    /**
-     * Terminate a convention (ACTIVE/SUSPENDUE -> TERMINEE).
-     *
-     * @param conventionId the convention ID
-     * @return the updated convention
-     */
-    public ConventionEntity terminateConvention(Long conventionId) {
-        LOG.debug("Terminating convention: {}", conventionId);
+    /** Étape 4 : signature de la direction → publication officielle */
+    public ConventionEntity signerEtPublier(Long id) {
+        LOG.debug("Signature direction + publication: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        validerEtape(c, EtapeApprobation.SIGNATURE_DIRECTION, "SIGNATURE_DIRECTION");
+        c.setEtapeApprobation(EtapeApprobation.PUBLIE);
+        c.setStatut(StatutConvention.ACTIVE);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
+    }
 
-        ConventionEntity convention = conventionRepository
-            .findById(conventionId)
-            .orElseThrow(() -> new RuntimeException("Convention not found: " + conventionId));
+    /** Rejeter à n'importe quelle étape → retour en REDACTION */
+    public ConventionEntity rejeter(Long id, String commentaire) {
+        LOG.debug("Rejet convention: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        c.setEtapeApprobation(EtapeApprobation.REJETE);
+        c.setCommentaireRejet(commentaire);
+        c.setStatut(StatutConvention.BROUILLON);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
+    }
 
-        if (convention.getStatut() == StatutConvention.TERMINEE || convention.getStatut() == StatutConvention.ANNULEE) {
-            throw new RuntimeException("Convention is already terminated or cancelled");
+    /** Reprendre après rejet */
+    public ConventionEntity reprendreApresRejet(Long id) {
+        LOG.debug("Reprise après rejet: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        if (c.getEtapeApprobation() != EtapeApprobation.REJETE) {
+            throw new IllegalStateException("La convention n'est pas en statut REJETE");
         }
+        c.setEtapeApprobation(EtapeApprobation.REDACTION);
+        c.setCommentaireRejet(null);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
+    }
 
-        convention.setStatut(StatutConvention.TERMINEE);
-        convention.setDateModification(Instant.now());
+    // ─── Gestion du statut opérationnel ─────────────────────────────────────
 
-        return conventionRepository.save(convention);
+    public ConventionEntity suspendConvention(Long id) {
+        LOG.debug("Suspension convention: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        if (c.getStatut() != StatutConvention.ACTIVE) throw new IllegalStateException("La convention doit être ACTIVE");
+        c.setStatut(StatutConvention.SUSPENDUE);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
+    }
+
+    public ConventionEntity reactivateConvention(Long id) {
+        LOG.debug("Réactivation convention: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        if (c.getStatut() != StatutConvention.SUSPENDUE) throw new IllegalStateException("La convention doit être SUSPENDUE");
+        c.setStatut(StatutConvention.ACTIVE);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
+    }
+
+    public ConventionEntity terminateConvention(Long id) {
+        LOG.debug("Clôture convention: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        if (c.getStatut() == StatutConvention.TERMINEE || c.getStatut() == StatutConvention.ANNULEE) {
+            throw new IllegalStateException("Convention déjà clôturée ou annulée");
+        }
+        c.setStatut(StatutConvention.TERMINEE);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
+    }
+
+    public ConventionEntity annulerConvention(Long id, String motif) {
+        LOG.debug("Annulation convention: {}", id);
+        ConventionEntity c = findOrThrow(id);
+        if (c.getStatut() == StatutConvention.TERMINEE || c.getStatut() == StatutConvention.ANNULEE) {
+            throw new IllegalStateException("Convention déjà clôturée ou annulée");
+        }
+        c.setStatut(StatutConvention.ANNULEE);
+        c.setCommentaireRejet(motif);
+        c.setDateModification(Instant.now());
+        return conventionRepository.save(c);
+    }
+
+    // ─── Helpers ─────────────────────────────────────────────────────────────
+
+    private ConventionEntity findOrThrow(Long id) {
+        return conventionRepository.findById(id).orElseThrow(() -> new RuntimeException("Convention introuvable: " + id));
+    }
+
+    private void validerEtape(ConventionEntity c, EtapeApprobation attendue, String nom) {
+        if (c.getEtapeApprobation() != attendue) {
+            throw new IllegalStateException("Étape attendue: " + nom + ", étape actuelle: " + c.getEtapeApprobation());
+        }
     }
 }

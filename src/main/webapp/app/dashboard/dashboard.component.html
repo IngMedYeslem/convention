@@ -1,124 +1,183 @@
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-12">
-      <h1>Tableau de bord - Gestion des Conventions</h1>
+  <!-- En-tête -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="mb-0">Tableau de bord — Gestion des Conventions</h1>
+      <small class="text-muted">{{ today | date: 'EEEE d MMMM yyyy' }}</small>
     </div>
+    <a class="btn btn-outline-secondary btn-sm" routerLink="/statistiques">
+      <fa-icon icon="chart-bar"></fa-icon> Rapports &amp; Statistiques
+    </a>
   </div>
 
   <!-- Actions rapides -->
-  <div class="row mb-4">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <h5>Actions rapides</h5>
-        </div>
-        <div class="card-body">
-          <div class="btn-group" role="group">
-            <button class="btn btn-primary" (click)="generateAllInvoices()">
-              <fa-icon icon="file-invoice"></fa-icon> Générer toutes les factures
-            </button>
-            <button class="btn btn-info" routerLink="/statistiques"><fa-icon icon="chart-bar"></fa-icon> Voir statistiques</button>
-            <button class="btn btn-success" routerLink="/client/new"><fa-icon icon="user-plus"></fa-icon> Nouveau client</button>
-            <button class="btn btn-warning" routerLink="/convention/new">
-              <fa-icon icon="file-contract"></fa-icon> Nouvelle convention
-            </button>
-          </div>
-        </div>
+  <div class="card mb-4">
+    <div class="card-body py-2">
+      <div class="d-flex gap-2 flex-wrap">
+        <button type="button" class="btn btn-primary btn-sm" (click)="generateAllInvoices()">
+          <fa-icon icon="file-invoice"></fa-icon> Générer les factures
+        </button>
+        <a class="btn btn-success btn-sm" routerLink="/convention/scan"> <fa-icon icon="qrcode"></fa-icon> Scanner PDF </a>
+        <a class="btn btn-warning btn-sm" routerLink="/convention/new"> <fa-icon icon="plus"></fa-icon> Nouvelle Convention </a>
+        <a class="btn btn-outline-primary btn-sm" routerLink="/client/new"> <fa-icon icon="user-plus"></fa-icon> Nouveau Partenaire </a>
+        <a class="btn btn-outline-secondary btn-sm" routerLink="/convention"> <fa-icon icon="list"></fa-icon> Toutes les Conventions </a>
       </div>
     </div>
   </div>
 
   <!-- KPIs -->
-  <div class="row mb-4">
-    <div class="col-md-3">
-      <div class="card text-center bg-primary text-white">
-        <div class="card-body">
-          <h5 class="card-title">Total Conventions</h5>
-          <h2>{{ statistics.totalConventions || 0 }}</h2>
+  <div class="row mb-4 g-3">
+    <div class="col-md-2 col-sm-4">
+      <div class="card text-center border-primary h-100">
+        <div class="card-body py-3">
+          <div class="text-muted small mb-1">Total Conventions</div>
+          <h2 class="text-primary mb-0">{{ statistics.totalConventions || 0 }}</h2>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-center bg-success text-white">
-        <div class="card-body">
-          <h5 class="card-title">Conventions Actives</h5>
-          <h2>{{ statistics.conventionsActives || 0 }}</h2>
+    <div class="col-md-2 col-sm-4">
+      <div class="card text-center border-success h-100">
+        <div class="card-body py-3">
+          <div class="text-muted small mb-1">Actives</div>
+          <h2 class="text-success mb-0">{{ statistics.conventionsActives || 0 }}</h2>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-center bg-info text-white">
-        <div class="card-body">
-          <h5 class="card-title">Chiffre d'Affaires</h5>
-          <h2>{{ statistics.chiffresAffaires || 0 | currency: 'MRU' }}</h2>
+    <div class="col-md-2 col-sm-4">
+      <div class="card text-center border-warning h-100">
+        <div class="card-body py-3">
+          <div class="text-muted small mb-1">Suspendues</div>
+          <h2 class="text-warning mb-0">{{ statistics.conventionsSuspendues || 0 }}</h2>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-center bg-warning text-white">
-        <div class="card-body">
-          <h5 class="card-title">Montant Impayé</h5>
-          <h2>{{ statistics.montantImpaye || 0 | currency: 'MRU' }}</h2>
+    <div class="col-md-2 col-sm-4">
+      <div class="card text-center border-info h-100">
+        <div class="card-body py-3">
+          <div class="text-muted small mb-1">Factures</div>
+          <h2 class="text-info mb-0">{{ statistics.totalFactures || 0 }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2 col-sm-4">
+      <div class="card text-center h-100">
+        <div class="card-body py-3">
+          <div class="text-muted small mb-1">Chiffre d'affaires</div>
+          <h5 class="text-dark mb-0">{{ statistics.chiffresAffaires || 0 | currency: 'MRU' : 'symbol' : '1.0-0' }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2 col-sm-4">
+      <div class="card text-center border-danger h-100">
+        <div class="card-body py-3">
+          <div class="text-muted small mb-1">Montant Impayé</div>
+          <h5 class="text-danger mb-0">{{ statistics.montantImpaye || 0 | currency: 'MRU' : 'symbol' : '1.0-0' }}</h5>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Navigation rapide -->
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          <h5>Gestion des Clients</h5>
+  <!-- Graphiques miniatures -->
+  <div class="row mb-4 g-3">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center py-2">
+          <span class="fw-semibold">Conventions signées / mois</span>
+          <a class="btn btn-link btn-sm py-0" routerLink="/statistiques">Détail →</a>
         </div>
         <div class="card-body">
-          <p>Gérer les informations clients</p>
-          <div class="btn-group-vertical w-100">
-            <button class="btn btn-outline-primary" routerLink="/client"><fa-icon icon="list"></fa-icon> Liste des clients</button>
-            <button class="btn btn-outline-success" routerLink="/client/new"><fa-icon icon="plus"></fa-icon> Nouveau client</button>
+          <canvas id="miniConvChart" height="160"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center py-2">
+          <span class="fw-semibold">Chiffre d'affaires mensuel (MRU)</span>
+          <a class="btn btn-link btn-sm py-0" routerLink="/statistiques">Détail →</a>
+        </div>
+        <div class="card-body">
+          <canvas id="miniCaChart" height="160"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alertes échéances -->
+  @if (conventionsAlerte.length > 0) {
+    <div class="card mb-4 border-warning">
+      <div class="card-header bg-warning text-dark fw-semibold py-2">
+        <fa-icon icon="bell"></fa-icon> Conventions arrivant à échéance (90 jours) — {{ conventionsAlerte.length }}
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>N°</th>
+              <th>Partenaire</th>
+              <th>Échéance</th>
+              <th>Délai</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (conv of conventionsAlerte; track conv.id) {
+              <tr [class]="alertClass(conv.echeanceConv)">
+                <td>{{ conv.numConvention }}</td>
+                <td>{{ conv.client?.nomClient ?? '—' }}</td>
+                <td>{{ conv.echeanceConv | date: 'dd/MM/yyyy' }}</td>
+                <td>
+                  <span class="fw-semibold">{{ joursLabel(conv.echeanceConv) }}</span>
+                </td>
+                <td>
+                  <a class="btn btn-xs btn-outline-primary btn-sm py-0 px-2" [routerLink]="['/convention', conv.id, 'view']">Voir</a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- Navigation modules -->
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-header fw-semibold"><fa-icon icon="users"></fa-icon> Partenaires</div>
+        <div class="card-body">
+          <p class="text-muted small">Gérer les informations des partenaires et institutions.</p>
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary btn-sm" routerLink="/client"> <fa-icon icon="list"></fa-icon> Liste des partenaires </a>
+            <a class="btn btn-outline-success btn-sm" routerLink="/client/new"> <fa-icon icon="plus"></fa-icon> Nouveau partenaire </a>
           </div>
         </div>
       </div>
     </div>
 
     <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          <h5>Gestion des Conventions</h5>
-        </div>
+      <div class="card h-100">
+        <div class="card-header fw-semibold"><fa-icon icon="file-contract"></fa-icon> Conventions</div>
         <div class="card-body">
-          <p>Créer et gérer les conventions</p>
-          <div class="btn-group-vertical w-100">
-            <button class="btn btn-outline-primary" routerLink="/convention"><fa-icon icon="list"></fa-icon> Liste des conventions</button>
-            <button class="btn btn-outline-success" routerLink="/convention/new">
-              <fa-icon icon="plus"></fa-icon> Nouvelle convention
-            </button>
-            <button class="btn btn-outline-info" routerLink="/detail-convention">
-              <fa-icon icon="list-alt"></fa-icon> Détails conventions
-            </button>
+          <p class="text-muted small">Créer, gérer et suivre le cycle de vie des conventions.</p>
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary btn-sm" routerLink="/convention"> <fa-icon icon="list"></fa-icon> Liste des conventions </a>
+            <a class="btn btn-outline-success btn-sm" routerLink="/convention/new"> <fa-icon icon="plus"></fa-icon> Nouvelle convention </a>
+            <a class="btn btn-outline-info btn-sm" routerLink="/convention/scan"> <fa-icon icon="qrcode"></fa-icon> Scanner un PDF </a>
           </div>
         </div>
       </div>
     </div>
 
     <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          <h5>Facturation & Paiements</h5>
-        </div>
+      <div class="card h-100">
+        <div class="card-header fw-semibold"><fa-icon icon="file-invoice"></fa-icon> Facturation &amp; Paiements</div>
         <div class="card-body">
-          <p>Gérer factures et paiements</p>
-          <div class="btn-group-vertical w-100">
-            <button class="btn btn-outline-primary" routerLink="/facture">
-              <fa-icon icon="file-invoice"></fa-icon> Liste des factures
-            </button>
-            <button class="btn btn-outline-success" routerLink="/payment">
-              <fa-icon icon="credit-card"></fa-icon> Liste des paiements
-            </button>
-            <button class="btn btn-outline-primary" routerLink="/payment/new"><fa-icon icon="plus"></fa-icon> Nouveau paiement</button>
-            <button class="btn btn-outline-warning" routerLink="/detail-facture">
-              <fa-icon icon="list-alt"></fa-icon> Détails factures
-            </button>
+          <p class="text-muted small">Gérer les factures, les paiements et les encaissements.</p>
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary btn-sm" routerLink="/facture"> <fa-icon icon="file-invoice"></fa-icon> Liste des factures </a>
+            <a class="btn btn-outline-success btn-sm" routerLink="/payment"> <fa-icon icon="credit-card"></fa-icon> Liste des paiements </a>
+            <a class="btn btn-outline-secondary btn-sm" routerLink="/payment/new"> <fa-icon icon="plus"></fa-icon> Nouveau paiement </a>
           </div>
         </div>
       </div>

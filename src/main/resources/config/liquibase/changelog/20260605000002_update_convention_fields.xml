@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260605000002-1" author="convention">
+        <addColumn tableName="convention">
+            <column name="type_convention" type="varchar(50)"/>
+            <column name="objet" type="varchar(500)"/>
+            <column name="direction_responsable" type="varchar(200)"/>
+            <column name="reference_juridique" type="varchar(200)"/>
+            <column name="numero_engagement" type="varchar(100)"/>
+            <column name="date_visa_controleur" type="date"/>
+            <column name="valeur_totale" type="decimal(21,2)"/>
+            <column name="renouvelable" type="boolean"/>
+            <column name="nombre_renouvellements" type="integer"/>
+            <column name="conditions_resiliation" type="${clobType}"/>
+            <column name="penalites" type="${clobType}"/>
+            <column name="etape_approbation" type="varchar(50)"/>
+            <column name="commentaire_rejet" type="varchar(500)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

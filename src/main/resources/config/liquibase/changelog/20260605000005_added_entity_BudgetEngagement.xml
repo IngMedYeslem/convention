@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260605000005-1" author="convention">
+        <createTable tableName="budget_engagement">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="numero_engagement" type="varchar(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="annee_budgetaire" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="montant_autorise" type="decimal(21,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="montant_consomme" type="decimal(21,2)"/>
+            <column name="chapitre_budgetaire" type="varchar(200)"/>
+            <column name="ligne_budgetaire" type="varchar(200)"/>
+            <column name="date_creation" type="${datetimeType}"/>
+            <column name="observations" type="${clobType}"/>
+            <column name="convention_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260605000005-2" author="convention">
+        <addForeignKeyConstraint
+            baseColumnNames="convention_id"
+            baseTableName="budget_engagement"
+            constraintName="fk_budget_engagement_convention_id"
+            referencedColumnNames="id"
+            referencedTableName="convention"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,135 +1,153 @@
-<div>
-  <h2 id="page-heading" data-cy="ClientHeading">
-    <span jhiTranslate="conventionApp.client.home.title">Clients</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
-        <span jhiTranslate="conventionApp.client.home.refreshListLabel">Actualiser la liste</span>
-      </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-client"
-        [routerLink]="['/client/new']"
-      >
-        <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="conventionApp.client.home.createLabel">Créer un nouveau Client</span>
-      </button>
+<div class="entity-list-page">
+  <!-- En-tête -->
+  <div class="entity-list-header d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="mb-0 fw-bold">
+        <fa-icon icon="users" class="me-2 text-primary"></fa-icon>
+        Partenaires / Clients
+      </h4>
+      <small class="text-muted">{{ totalItems }} partenaire{{ totalItems > 1 ? 's' : '' }} enregistré{{ totalItems > 1 ? 's' : '' }}</small>
     </div>
-  </h2>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary btn-sm" [routerLink]="['/client/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouveau partenaire
+      </a>
+    </div>
+  </div>
 
   <jhi-alert-error />
-
   <jhi-alert />
-
   <jhi-filter [filters]="filters" />
 
   @if (clients().length === 0) {
-    <div class="alert alert-warning" id="no-result">
-      <span jhiTranslate="conventionApp.client.home.notFound">Aucun Client trouvé</span>
+    <div class="entity-empty text-center py-5">
+      <fa-icon icon="users" class="text-muted fa-3x mb-3 d-block"></fa-icon>
+      <p class="text-muted mb-0">Aucun partenaire enregistré.</p>
+      <a [routerLink]="['/client/new']" class="btn btn-primary btn-sm mt-3">
+        <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter le premier
+      </a>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
+    <div class="table-responsive rounded-3 shadow-sm" id="entities">
+      <table class="table table-sm table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-dark">
           <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" jhiSortBy="id">
-              <div class="d-flex">
-                <span jhiTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="numClient">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.client.numClient">Num Client</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="nomClient">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.client.nomClient">Nom Client</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="adresseClient">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.client.adresseClient">Adresse Client</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="emailClient">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.client.emailClient">Email Client</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="whatsClient">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.client.whatsClient">Whats Client</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="obsClient">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.client.obsClient">Obs Client</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="dateCreation">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.client.dateCreation">Date Creation</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="actif">
-              <div class="d-flex">
-                <span jhiTranslate="conventionApp.client.actif">Actif</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col"></th>
+            <th scope="col" jhiSortBy="numClient" class="ps-3">N° <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="nomClient">Nom / Institution <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="typeInstitution">Type <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="nomRepresentant">Représentant <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="wilaya">Wilaya <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="emailClient">Contact <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="actif" class="text-center">Statut <fa-icon class="ms-1" icon="sort"></fa-icon></th>
+            <th scope="col" class="text-end pe-3">Actions</th>
           </tr>
         </thead>
         <tbody>
           @for (client of clients(); track trackId(client)) {
             <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/client', client.id, 'view']">{{ client.id }}</a>
+              <td class="ps-3 text-muted fw-semibold small">
+                {{ client.numClient ?? '—' }}
               </td>
-              <td>{{ client.numClient }}</td>
-              <td>{{ client.nomClient }}</td>
-              <td>{{ client.adresseClient }}</td>
-              <td>{{ client.emailClient }}</td>
-              <td>{{ client.whatsClient }}</td>
-              <td>{{ client.obsClient }}</td>
-              <td>{{ client.dateCreation | formatMediumDatetime }}</td>
-              <td>{{ client.actif }}</td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/client', client.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+              <td>
+                <a [routerLink]="['/client', client.id, 'view']" class="fw-semibold text-dark text-decoration-none">
+                  {{ client.nomClient ?? '—' }}
+                </a>
+              </td>
+              <td>
+                @if (client.typeInstitution) {
+                  @switch (client.typeInstitution) {
+                    @case ('MINISTERE') {
+                      <span class="badge bg-primary">Ministère</span>
+                    }
+                    @case ('ETABLISSEMENT_PUBLIC_ADMINISTRATIF') {
+                      <span class="badge bg-info">EPA</span>
+                    }
+                    @case ('ETABLISSEMENT_PUBLIC_COMMERCIAL') {
+                      <span class="badge bg-info text-dark">EPC</span>
+                    }
+                    @case ('COLLECTIVITE_LOCALE') {
+                      <span class="badge bg-secondary">Collectivité</span>
+                    }
+                    @case ('SECTEUR_PRIVE') {
+                      <span class="badge bg-warning text-dark">Privé</span>
+                    }
+                    @case ('ORGANISATION_INTERNATIONALE') {
+                      <span class="badge bg-success">Org. Int.</span>
+                    }
+                    @case ('ONG') {
+                      <span class="badge bg-success">ONG</span>
+                    }
+                    @case ('UNIVERSITE') {
+                      <span class="badge bg-dark">Université</span>
+                    }
+                    @default {
+                      <span class="badge bg-light text-muted border">{{ client.typeInstitution }}</span>
+                    }
+                  }
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td>
+                @if (client.nomRepresentant) {
+                  <div class="small">{{ client.nomRepresentant }}</div>
+                  @if (client.fonctionRepresentant) {
+                    <div class="text-muted small">{{ client.fonctionRepresentant }}</div>
+                  }
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="small">{{ client.wilaya ?? '—' }}</td>
+              <td class="small">
+                @if (client.emailClient) {
+                  <div>{{ client.emailClient }}</div>
+                }
+                @if (client.whatsClient) {
+                  <div class="text-muted">{{ client.whatsClient }}</div>
+                }
+                @if (!client.emailClient && !client.whatsClient) {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-center">
+                @if (client.actif) {
+                  <span class="badge bg-success">Actif</span>
+                } @else {
+                  <span class="badge bg-danger">Inactif</span>
+                }
+              </td>
+              <td class="text-end pe-3">
+                <div class="btn-group btn-group-sm flex-nowrap">
+                  <a
+                    [routerLink]="['/client', client.id, 'view']"
+                    class="btn btn-outline-secondary"
+                    title="Voir"
+                    data-cy="entityDetailsButton"
+                  >
                     <fa-icon icon="eye"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
                   </a>
-
-                  <a [routerLink]="['/client', client.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                  <a
+                    [routerLink]="['/client', client.id, 'edit']"
+                    class="btn btn-outline-primary"
+                    title="Éditer"
+                    data-cy="entityEditButton"
+                  >
                     <fa-icon icon="pencil-alt"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
                   </a>
-
-                  <button type="submit" (click)="delete(client)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                  <button
+                    type="button"
+                    (click)="delete(client)"
+                    class="btn btn-outline-danger"
+                    title="Supprimer"
+                    data-cy="entityDeleteButton"
+                  >
                     <fa-icon icon="times"></fa-icon>
-                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
                   </button>
                 </div>
               </td>
@@ -138,24 +156,18 @@
         </tbody>
       </table>
     </div>
-  }
-  @if (clients().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }" />
-      </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems"
-          [page]="page"
-          [pageSize]="itemsPerPage"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        ></ngb-pagination>
-      </div>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }" />
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
     </div>
   }
 </div>

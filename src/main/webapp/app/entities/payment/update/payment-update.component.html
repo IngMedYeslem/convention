@@ -1,61 +1,133 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
+<div class="form-page">
+  <div class="form-card-wrapper">
     <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2>Créer un nouveau Paiement</h2>
-
-      <div>
-        <div class="mb-3">
-          <label class="form-label" for="field_numPaiement">Numéro de Paiement</label>
-          <input type="text" class="form-control" name="numPaiement" id="field_numPaiement" formControlName="numPaiement" required />
+      <!-- En-tête carte -->
+      <div class="form-card-header">
+        <div class="d-flex align-items-center gap-3">
+          <div class="form-card-icon">
+            <fa-icon icon="money-bill-wave" class="fa-lg"></fa-icon>
+          </div>
+          <div>
+            <h5 class="mb-0 fw-bold">Enregistrer un paiement</h5>
+            <small class="opacity-75">Saisir les informations du règlement effectué</small>
+          </div>
         </div>
+        <button type="button" class="btn btn-outline-light btn-sm" (click)="previousState()">
+          <fa-icon icon="arrow-left" class="me-1"></fa-icon> Retour
+        </button>
+      </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_datePaiement">Date de Paiement</label>
-          <input type="date" class="form-control" name="datePaiement" id="field_datePaiement" formControlName="datePaiement" required />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_montant">Montant</label>
-          <input type="number" class="form-control" name="montant" id="field_montant" formControlName="montant" step="0.01" required />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_modePaiement">Mode de Paiement</label>
-          <select class="form-control" name="modePaiement" formControlName="modePaiement" id="field_modePaiement" required>
-            <option value="">Sélectionner un mode</option>
-            <option value="ESPECES">Espèces</option>
-            <option value="CHEQUE">Chèque</option>
-            <option value="VIREMENT">Virement</option>
-            <option value="CARTE_BANCAIRE">Carte Bancaire</option>
+      <!-- Corps -->
+      <div class="form-card-body">
+        <!-- Section : Facture liée -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="file-invoice-dollar" class="me-2 text-primary"></fa-icon>
+            Facture à régler <span class="text-danger">*</span>
+          </div>
+          <select class="form-select" id="field_facture" formControlName="facture" aria-label="Facture à régler">
+            <option value="">— Sélectionner une facture —</option>
+            @for (facture of factures; track facture.id) {
+              <option [ngValue]="facture">Facture N° {{ facture.numFacture }} — {{ facture.montantTTC | number: '1.0-2' }} MRU</option>
+            }
           </select>
+          @if (editForm.get('facture')?.invalid && editForm.get('facture')?.touched) {
+            <div class="invalid-feedback d-block mt-1">Champ obligatoire.</div>
+          }
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_reference">Référence</label>
-          <input type="text" class="form-control" name="reference" id="field_reference" formControlName="reference" />
+        <!-- Section : Paiement -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="credit-card" class="me-2 text-primary"></fa-icon>
+            Détails du paiement
+          </div>
+          <div class="row g-3">
+            <div class="col-md-5">
+              <label class="form-label" for="field_numPaiement">N° Paiement <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_numPaiement"
+                formControlName="numPaiement"
+                placeholder="PAY-2025MMJJ-XXXX"
+              />
+              @if (editForm.get('numPaiement')?.invalid && editForm.get('numPaiement')?.touched) {
+                <div class="invalid-feedback d-block">Obligatoire, max 50 caractères.</div>
+              }
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_datePaiement">Date de paiement <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" id="field_datePaiement" formControlName="datePaiement" />
+              @if (editForm.get('datePaiement')?.invalid && editForm.get('datePaiement')?.touched) {
+                <div class="invalid-feedback d-block">Champ obligatoire.</div>
+              }
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="field_montant">Montant versé <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="number" step="0.01" class="form-control" id="field_montant" formControlName="montant" placeholder="0" />
+                <span class="input-group-text fw-semibold">MRU</span>
+              </div>
+              @if (editForm.get('montant')?.invalid && editForm.get('montant')?.touched) {
+                <div class="invalid-feedback d-block">Obligatoire, valeur positive.</div>
+              }
+            </div>
+            <div class="col-md-5">
+              <label class="form-label" for="field_modePaiement">Mode de paiement <span class="text-danger">*</span></label>
+              <select class="form-select" id="field_modePaiement" formControlName="modePaiement">
+                <option value="">— Sélectionner —</option>
+                <option value="VIREMENT">Virement bancaire</option>
+                <option value="CHEQUE">Chèque</option>
+                <option value="ESPECES">Espèces</option>
+                <option value="CARTE_BANCAIRE">Carte bancaire</option>
+              </select>
+              @if (editForm.get('modePaiement')?.invalid && editForm.get('modePaiement')?.touched) {
+                <div class="invalid-feedback d-block">Champ obligatoire.</div>
+              }
+            </div>
+            <div class="col-md-7">
+              <label class="form-label" for="field_reference">Référence / N° de virement</label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_reference"
+                formControlName="reference"
+                placeholder="Ex: VIR-2025-0312 ou N° chèque"
+              />
+            </div>
+          </div>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_facture">Facture</label>
-          <select class="form-control" name="facture" formControlName="facture" id="field_facture" required>
-            <option value="">Sélectionner une facture</option>
-            <option *ngFor="let facture of factures" [ngValue]="facture">
-              Facture N° {{ facture.numFacture }} - {{ facture.montantTTC | currency: 'MRU' }}
-            </option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_observations">Observations</label>
-          <textarea class="form-control" name="observations" id="field_observations" formControlName="observations" rows="3"></textarea>
+        <!-- Section : Observations -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="comment-alt" class="me-2 text-primary"></fa-icon>
+            Observations
+          </div>
+          <textarea
+            class="form-control"
+            id="field_observations"
+            formControlName="observations"
+            rows="3"
+            placeholder="Informations complémentaires sur le paiement…"
+          ></textarea>
         </div>
       </div>
 
-      <div>
-        <button type="button" class="btn btn-secondary me-2" (click)="previousState()"><fa-icon icon="ban"></fa-icon> Annuler</button>
-
-        <button type="submit" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
-          <fa-icon icon="save"></fa-icon> Sauvegarder
+      <!-- Pied de carte -->
+      <div class="form-card-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Annuler</span>
+        </button>
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary px-4"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Sauvegarder</span>
         </button>
       </div>
     </form>

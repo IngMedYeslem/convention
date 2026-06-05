@@ -3,12 +3,21 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.card-title {
-  font-size: 0.9rem;
-  color: #6c757d;
-  margin-bottom: 0.5rem;
-}
-
 canvas {
   max-height: 300px;
+}
+
+.kpi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.kpi-label {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.monthly-scroll {
+  max-height: 280px;
+  overflow-y: auto;
 }

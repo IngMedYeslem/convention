@@ -73,7 +73,7 @@ export class ConventionUpdateComponent implements OnInit {
   }
 
   protected onSaveError(): void {
-    // Api for inheritance.
+    this.isSaving = false;
   }
 
   protected onSaveFinalize(): void {

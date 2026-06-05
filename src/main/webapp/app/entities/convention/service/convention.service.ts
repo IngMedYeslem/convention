@@ -14,11 +14,12 @@ export type PartialUpdateConvention = Partial<IConvention> & Pick<IConvention, '
 
 type RestOf<T extends IConvention | NewConvention> = Omit<
   T,
-  'dateSignConv' | 'dateDebutConv' | 'echeanceConv' | 'dateCreation' | 'dateModification'
+  'dateSignConv' | 'dateDebutConv' | 'echeanceConv' | 'dateVisaControleur' | 'dateCreation' | 'dateModification'
 > & {
   dateSignConv?: string | null;
   dateDebutConv?: string | null;
   echeanceConv?: string | null;
+  dateVisaControleur?: string | null;
   dateCreation?: string | null;
   dateModification?: string | null;
 };
@@ -111,6 +112,7 @@ export class ConventionService {
       dateSignConv: convention.dateSignConv?.format(DATE_FORMAT) ?? null,
       dateDebutConv: convention.dateDebutConv?.format(DATE_FORMAT) ?? null,
       echeanceConv: convention.echeanceConv?.format(DATE_FORMAT) ?? null,
+      dateVisaControleur: convention.dateVisaControleur?.format(DATE_FORMAT) ?? null,
       dateCreation: convention.dateCreation?.toJSON() ?? null,
       dateModification: convention.dateModification?.toJSON() ?? null,
     };
@@ -122,6 +124,7 @@ export class ConventionService {
       dateSignConv: restConvention.dateSignConv ? dayjs(restConvention.dateSignConv) : undefined,
       dateDebutConv: restConvention.dateDebutConv ? dayjs(restConvention.dateDebutConv) : undefined,
       echeanceConv: restConvention.echeanceConv ? dayjs(restConvention.echeanceConv) : undefined,
+      dateVisaControleur: restConvention.dateVisaControleur ? dayjs(restConvention.dateVisaControleur) : undefined,
       dateCreation: restConvention.dateCreation ? dayjs(restConvention.dateCreation) : undefined,
       dateModification: restConvention.dateModification ? dayjs(restConvention.dateModification) : undefined,
     };

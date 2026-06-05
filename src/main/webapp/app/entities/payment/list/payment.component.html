@@ -1,70 +1,117 @@
-<div class="container-fluid">
-  <div class="row mb-3">
-    <div class="col-md-12 d-flex justify-content-between align-items-center">
-      <h2 class="mb-0">Gestion des Paiements</h2>
-      <button class="btn btn-success btn-lg" (click)="createPayment()"><fa-icon icon="plus"></fa-icon> Nouveau Paiement</button>
+<div class="entity-list-page">
+  <!-- En-tête -->
+  <div class="entity-list-header d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="mb-0 fw-bold">
+        <fa-icon icon="money-bill-wave" class="me-2 text-primary"></fa-icon>
+        Paiements
+      </h4>
+      <small class="text-muted">Historique des règlements effectués</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm" (click)="loadPayments()">
+        <fa-icon icon="sync"></fa-icon>
+        Actualiser
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" (click)="createPayment()">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouveau paiement
+      </button>
     </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Numéro</th>
-          <th>Date</th>
-          <th>Montant</th>
-          <th>Mode</th>
-          <th>Référence</th>
-          <th>Facture</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let payment of payments">
-          <td>
-            <strong>{{ payment.id }}</strong>
-          </td>
-          <td>
-            <span class="badge bg-secondary">{{ payment.numPaiement }}</span>
-          </td>
-          <td>{{ payment.datePaiement | date: 'dd/MM/yyyy' }}</td>
-          <td>
-            <strong class="text-success">{{ payment.montant | currency: 'MRU' }}</strong>
-          </td>
-          <td>
-            <span
-              class="badge"
-              [ngClass]="{
-                'bg-success': payment.modePaiement === 'VIREMENT',
-                'bg-info': payment.modePaiement === 'CARTE_BANCAIRE',
-                'bg-warning': payment.modePaiement === 'CHEQUE',
-                'bg-secondary': payment.modePaiement === 'ESPECES',
-              }"
-              >{{ payment.modePaiement }}</span
-            >
-          </td>
-          <td>{{ payment.reference || 'N/A' }}</td>
-          <td>
-            <span class="badge bg-primary">{{ payment.facture?.numFacture }}</span>
-          </td>
-          <td>
-            <div class="btn-group-vertical btn-group-sm">
-              <div class="btn-group btn-group-sm mb-1">
-                <button class="btn btn-info btn-sm" (click)="viewPayment(payment.id)" title="Voir les détails">
-                  <fa-icon icon="eye"></fa-icon> Voir
-                </button>
-                <button class="btn btn-primary btn-sm" (click)="editPayment(payment.id)" title="Éditer le paiement">
-                  <fa-icon icon="edit"></fa-icon> Éditer
-                </button>
-              </div>
-              <button class="btn btn-danger btn-sm" (click)="deletePayment(payment.id)" title="Supprimer le paiement">
-                <fa-icon icon="trash"></fa-icon> Supprimer
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  @if (payments.length === 0) {
+    <div class="entity-empty text-center py-5">
+      <fa-icon icon="money-bill-wave" class="text-muted fa-3x mb-3 d-block"></fa-icon>
+      <p class="text-muted mb-0">Aucun paiement enregistré.</p>
+      <button type="button" class="btn btn-primary btn-sm mt-3" (click)="createPayment()">
+        <fa-icon icon="plus" class="me-1"></fa-icon> Enregistrer le premier
+      </button>
+    </div>
+  } @else {
+    <div class="table-responsive rounded-3 shadow-sm">
+      <table class="table table-sm table-hover align-middle mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col" class="ps-3">N° Paiement</th>
+            <th scope="col">Date</th>
+            <th scope="col">Facture</th>
+            <th scope="col" class="text-end">Montant (MRU)</th>
+            <th scope="col" class="text-center">Mode</th>
+            <th scope="col">Référence</th>
+            <th scope="col" class="text-end pe-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (payment of payments; track payment.id) {
+            <tr>
+              <td class="ps-3">
+                <span class="fw-semibold text-dark">
+                  {{ payment.numPaiement ?? '#' + payment.id }}
+                </span>
+              </td>
+              <td class="small">
+                @if (payment.datePaiement) {
+                  {{ payment.datePaiement | date: 'dd/MM/yyyy' }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td>
+                @if (payment.facture) {
+                  <span class="badge bg-primary">F-{{ payment.facture.numFacture ?? payment.facture.id }}</span>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-end fw-semibold text-success">
+                @if (payment.montant != null) {
+                  {{ payment.montant | number: '1.0-2' }}
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-center">
+                @switch (payment.modePaiement) {
+                  @case ('VIREMENT') {
+                    <span class="badge bg-success">Virement</span>
+                  }
+                  @case ('CARTE_BANCAIRE') {
+                    <span class="badge bg-info">Carte</span>
+                  }
+                  @case ('CHEQUE') {
+                    <span class="badge bg-warning text-dark">Chèque</span>
+                  }
+                  @case ('ESPECES') {
+                    <span class="badge bg-secondary">Espèces</span>
+                  }
+                  @default {
+                    @if (payment.modePaiement) {
+                      <span class="badge bg-light text-dark border">{{ payment.modePaiement }}</span>
+                    } @else {
+                      <span class="text-muted">—</span>
+                    }
+                  }
+                }
+              </td>
+              <td class="small text-muted">{{ payment.reference || '—' }}</td>
+              <td class="text-end pe-3">
+                <div class="btn-group btn-group-sm flex-nowrap">
+                  <button type="button" class="btn btn-outline-secondary" (click)="viewPayment(payment.id)" title="Voir">
+                    <fa-icon icon="eye"></fa-icon>
+                  </button>
+                  <button type="button" class="btn btn-outline-primary" (click)="editPayment(payment.id)" title="Éditer">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                  </button>
+                  <button type="button" class="btn btn-outline-danger" (click)="deletePayment(payment.id)" title="Supprimer">
+                    <fa-icon icon="times"></fa-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>

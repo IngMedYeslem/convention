@@ -1,6 +1,8 @@
 package com.convention.service.dto;
 
+import com.convention.domain.enumeration.EtapeApprobation;
 import com.convention.domain.enumeration.StatutConvention;
+import com.convention.domain.enumeration.TypeConvention;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -45,6 +47,38 @@ public class ConventionDTO implements Serializable {
 
     @NotNull
     private ClientDTO client;
+
+    private TypeConvention typeConvention;
+
+    @Size(max = 500)
+    private String objet;
+
+    @Size(max = 200)
+    private String directionResponsable;
+
+    @Size(max = 200)
+    private String referenceJuridique;
+
+    @Size(max = 100)
+    private String numeroEngagement;
+
+    private java.time.LocalDate dateVisaControleur;
+
+    @DecimalMin(value = "0")
+    private java.math.BigDecimal valeurTotale;
+
+    private Boolean renouvelable;
+
+    private Integer nombreRenouvellements;
+
+    private String conditionsResiliation;
+
+    private String penalites;
+
+    private EtapeApprobation etapeApprobation;
+
+    @Size(max = 500)
+    private String commentaireRejet;
 
     public Long getId() {
         return id;
@@ -132,6 +166,110 @@ public class ConventionDTO implements Serializable {
 
     public void setClient(ClientDTO client) {
         this.client = client;
+    }
+
+    public TypeConvention getTypeConvention() {
+        return typeConvention;
+    }
+
+    public void setTypeConvention(TypeConvention typeConvention) {
+        this.typeConvention = typeConvention;
+    }
+
+    public String getObjet() {
+        return objet;
+    }
+
+    public void setObjet(String objet) {
+        this.objet = objet;
+    }
+
+    public String getDirectionResponsable() {
+        return directionResponsable;
+    }
+
+    public void setDirectionResponsable(String directionResponsable) {
+        this.directionResponsable = directionResponsable;
+    }
+
+    public String getReferenceJuridique() {
+        return referenceJuridique;
+    }
+
+    public void setReferenceJuridique(String referenceJuridique) {
+        this.referenceJuridique = referenceJuridique;
+    }
+
+    public String getNumeroEngagement() {
+        return numeroEngagement;
+    }
+
+    public void setNumeroEngagement(String numeroEngagement) {
+        this.numeroEngagement = numeroEngagement;
+    }
+
+    public java.time.LocalDate getDateVisaControleur() {
+        return dateVisaControleur;
+    }
+
+    public void setDateVisaControleur(java.time.LocalDate dateVisaControleur) {
+        this.dateVisaControleur = dateVisaControleur;
+    }
+
+    public java.math.BigDecimal getValeurTotale() {
+        return valeurTotale;
+    }
+
+    public void setValeurTotale(java.math.BigDecimal valeurTotale) {
+        this.valeurTotale = valeurTotale;
+    }
+
+    public Boolean getRenouvelable() {
+        return renouvelable;
+    }
+
+    public void setRenouvelable(Boolean renouvelable) {
+        this.renouvelable = renouvelable;
+    }
+
+    public Integer getNombreRenouvellements() {
+        return nombreRenouvellements;
+    }
+
+    public void setNombreRenouvellements(Integer nombreRenouvellements) {
+        this.nombreRenouvellements = nombreRenouvellements;
+    }
+
+    public String getConditionsResiliation() {
+        return conditionsResiliation;
+    }
+
+    public void setConditionsResiliation(String conditionsResiliation) {
+        this.conditionsResiliation = conditionsResiliation;
+    }
+
+    public String getPenalites() {
+        return penalites;
+    }
+
+    public void setPenalites(String penalites) {
+        this.penalites = penalites;
+    }
+
+    public EtapeApprobation getEtapeApprobation() {
+        return etapeApprobation;
+    }
+
+    public void setEtapeApprobation(EtapeApprobation etapeApprobation) {
+        this.etapeApprobation = etapeApprobation;
+    }
+
+    public String getCommentaireRejet() {
+        return commentaireRejet;
+    }
+
+    public void setCommentaireRejet(String commentaireRejet) {
+        this.commentaireRejet = commentaireRejet;
     }
 
     @Override

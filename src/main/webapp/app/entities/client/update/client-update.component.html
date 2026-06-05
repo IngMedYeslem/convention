@@ -1,173 +1,209 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
+<div class="form-page">
+  <div class="form-card-wrapper">
     <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="jhi-client-heading" data-cy="ClientCreateUpdateHeading" jhiTranslate="conventionApp.client.home.createOrEditLabel">
-        Créer ou éditer un Client
-      </h2>
+      <!-- En-tête carte -->
+      <div class="form-card-header">
+        <div class="d-flex align-items-center gap-3">
+          <div class="form-card-icon">
+            <fa-icon icon="users" class="fa-lg"></fa-icon>
+          </div>
+          <div>
+            <h5 class="mb-0 fw-bold">
+              {{ editForm.controls.id.value !== null ? 'Éditer le partenaire' : 'Nouveau partenaire' }}
+            </h5>
+            <small class="opacity-75">Renseigner les informations de l'institution partenaire</small>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline-light btn-sm" (click)="previousState()">
+          <fa-icon icon="arrow-left" class="me-1"></fa-icon> Retour
+        </button>
+      </div>
 
-      <div>
+      <!-- Corps -->
+      <div class="form-card-body">
         <jhi-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" jhiTranslate="conventionApp.client.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        <!-- Section : Identification -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="id-card" class="me-2 text-primary"></fa-icon>
+            Identification
           </div>
-        }
-
-        @let numClientRef = editForm.get('numClient')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_numClient" jhiTranslate="conventionApp.client.numClient">Num Client</label>
-          <input type="number" class="form-control" name="numClient" id="field_numClient" data-cy="numClient" formControlName="numClient" />
-          @if (numClientRef.invalid && (numClientRef.dirty || numClientRef.touched)) {
-            <div>
-              @if (editForm.get('numClient')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('numClient')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
-        </div>
-
-        @let nomClientRef = editForm.get('nomClient')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_nomClient" jhiTranslate="conventionApp.client.nomClient">Nom Client</label>
-          <input type="text" class="form-control" name="nomClient" id="field_nomClient" data-cy="nomClient" formControlName="nomClient" />
-          @if (nomClientRef.invalid && (nomClientRef.dirty || nomClientRef.touched)) {
-            <div>
-              @if (editForm.get('nomClient')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('nomClient')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
-                  >Ce champ doit faire moins de 100 caractères.</small
-                >
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label" for="field_numClient">N° Client <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="field_numClient" formControlName="numClient" placeholder="001" />
+              @if (editForm.get('numClient')?.invalid && editForm.get('numClient')?.touched) {
+                <div class="invalid-feedback d-block">Champ obligatoire.</div>
               }
             </div>
-          }
-        </div>
-
-        @let adresseClientRef = editForm.get('adresseClient')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_adresseClient" jhiTranslate="conventionApp.client.adresseClient">Adresse Client</label>
-          <input
-            type="text"
-            class="form-control"
-            name="adresseClient"
-            id="field_adresseClient"
-            data-cy="adresseClient"
-            formControlName="adresseClient"
-          />
-          @if (adresseClientRef.invalid && (adresseClientRef.dirty || adresseClientRef.touched)) {
-            <div>
-              @if (editForm.get('adresseClient')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '255' }"
-                  >Ce champ doit faire moins de 255 caractères.</small
-                >
+            <div class="col-md-9">
+              <label class="form-label" for="field_nomClient">Nom de l'institution <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_nomClient"
+                formControlName="nomClient"
+                placeholder="Ex: Ministère des Finances"
+              />
+              @if (editForm.get('nomClient')?.invalid && editForm.get('nomClient')?.touched) {
+                <div class="invalid-feedback d-block">Obligatoire, max 100 caractères.</div>
               }
             </div>
-          }
-        </div>
-
-        @let emailClientRef = editForm.get('emailClient')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_emailClient" jhiTranslate="conventionApp.client.emailClient">Email Client</label>
-          <input
-            type="text"
-            class="form-control"
-            name="emailClient"
-            id="field_emailClient"
-            data-cy="emailClient"
-            formControlName="emailClient"
-          />
-          @if (emailClientRef.invalid && (emailClientRef.dirty || emailClientRef.touched)) {
-            <div>
-              @if (editForm.get('emailClient')?.errors?.pattern) {
-                <small
-                  class="form-text text-danger"
-                  jhiTranslate="entity.validation.pattern"
-                  [translateValues]="{ pattern: 'Email Client' }"
-                  >Ce champ doit suivre l&apos;expression régulière Email Client.</small
-                >
-              }
+            <div class="col-md-6">
+              <label class="form-label" for="field_typeInstitution">Type d'institution</label>
+              <select class="form-select" id="field_typeInstitution" formControlName="typeInstitution">
+                <option value="">— Sélectionner —</option>
+                <option value="MINISTERE">Ministère</option>
+                <option value="ETABLISSEMENT_PUBLIC_ADMINISTRATIF">Établissement Public Administratif (EPA)</option>
+                <option value="ETABLISSEMENT_PUBLIC_COMMERCIAL">Établissement Public Commercial (EPC)</option>
+                <option value="COLLECTIVITE_LOCALE">Collectivité Locale</option>
+                <option value="SECTEUR_PRIVE">Secteur Privé</option>
+                <option value="ORGANISATION_INTERNATIONALE">Organisation Internationale</option>
+                <option value="ONG">ONG</option>
+                <option value="UNIVERSITE">Université</option>
+                <option value="AUTRE">Autre</option>
+              </select>
             </div>
-          }
-        </div>
-
-        @let whatsClientRef = editForm.get('whatsClient')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_whatsClient" jhiTranslate="conventionApp.client.whatsClient">Whats Client</label>
-          <input
-            type="text"
-            class="form-control"
-            name="whatsClient"
-            id="field_whatsClient"
-            data-cy="whatsClient"
-            formControlName="whatsClient"
-          />
-          @if (whatsClientRef.invalid && (whatsClientRef.dirty || whatsClientRef.touched)) {
-            <div>
-              @if (editForm.get('whatsClient')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
-                  >Ce champ doit faire moins de 20 caractères.</small
-                >
-              }
+            <div class="col-md-3">
+              <label class="form-label" for="field_nif">NIF</label>
+              <input type="text" class="form-control" id="field_nif" formControlName="nif" placeholder="Numéro d'identification fiscale" />
             </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_obsClient" jhiTranslate="conventionApp.client.obsClient">Obs Client</label>
-          <textarea class="form-control" name="obsClient" id="field_obsClient" data-cy="obsClient" formControlName="obsClient"></textarea>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_dateCreation" jhiTranslate="conventionApp.client.dateCreation">Date Creation</label>
-          <div class="d-flex">
-            <input
-              id="field_dateCreation"
-              data-cy="dateCreation"
-              type="datetime-local"
-              class="form-control"
-              name="dateCreation"
-              formControlName="dateCreation"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
+            <div class="col-md-3">
+              <label class="form-label" for="field_rc">Registre commercial (RC)</label>
+              <input type="text" class="form-control" id="field_rc" formControlName="rc" placeholder="N° RC" />
+            </div>
           </div>
         </div>
 
-        @let actifRef = editForm.get('actif')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_actif" jhiTranslate="conventionApp.client.actif">Actif</label>
-          <input type="checkbox" class="form-check" name="actif" id="field_actif" data-cy="actif" formControlName="actif" />
-          @if (actifRef.invalid && (actifRef.dirty || actifRef.touched)) {
-            <div>
-              @if (editForm.get('actif')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+        <!-- Section : Représentant légal -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="user-tie" class="me-2 text-primary"></fa-icon>
+            Représentant légal
+          </div>
+          <div class="row g-3">
+            <div class="col-md-5">
+              <label class="form-label" for="field_nomRepresentant">Nom complet</label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_nomRepresentant"
+                formControlName="nomRepresentant"
+                placeholder="Prénom Nom"
+              />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="field_fonctionRepresentant">Fonction / Titre</label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_fonctionRepresentant"
+                formControlName="fonctionRepresentant"
+                placeholder="Ex: Directeur Général"
+              />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_qualiteSignature">Qualité de signature</label>
+              <select class="form-select" id="field_qualiteSignature" formControlName="qualiteSignature">
+                <option value="">— Sélectionner —</option>
+                <option value="TITULAIRE">Titulaire</option>
+                <option value="MANDATAIRE">Mandataire</option>
+                <option value="DELEGATAIRE">Délégataire</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Coordonnées -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="map-marker-alt" class="me-2 text-primary"></fa-icon>
+            Coordonnées
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="field_adresseClient">Adresse</label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_adresseClient"
+                formControlName="adresseClient"
+                placeholder="Adresse complète"
+              />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_wilaya">Wilaya</label>
+              <input type="text" class="form-control" id="field_wilaya" formControlName="wilaya" placeholder="Ex: Nouakchott" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_commune">Commune</label>
+              <input type="text" class="form-control" id="field_commune" formControlName="commune" placeholder="Commune" />
+            </div>
+            <div class="col-md-5">
+              <label class="form-label" for="field_emailClient">Adresse e-mail</label>
+              <div class="input-group">
+                <span class="input-group-text"><fa-icon icon="envelope"></fa-icon></span>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="field_emailClient"
+                  formControlName="emailClient"
+                  placeholder="contact@institution.mr"
+                />
+              </div>
+              @if (editForm.get('emailClient')?.invalid && editForm.get('emailClient')?.touched) {
+                <div class="invalid-feedback d-block">Format e-mail invalide.</div>
               }
             </div>
-          }
+            <div class="col-md-4">
+              <label class="form-label" for="field_whatsClient">WhatsApp / Téléphone</label>
+              <div class="input-group">
+                <span class="input-group-text"><fa-icon icon="phone"></fa-icon></span>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="field_whatsClient"
+                  formControlName="whatsClient"
+                  placeholder="+222 XX XX XX XX"
+                />
+              </div>
+            </div>
+            <div class="col-md-3 d-flex align-items-end pb-1">
+              <div class="form-check form-switch ms-2">
+                <input type="checkbox" class="form-check-input" id="field_actif" formControlName="actif" role="switch" />
+                <label class="form-check-label fw-semibold" for="field_actif">Partenaire actif</label>
+              </div>
+            </div>
+          </div>
+          <div class="row g-3 mt-0">
+            <div class="col-12">
+              <label class="form-label" for="field_obsClient">Observations</label>
+              <textarea
+                class="form-control"
+                id="field_obsClient"
+                formControlName="obsClient"
+                rows="3"
+                placeholder="Informations complémentaires sur le partenaire..."
+              ></textarea>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+      <!-- Pied de carte -->
+      <div class="form-card-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Annuler</span>
         </button>
-
         <button
           type="submit"
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          class="btn btn-primary px-4"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Sauvegarder</span>
         </button>
       </div>
     </form>

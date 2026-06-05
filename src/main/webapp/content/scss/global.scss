@@ -163,6 +163,68 @@ entity list page css
 }
 
 /* ==========================================================================
+Shared entity list styles
+========================================================================== */
+
+.entity-list-page {
+  padding: 1.5rem 0;
+}
+
+.entity-list-header {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+
+  h4 {
+    font-weight: 700;
+  }
+}
+
+.entity-empty {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 12px;
+  padding: 3rem 1rem;
+
+  fa-icon {
+    opacity: 0.4;
+  }
+}
+
+.table {
+  &.align-middle td,
+  &.align-middle th {
+    vertical-align: middle;
+  }
+
+  thead.table-dark th {
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    cursor: pointer;
+  }
+
+  tbody tr:hover {
+    background-color: #f0f4ff;
+  }
+}
+
+.footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  text-align: center;
+  padding: 0.75rem 0;
+  font-size: 0.85rem;
+
+  .footer-sep {
+    margin: 0 0.5rem;
+    opacity: 0.4;
+  }
+}
+
+/* ==========================================================================
 entity detail page css
 ========================================================================== */
 .row-md.jh-entity-details {
@@ -233,4 +295,85 @@ angular-cli removes postcss-rtl processed inline css, processed rules must be ad
     }
   }
 }
+/* ==========================================================================
+Form page — carte moderne (create/edit)
+========================================================================== */
+
+.form-page {
+  background: #f0f2f5;
+  min-height: calc(100vh - 120px);
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.form-card-wrapper {
+  width: 100%;
+  max-width: 780px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  align-self: flex-start;
+
+  &--xl {
+    max-width: 1020px;
+  }
+}
+
+.form-card-header {
+  background: linear-gradient(135deg, #1a3a6c 0%, #0d6efd 100%);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+
+  .form-card-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  h5 {
+    font-size: 1.05rem;
+  }
+}
+
+.form-card-body {
+  padding: 0 2rem 1rem;
+}
+
+.form-section {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #f0f2f5;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.form-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.form-card-footer {
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
 /* jhipster-needle-scss-add-main JHipster will add new css style */

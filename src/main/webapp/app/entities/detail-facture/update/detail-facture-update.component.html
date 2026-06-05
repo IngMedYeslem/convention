@@ -1,221 +1,195 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
+<div class="form-page">
+  <div class="form-card-wrapper">
     <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-detail-facture-heading"
-        data-cy="DetailFactureCreateUpdateHeading"
-        jhiTranslate="conventionApp.detailFacture.home.createOrEditLabel"
-      >
-        Créer ou éditer un Detail Facture
-      </h2>
+      <!-- En-tête carte -->
+      <div class="form-card-header">
+        <div class="d-flex align-items-center gap-3">
+          <div class="form-card-icon">
+            <fa-icon icon="receipt" class="fa-lg"></fa-icon>
+          </div>
+          <div>
+            <h5 class="mb-0 fw-bold">
+              {{ editForm.controls.id.value !== null ? 'Éditer la ligne' : 'Nouvelle ligne de facture' }}
+            </h5>
+            <small class="opacity-75">Détail d'une prestation rattachée à une facture</small>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline-light btn-sm" (click)="previousState()">
+          <fa-icon icon="arrow-left" class="me-1"></fa-icon> Retour
+        </button>
+      </div>
 
-      <div>
+      <!-- Corps -->
+      <div class="form-card-body">
         <jhi-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" jhiTranslate="conventionApp.detailFacture.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        <!-- Section : Facture liée -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="link" class="me-2 text-primary"></fa-icon>
+            Facture liée <span class="text-danger">*</span>
           </div>
-        }
-
-        @let designationRef = editForm.get('designation')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_designation" jhiTranslate="conventionApp.detailFacture.designation">Designation</label>
-          <input
-            type="text"
-            class="form-control"
-            name="designation"
-            id="field_designation"
-            data-cy="designation"
-            formControlName="designation"
-          />
-          @if (designationRef.invalid && (designationRef.dirty || designationRef.touched)) {
-            <div>
-              @if (editForm.get('designation')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('designation')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
-                  >Ce champ doit faire moins de 200 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        @let prixUnitaireRef = editForm.get('prixUnitaire')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_prixUnitaire" jhiTranslate="conventionApp.detailFacture.prixUnitaire">Prix Unitaire</label>
-          <input
-            type="number"
-            class="form-control"
-            name="prixUnitaire"
-            id="field_prixUnitaire"
-            data-cy="prixUnitaire"
-            formControlName="prixUnitaire"
-          />
-          @if (prixUnitaireRef.invalid && (prixUnitaireRef.dirty || prixUnitaireRef.touched)) {
-            <div>
-              @if (editForm.get('prixUnitaire')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('prixUnitaire')?.errors?.min) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
-                  >Ce champ doit être supérieur à 0.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('prixUnitaire')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
-        </div>
-
-        @let quantiteRef = editForm.get('quantite')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_quantite" jhiTranslate="conventionApp.detailFacture.quantite">Quantite</label>
-          <input type="number" class="form-control" name="quantite" id="field_quantite" data-cy="quantite" formControlName="quantite" />
-          @if (quantiteRef.invalid && (quantiteRef.dirty || quantiteRef.touched)) {
-            <div>
-              @if (editForm.get('quantite')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('quantite')?.errors?.min) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
-                  >Ce champ doit être supérieur à 1.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('quantite')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_montantHT" jhiTranslate="conventionApp.detailFacture.montantHT">Montant HT</label>
-          <input type="number" class="form-control" name="montantHT" id="field_montantHT" data-cy="montantHT" formControlName="montantHT" />
-        </div>
-
-        @let tauxTVARef = editForm.get('tauxTVA')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_tauxTVA" jhiTranslate="conventionApp.detailFacture.tauxTVA">Taux TVA</label>
-          <input type="number" class="form-control" name="tauxTVA" id="field_tauxTVA" data-cy="tauxTVA" formControlName="tauxTVA" />
-          @if (tauxTVARef.invalid && (tauxTVARef.dirty || tauxTVARef.touched)) {
-            <div>
-              @if (editForm.get('tauxTVA')?.errors?.min) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
-                  >Ce champ doit être supérieur à 0.</small
-                >
-              }
-              @if (editForm.get('tauxTVA')?.errors?.max) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.max" [translateValues]="{ max: '100' }"
-                  >Ce champ doit être inférieur à 100.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('tauxTVA')?.errors?.number"
-                jhiTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_montantTVA" jhiTranslate="conventionApp.detailFacture.montantTVA">Montant TVA</label>
-          <input
-            type="number"
-            class="form-control"
-            name="montantTVA"
-            id="field_montantTVA"
-            data-cy="montantTVA"
-            formControlName="montantTVA"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_montantTTC" jhiTranslate="conventionApp.detailFacture.montantTTC">Montant TTC</label>
-          <input
-            type="number"
-            class="form-control"
-            name="montantTTC"
-            id="field_montantTTC"
-            data-cy="montantTTC"
-            formControlName="montantTTC"
-          />
-        </div>
-
-        @let observationsRef = editForm.get('observations')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_observations" jhiTranslate="conventionApp.detailFacture.observations">Observations</label>
-          <input
-            type="text"
-            class="form-control"
-            name="observations"
-            id="field_observations"
-            data-cy="observations"
-            formControlName="observations"
-          />
-          @if (observationsRef.invalid && (observationsRef.dirty || observationsRef.touched)) {
-            <div>
-              @if (editForm.get('observations')?.errors?.maxlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
-                  >Ce champ doit faire moins de 500 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_facture" jhiTranslate="conventionApp.detailFacture.facture">Facture</label>
           <select
-            class="form-control"
+            class="form-select"
             id="field_facture"
             data-cy="facture"
-            name="facture"
             formControlName="facture"
             [compareWith]="compareFacture"
+            aria-label="Facture liée"
           >
-            @if (!editForm.get('facture')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
+            <option [ngValue]="null">— Sélectionner une facture —</option>
             @for (factureOption of facturesSharedCollection; track $index) {
               <option [ngValue]="factureOption">{{ factureOption.id }}</option>
             }
           </select>
+          @if (editForm.get('facture')?.invalid && editForm.get('facture')?.touched) {
+            <div class="invalid-feedback d-block mt-1">Champ obligatoire.</div>
+          }
         </div>
-        @if (editForm.get(['facture'])!.invalid && (editForm.get(['facture'])!.dirty || editForm.get(['facture'])!.touched)) {
-          <div>
-            @if (editForm.get(['facture'])?.errors?.required) {
-              <small class="form-text text-danger" jhiTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
+
+        <!-- Section : Prestation -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="box" class="me-2 text-primary"></fa-icon>
+            Détail de la prestation
           </div>
-        }
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="field_designation">Désignation <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_designation"
+                data-cy="designation"
+                formControlName="designation"
+                placeholder="Décrire la prestation ou le service…"
+              />
+              @if (editForm.get('designation')?.invalid && editForm.get('designation')?.touched) {
+                <div class="invalid-feedback d-block">Obligatoire, max 200 caractères.</div>
+              }
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="field_prixUnitaire">Prix unitaire HT <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="field_prixUnitaire"
+                  data-cy="prixUnitaire"
+                  formControlName="prixUnitaire"
+                  placeholder="0"
+                />
+                <span class="input-group-text fw-semibold">MRU</span>
+              </div>
+              @if (editForm.get('prixUnitaire')?.invalid && editForm.get('prixUnitaire')?.touched) {
+                <div class="invalid-feedback d-block">Obligatoire, valeur positive.</div>
+              }
+            </div>
+            <div class="col-md-2">
+              <label class="form-label" for="field_quantite">Quantité <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="field_quantite" data-cy="quantite" formControlName="quantite" placeholder="1" />
+              @if (editForm.get('quantite')?.invalid && editForm.get('quantite')?.touched) {
+                <div class="invalid-feedback d-block">Min. 1.</div>
+              }
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="field_montantHT">Montant HT</label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="field_montantHT"
+                  data-cy="montantHT"
+                  formControlName="montantHT"
+                  placeholder="Calculé"
+                />
+                <span class="input-group-text fw-semibold">MRU</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Calcul TVA -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="percent" class="me-2 text-primary"></fa-icon>
+            Calcul de la TVA
+          </div>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label" for="field_tauxTVA">Taux TVA</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="field_tauxTVA" data-cy="tauxTVA" formControlName="tauxTVA" placeholder="0" />
+                <span class="input-group-text">%</span>
+              </div>
+              @if (editForm.get('tauxTVA')?.errors?.min || editForm.get('tauxTVA')?.errors?.max) {
+                <div class="invalid-feedback d-block">Entre 0 et 100.</div>
+              }
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="field_montantTVA">Montant TVA</label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="field_montantTVA"
+                  data-cy="montantTVA"
+                  formControlName="montantTVA"
+                  placeholder="Calculé"
+                />
+                <span class="input-group-text fw-semibold">MRU</span>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label" for="field_montantTTC">Montant TTC</label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="field_montantTTC"
+                  data-cy="montantTTC"
+                  formControlName="montantTTC"
+                  placeholder="Calculé"
+                />
+                <span class="input-group-text fw-semibold">MRU</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Observations -->
+        <div class="form-section">
+          <div class="form-section-title">
+            <fa-icon icon="comment-alt" class="me-2 text-primary"></fa-icon>
+            Observations
+          </div>
+          <input
+            type="text"
+            class="form-control"
+            id="field_observations"
+            data-cy="observations"
+            formControlName="observations"
+            placeholder="Notes complémentaires (max 500 caractères)…"
+          />
+          @if (editForm.get('observations')?.errors?.maxlength) {
+            <div class="invalid-feedback d-block mt-1">Max 500 caractères.</div>
+          }
+        </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+      <!-- Pied de carte -->
+      <div class="form-card-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Annuler</span>
         </button>
-
         <button
           type="submit"
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
+          class="btn btn-primary px-4"
         >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Sauvegarder</span>
         </button>
       </div>
     </form>
