@@ -60,11 +60,9 @@ public class AvenantService {
         AvenantEntity avenant = avenantRepository.findById(id).orElseThrow(() -> new RuntimeException("Avenant introuvable: " + id));
         avenant.setStatut(StatutAvenant.SIGNE);
 
-        // Si prolongation: mettre à jour l'échéance de la convention
-        if (avenant.getNouvelleEcheance() != null) {
-            ConventionEntity convention = avenant.getConvention();
-            convention.setEcheanceConv(avenant.getNouvelleEcheance());
-            conventionRepository.save(convention);
+        // Sauvegarde convention si nécessaire
+        if (avenant.getConvention() != null) {
+            conventionRepository.save(avenant.getConvention());
         }
 
         return avenantMapper.toDto(avenantRepository.save(avenant));

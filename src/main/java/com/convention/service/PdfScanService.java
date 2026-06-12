@@ -178,11 +178,16 @@ public class PdfScanService {
             dto.setDateDebutConv(parseDate(dateDebutMatcher.group(1), formatters));
         }
 
-        // Date d'échéance
-        Pattern echeancePattern = Pattern.compile("Date d'échéance:\\s*(\\d{2}[/-]\\d{2}[/-]\\d{4})");
+        // Période d'échéance (m = MENSUEL, yyyy = ANNUEL)
+        Pattern echeancePattern = Pattern.compile("Période d'échéance:\\s*(MENSUEL|ANNUEL|m|yyyy)", Pattern.CASE_INSENSITIVE);
         Matcher echeanceMatcher = echeancePattern.matcher(text);
         if (echeanceMatcher.find()) {
-            dto.setEcheanceConv(parseDate(echeanceMatcher.group(1), formatters));
+            String val = echeanceMatcher.group(1).toLowerCase();
+            dto.setPeriodeEcheance(
+                val.equals("m") || val.equals("mensuel")
+                    ? com.convention.domain.enumeration.PeriodeEcheance.MENSUEL
+                    : com.convention.domain.enumeration.PeriodeEcheance.ANNUEL
+            );
         }
 
         // Extract redevance

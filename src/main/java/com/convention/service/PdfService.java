@@ -74,7 +74,11 @@ public class PdfService {
             addTableRow(table, "Numéro de convention:", convention.getNumConvention().toString());
             addTableRow(table, "Date de signature:", convention.getDateSignConv().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
             addTableRow(table, "Date de début:", convention.getDateDebutConv().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            addTableRow(table, "Date d'échéance:", convention.getEcheanceConv().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            addTableRow(
+                table,
+                "Période d'échéance:",
+                convention.getPeriodeEcheance() != null ? convention.getPeriodeEcheance().name() : "N/A"
+            );
             addTableRow(table, "Redevance:", convention.getRedevance().toString() + " MRU");
             addTableRow(table, "Responsable:", convention.getNomResponsable());
             addTableRow(table, "Statut:", convention.getStatut().toString());

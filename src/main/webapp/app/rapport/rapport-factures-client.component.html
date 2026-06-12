@@ -1,0 +1,195 @@
+<div class="container-fluid py-4 print-container">
+  <!-- En-tête rapport (visible à l'écran) -->
+  <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+    <div>
+      <h4 class="mb-0 fw-bold"><fa-icon icon="file-invoice-dollar" class="me-2 text-primary"></fa-icon>Détails des factures par client</h4>
+      <small class="text-muted">Sélectionnez un partenaire pour afficher ses factures et lignes de détail</small>
+    </div>
+    @if (items.length > 0) {
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="print()"><fa-icon icon="print"></fa-icon> Imprimer</button>
+    }
+  </div>
+
+  <!-- Filtre client -->
+  <div class="card shadow-sm mb-4 no-print">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Partenaire</label>
+          <select class="form-select" [(ngModel)]="selectedClientId" title="Sélectionner un partenaire">
+            <option [ngValue]="null">— Sélectionner un partenaire —</option>
+            @for (client of clients; track client.id) {
+              <option [ngValue]="client.id">{{ client.nomClient }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-primary w-100" (click)="load()" [disabled]="!selectedClientId || loading">
+            <fa-icon icon="search"></fa-icon> Afficher
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  }
+
+  @if (!loading && items.length > 0) {
+    <!-- En-tête d'impression -->
+    <div class="d-none d-print-block mb-4">
+      <h5 class="fw-bold">AGENCE NATIONALE DU REGISTRE DE LA POPULATION ET DES TITRES SÉCURISÉS</h5>
+      <h6>Rapport — Détails des factures par client</h6>
+      <p class="mb-0">
+        Partenaire : <strong>{{ selectedClient?.nomClient }}</strong>
+      </p>
+      <p class="mb-0">Date d'impression : {{ today }}</p>
+      <hr />
+    </div>
+
+    <!-- Bilan -->
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-md-3">
+        <div class="card border-0 bg-light text-center py-3">
+          <div class="fs-5 fw-bold">{{ items.length }}</div>
+          <small class="text-muted">Factures</small>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card border-0 bg-light text-center py-3">
+          <div class="fs-5 fw-bold text-dark">{{ totalFacture | number: '1.2-2' }} MRU</div>
+          <small class="text-muted">Total facturé HT</small>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card border-0 bg-light text-center py-3">
+          <div class="fs-5 fw-bold text-success">{{ totalPaye | number: '1.2-2' }} MRU</div>
+          <small class="text-muted">Total payé</small>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card border-0 bg-light text-center py-3">
+          <div class="fs-5 fw-bold text-danger">{{ totalImpaye | number: '1.2-2' }} MRU</div>
+          <small class="text-muted">Total impayé</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Une carte par facture avec ses lignes de détail -->
+    @for (item of items; track item.facture.id; let i = $index) {
+      <div class="card shadow-sm mb-3">
+        <!-- En-tête de la facture -->
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+          [class.bg-success]="item.facture.statut === 'PAYEE'"
+          [class.bg-info]="item.facture.statut === 'EMISE'"
+          [class.bg-danger]="item.facture.statut === 'IMPAYEE'"
+          [class.bg-warning]="item.facture.statut === 'BROUILLON'"
+          [class.bg-secondary]="item.facture.statut === 'ANNULEE'"
+          [class.text-white]="
+            item.facture.statut === 'PAYEE' ||
+            item.facture.statut === 'IMPAYEE' ||
+            item.facture.statut === 'ANNULEE' ||
+            item.facture.statut === 'EMISE'
+          "
+        >
+          <div>
+            <span class="fw-bold me-2">Facture N° {{ item.facture.numFacture }}</span>
+            <span class="me-2">{{ item.facture.dateFacture | formatMediumDate }}</span>
+            @if (item.facture.ancienneRef) {
+              <small class="opacity-75">Réf. préc. : {{ item.facture.ancienneRef }}</small>
+            }
+          </div>
+          <div class="text-end">
+            <span class="me-3 fw-semibold">{{ item.facture.montantTotal | number: '1.2-2' }} MRU HT</span>
+            <span class="badge bg-light text-dark">{{ item.facture.statut }}</span>
+          </div>
+        </div>
+
+        <div class="card-body p-0">
+          <!-- Lignes de détail -->
+          @if (item.lignes.length > 0) {
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th class="text-muted fw-normal col-num">#</th>
+                    <th>Désignation</th>
+                    <th class="text-end col-pu">P.U. (MRU)</th>
+                    <th class="text-center col-qte">Qté</th>
+                    <th class="text-end col-montant">Montant HT</th>
+                    <th class="text-center col-taux">TVA %</th>
+                    <th class="text-end col-montant">Montant TTC</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (ligne of item.lignes; track ligne.id; let j = $index) {
+                    <tr>
+                      <td class="text-muted text-center">{{ j + 1 }}</td>
+                      <td>{{ ligne.designation }}</td>
+                      <td class="text-end">{{ ligne.prixUnitaire | number: '1.2-2' }}</td>
+                      <td class="text-center">{{ ligne.quantite }}</td>
+                      <td class="text-end">{{ ligne.montantHT | number: '1.2-2' }}</td>
+                      <td class="text-center">{{ ligne.tauxTVA ?? 0 }}%</td>
+                      <td class="text-end fw-semibold">{{ ligne.montantTTC | number: '1.2-2' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <p class="text-muted text-center py-2 mb-0 small">Aucune ligne de détail</p>
+          }
+
+          <!-- Récapitulatif paiements -->
+          <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top bg-light">
+            <div class="small text-muted">
+              @if (item.paiements.length > 0) {
+                {{ item.paiements.length }} paiement(s) enregistré(s)
+              } @else {
+                Aucun paiement enregistré
+              }
+            </div>
+            <div class="d-flex gap-3 text-end small">
+              <span
+                >Facturé : <strong>{{ item.facture.montantTotal | number: '1.2-2' }} MRU</strong></span
+              >
+              <span class="text-success"
+                >Payé : <strong>{{ montantPaye(item) | number: '1.2-2' }} MRU</strong></span
+              >
+              <span [class.text-danger]="montantAPayer(item) > 0" [class.text-success]="montantAPayer(item) <= 0">
+                À payer : <strong>{{ montantAPayer(item) | number: '1.2-2' }} MRU</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Total général -->
+    <div class="card border-dark mb-4">
+      <div class="card-header bg-dark text-white fw-bold">Total général — {{ selectedClient?.nomClient }}</div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-4">
+            <div class="fs-5 fw-bold">{{ totalFacture | number: '1.2-2' }} MRU</div>
+            <small class="text-muted">Total facturé HT</small>
+          </div>
+          <div class="col-4">
+            <div class="fs-5 fw-bold text-success">{{ totalPaye | number: '1.2-2' }} MRU</div>
+            <small class="text-muted">Total payé</small>
+          </div>
+          <div class="col-4">
+            <div class="fs-5 fw-bold text-danger">{{ totalImpaye | number: '1.2-2' }} MRU</div>
+            <small class="text-muted">Total impayé</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (!loading && selectedClientId && items.length === 0) {
+    <div class="alert alert-info text-center">Aucune facture trouvée pour ce partenaire.</div>
+  }
+</div>

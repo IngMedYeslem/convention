@@ -140,6 +140,15 @@ public class DetailConventionResource {
     }
 
     /**
+     * {@code GET  /detail-conventions/by-convention/:conventionId} : get all detailConventions for a convention.
+     */
+    @GetMapping("/by-convention/{conventionId}")
+    public ResponseEntity<List<DetailConventionDTO>> getDetailConventionsByConvention(@PathVariable Long conventionId) {
+        LOG.debug("REST request to get DetailConventions for convention : {}", conventionId);
+        return ResponseEntity.ok(detailConventionService.findByConventionId(conventionId));
+    }
+
+    /**
      * {@code GET  /detail-conventions} : get all the detailConventions.
      *
      * @param pageable the pagination information.

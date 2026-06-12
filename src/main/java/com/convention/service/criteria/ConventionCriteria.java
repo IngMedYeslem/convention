@@ -1,5 +1,6 @@
 package com.convention.service.criteria;
 
+import com.convention.domain.enumeration.PeriodeEcheance;
 import com.convention.domain.enumeration.StatutConvention;
 import java.io.Serializable;
 import java.util.Objects;
@@ -20,6 +21,23 @@ import tech.jhipster.service.filter.*;
 @ParameterObject
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ConventionCriteria implements Serializable, Criteria {
+
+    /**
+     * Class for filtering PeriodeEcheance
+     */
+    public static class PeriodeEcheanceFilter extends Filter<PeriodeEcheance> {
+
+        public PeriodeEcheanceFilter() {}
+
+        public PeriodeEcheanceFilter(PeriodeEcheanceFilter filter) {
+            super(filter);
+        }
+
+        @Override
+        public PeriodeEcheanceFilter copy() {
+            return new PeriodeEcheanceFilter(this);
+        }
+    }
 
     /**
      * Class for filtering StatutConvention
@@ -48,7 +66,7 @@ public class ConventionCriteria implements Serializable, Criteria {
 
     private LocalDateFilter dateDebutConv;
 
-    private LocalDateFilter echeanceConv;
+    private PeriodeEcheanceFilter periodeEcheance;
 
     private BigDecimalFilter redevance;
 
@@ -71,7 +89,7 @@ public class ConventionCriteria implements Serializable, Criteria {
         this.numConvention = other.optionalNumConvention().map(LongFilter::copy).orElse(null);
         this.dateSignConv = other.optionalDateSignConv().map(LocalDateFilter::copy).orElse(null);
         this.dateDebutConv = other.optionalDateDebutConv().map(LocalDateFilter::copy).orElse(null);
-        this.echeanceConv = other.optionalEcheanceConv().map(LocalDateFilter::copy).orElse(null);
+        this.periodeEcheance = other.optionalPeriodeEcheance().map(PeriodeEcheanceFilter::copy).orElse(null);
         this.redevance = other.optionalRedevance().map(BigDecimalFilter::copy).orElse(null);
         this.nomResponsable = other.optionalNomResponsable().map(StringFilter::copy).orElse(null);
         this.statut = other.optionalStatut().map(StatutConventionFilter::copy).orElse(null);
@@ -162,23 +180,23 @@ public class ConventionCriteria implements Serializable, Criteria {
         this.dateDebutConv = dateDebutConv;
     }
 
-    public LocalDateFilter getEcheanceConv() {
-        return echeanceConv;
+    public PeriodeEcheanceFilter getPeriodeEcheance() {
+        return periodeEcheance;
     }
 
-    public Optional<LocalDateFilter> optionalEcheanceConv() {
-        return Optional.ofNullable(echeanceConv);
+    public Optional<PeriodeEcheanceFilter> optionalPeriodeEcheance() {
+        return Optional.ofNullable(periodeEcheance);
     }
 
-    public LocalDateFilter echeanceConv() {
-        if (echeanceConv == null) {
-            setEcheanceConv(new LocalDateFilter());
+    public PeriodeEcheanceFilter periodeEcheance() {
+        if (periodeEcheance == null) {
+            setPeriodeEcheance(new PeriodeEcheanceFilter());
         }
-        return echeanceConv;
+        return periodeEcheance;
     }
 
-    public void setEcheanceConv(LocalDateFilter echeanceConv) {
-        this.echeanceConv = echeanceConv;
+    public void setPeriodeEcheance(PeriodeEcheanceFilter periodeEcheance) {
+        this.periodeEcheance = periodeEcheance;
     }
 
     public BigDecimalFilter getRedevance() {
@@ -328,7 +346,7 @@ public class ConventionCriteria implements Serializable, Criteria {
             Objects.equals(numConvention, that.numConvention) &&
             Objects.equals(dateSignConv, that.dateSignConv) &&
             Objects.equals(dateDebutConv, that.dateDebutConv) &&
-            Objects.equals(echeanceConv, that.echeanceConv) &&
+            Objects.equals(periodeEcheance, that.periodeEcheance) &&
             Objects.equals(redevance, that.redevance) &&
             Objects.equals(nomResponsable, that.nomResponsable) &&
             Objects.equals(statut, that.statut) &&
@@ -346,7 +364,7 @@ public class ConventionCriteria implements Serializable, Criteria {
             numConvention,
             dateSignConv,
             dateDebutConv,
-            echeanceConv,
+            periodeEcheance,
             redevance,
             nomResponsable,
             statut,
@@ -365,7 +383,7 @@ public class ConventionCriteria implements Serializable, Criteria {
             optionalNumConvention().map(f -> "numConvention=" + f + ", ").orElse("") +
             optionalDateSignConv().map(f -> "dateSignConv=" + f + ", ").orElse("") +
             optionalDateDebutConv().map(f -> "dateDebutConv=" + f + ", ").orElse("") +
-            optionalEcheanceConv().map(f -> "echeanceConv=" + f + ", ").orElse("") +
+            optionalPeriodeEcheance().map(f -> "periodeEcheance=" + f + ", ").orElse("") +
             optionalRedevance().map(f -> "redevance=" + f + ", ").orElse("") +
             optionalNomResponsable().map(f -> "nomResponsable=" + f + ", ").orElse("") +
             optionalStatut().map(f -> "statut=" + f + ", ").orElse("") +

@@ -9,11 +9,10 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
 type ConventionFormGroupInput = IConvention | PartialWithRequiredKeyOf<NewConvention>;
 type FormValueOf<T extends IConvention | NewConvention> = Omit<
   T,
-  'dateSignConv' | 'dateDebutConv' | 'echeanceConv' | 'dateVisaControleur' | 'dateCreation' | 'dateModification'
+  'dateSignConv' | 'dateDebutConv' | 'dateVisaControleur' | 'dateCreation' | 'dateModification'
 > & {
   dateSignConv?: string | null;
   dateDebutConv?: string | null;
-  echeanceConv?: string | null;
   dateVisaControleur?: string | null;
   dateCreation?: string | null;
   dateModification?: string | null;
@@ -27,7 +26,7 @@ type ConventionFormGroupContent = {
   numConvention: FormControl<ConventionFormRawValue['numConvention']>;
   dateSignConv: FormControl<ConventionFormRawValue['dateSignConv']>;
   dateDebutConv: FormControl<ConventionFormRawValue['dateDebutConv']>;
-  echeanceConv: FormControl<ConventionFormRawValue['echeanceConv']>;
+  periodeEcheance: FormControl<ConventionFormRawValue['periodeEcheance']>;
   redevance: FormControl<ConventionFormRawValue['redevance']>;
   nomResponsable: FormControl<ConventionFormRawValue['nomResponsable']>;
   statut: FormControl<ConventionFormRawValue['statut']>;
@@ -60,7 +59,7 @@ export class ConventionFormService {
       numConvention: new FormControl(raw.numConvention, { validators: [Validators.required] }),
       dateSignConv: new FormControl(raw.dateSignConv, { validators: [Validators.required] }),
       dateDebutConv: new FormControl(raw.dateDebutConv, { validators: [Validators.required] }),
-      echeanceConv: new FormControl(raw.echeanceConv, { validators: [Validators.required] }),
+      periodeEcheance: new FormControl(raw.periodeEcheance, { validators: [Validators.required] }),
       redevance: new FormControl(raw.redevance, { validators: [Validators.required, Validators.min(0)] }),
       nomResponsable: new FormControl(raw.nomResponsable, { validators: [Validators.required, Validators.maxLength(100)] }),
       statut: new FormControl(raw.statut, { validators: [Validators.required] }),
@@ -102,7 +101,6 @@ export class ConventionFormService {
       ...raw,
       dateSignConv: raw.dateSignConv ? dayjs(raw.dateSignConv) : null,
       dateDebutConv: raw.dateDebutConv ? dayjs(raw.dateDebutConv) : null,
-      echeanceConv: raw.echeanceConv ? dayjs(raw.echeanceConv) : null,
       dateVisaControleur: raw.dateVisaControleur ? dayjs(raw.dateVisaControleur) : null,
       dateCreation: dayjs(raw.dateCreation, DATE_TIME_FORMAT),
       dateModification: dayjs(raw.dateModification, DATE_TIME_FORMAT),
@@ -116,7 +114,6 @@ export class ConventionFormService {
       ...convention,
       dateSignConv: convention.dateSignConv ? convention.dateSignConv.format(DATE_FORMAT) : null,
       dateDebutConv: convention.dateDebutConv ? convention.dateDebutConv.format(DATE_FORMAT) : null,
-      echeanceConv: convention.echeanceConv ? convention.echeanceConv.format(DATE_FORMAT) : null,
       dateVisaControleur: convention.dateVisaControleur ? convention.dateVisaControleur.format(DATE_FORMAT) : null,
       dateCreation: convention.dateCreation ? convention.dateCreation.format(DATE_TIME_FORMAT) : undefined,
       dateModification: convention.dateModification ? convention.dateModification.format(DATE_TIME_FORMAT) : undefined,

@@ -79,7 +79,7 @@ class ConventionCriteriaTest {
         conventionEntityCriteria.numConvention();
         conventionEntityCriteria.dateSignConv();
         conventionEntityCriteria.dateDebutConv();
-        conventionEntityCriteria.echeanceConv();
+        conventionEntityCriteria.periodeEcheance();
         conventionEntityCriteria.redevance();
         conventionEntityCriteria.nomResponsable();
         conventionEntityCriteria.statut();
@@ -96,7 +96,7 @@ class ConventionCriteriaTest {
                 condition.apply(criteria.getNumConvention()) &&
                 condition.apply(criteria.getDateSignConv()) &&
                 condition.apply(criteria.getDateDebutConv()) &&
-                condition.apply(criteria.getEcheanceConv()) &&
+                condition.apply(criteria.getPeriodeEcheance()) &&
                 condition.apply(criteria.getRedevance()) &&
                 condition.apply(criteria.getNomResponsable()) &&
                 condition.apply(criteria.getStatut()) &&
@@ -115,7 +115,7 @@ class ConventionCriteriaTest {
                 condition.apply(criteria.getNumConvention(), copy.getNumConvention()) &&
                 condition.apply(criteria.getDateSignConv(), copy.getDateSignConv()) &&
                 condition.apply(criteria.getDateDebutConv(), copy.getDateDebutConv()) &&
-                condition.apply(criteria.getEcheanceConv(), copy.getEcheanceConv()) &&
+                condition.apply(criteria.getPeriodeEcheance(), copy.getPeriodeEcheance()) &&
                 condition.apply(criteria.getRedevance(), copy.getRedevance()) &&
                 condition.apply(criteria.getNomResponsable(), copy.getNomResponsable()) &&
                 condition.apply(criteria.getStatut(), copy.getStatut()) &&

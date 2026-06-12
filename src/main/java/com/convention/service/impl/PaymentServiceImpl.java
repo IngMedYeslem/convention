@@ -1,11 +1,13 @@
 package com.convention.service.impl;
 
 import com.convention.domain.PaymentEntity;
+import com.convention.repository.FactureRepository;
 import com.convention.repository.PaymentRepository;
 import com.convention.service.PaymentService;
 import com.convention.service.dto.PaymentDTO;
 import com.convention.service.mapper.PaymentMapper;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service Implementation for managing {@link com.convention.domain.PaymentEntity}.
- */
 @Service
 @Transactional
 public class PaymentServiceImpl implements PaymentService {
@@ -24,18 +23,26 @@ public class PaymentServiceImpl implements PaymentService {
     private static final Logger LOG = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
     private final PaymentRepository paymentRepository;
-
     private final PaymentMapper paymentMapper;
+    private final FactureRepository factureRepository;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper, FactureRepository factureRepository) {
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
+        this.factureRepository = factureRepository;
+    }
+
+    private void resolveAssociations(PaymentEntity entity, PaymentDTO dto) {
+        if (dto.getFacture() != null && dto.getFacture().getId() != null) {
+            entity.setFacture(factureRepository.getReferenceById(dto.getFacture().getId()));
+        }
     }
 
     @Override
     public PaymentDTO save(PaymentDTO paymentDTO) {
         LOG.debug("Request to save Payment : {}", paymentDTO);
         PaymentEntity paymentEntity = paymentMapper.toEntity(paymentDTO);
+        resolveAssociations(paymentEntity, paymentDTO);
         if (paymentEntity.getDateCreation() == null) {
             paymentEntity.setDateCreation(Instant.now());
         }
@@ -47,6 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDTO update(PaymentDTO paymentDTO) {
         LOG.debug("Request to update Payment : {}", paymentDTO);
         PaymentEntity paymentEntity = paymentMapper.toEntity(paymentDTO);
+        resolveAssociations(paymentEntity, paymentDTO);
         paymentEntity = paymentRepository.save(paymentEntity);
         return paymentMapper.toDto(paymentEntity);
     }
@@ -83,5 +91,11 @@ public class PaymentServiceImpl implements PaymentService {
     public void delete(Long id) {
         LOG.debug("Request to delete Payment : {}", id);
         paymentRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PaymentDTO> findByFactureId(Long factureId) {
+        return paymentRepository.findByFactureId(factureId).stream().map(paymentMapper::toDto).toList();
     }
 }

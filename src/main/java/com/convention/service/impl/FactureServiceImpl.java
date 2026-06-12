@@ -1,6 +1,8 @@
 package com.convention.service.impl;
 
 import com.convention.domain.FactureEntity;
+import com.convention.repository.ClientRepository;
+import com.convention.repository.ConventionRepository;
 import com.convention.repository.FactureRepository;
 import com.convention.service.FactureService;
 import com.convention.service.dto.FactureDTO;
@@ -21,18 +23,36 @@ public class FactureServiceImpl implements FactureService {
     private static final Logger LOG = LoggerFactory.getLogger(FactureServiceImpl.class);
 
     private final FactureRepository factureRepository;
-
+    private final ClientRepository clientRepository;
+    private final ConventionRepository conventionRepository;
     private final FactureMapper factureMapper;
 
-    public FactureServiceImpl(FactureRepository factureRepository, FactureMapper factureMapper) {
+    public FactureServiceImpl(
+        FactureRepository factureRepository,
+        ClientRepository clientRepository,
+        ConventionRepository conventionRepository,
+        FactureMapper factureMapper
+    ) {
         this.factureRepository = factureRepository;
+        this.clientRepository = clientRepository;
+        this.conventionRepository = conventionRepository;
         this.factureMapper = factureMapper;
+    }
+
+    private void resolveAssociations(FactureEntity factureEntity, FactureDTO factureDTO) {
+        if (factureDTO.getClient() != null && factureDTO.getClient().getId() != null) {
+            factureEntity.setClient(clientRepository.getReferenceById(factureDTO.getClient().getId()));
+        }
+        if (factureDTO.getConvention() != null && factureDTO.getConvention().getId() != null) {
+            factureEntity.setConvention(conventionRepository.getReferenceById(factureDTO.getConvention().getId()));
+        }
     }
 
     @Override
     public FactureDTO save(FactureDTO factureDTO) {
         LOG.debug("Request to save Facture : {}", factureDTO);
         FactureEntity factureEntity = factureMapper.toEntity(factureDTO);
+        resolveAssociations(factureEntity, factureDTO);
         factureEntity = factureRepository.save(factureEntity);
         return factureMapper.toDto(factureEntity);
     }
@@ -41,6 +61,7 @@ public class FactureServiceImpl implements FactureService {
     public FactureDTO update(FactureDTO factureDTO) {
         LOG.debug("Request to update Facture : {}", factureDTO);
         FactureEntity factureEntity = factureMapper.toEntity(factureDTO);
+        resolveAssociations(factureEntity, factureDTO);
         factureEntity = factureRepository.save(factureEntity);
         return factureMapper.toDto(factureEntity);
     }

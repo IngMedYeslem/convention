@@ -77,7 +77,7 @@ public class ConventionQueryService extends QueryService<ConventionEntity> {
                 buildRangeSpecification(criteria.getNumConvention(), ConventionEntity_.numConvention),
                 buildRangeSpecification(criteria.getDateSignConv(), ConventionEntity_.dateSignConv),
                 buildRangeSpecification(criteria.getDateDebutConv(), ConventionEntity_.dateDebutConv),
-                buildRangeSpecification(criteria.getEcheanceConv(), ConventionEntity_.echeanceConv),
+                buildSpecification(criteria.getPeriodeEcheance(), ConventionEntity_.periodeEcheance),
                 buildRangeSpecification(criteria.getRedevance(), ConventionEntity_.redevance),
                 buildStringSpecification(criteria.getNomResponsable(), ConventionEntity_.nomResponsable),
                 buildSpecification(criteria.getStatut(), ConventionEntity_.statut),

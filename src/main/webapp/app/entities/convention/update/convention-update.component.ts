@@ -1,18 +1,31 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { finalize, map, switchMap } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IClient } from 'app/entities/client/client.model';
 import { ClientService } from 'app/entities/client/service/client.service';
+import { IDetailConvention, NewDetailConvention } from 'app/entities/detail-convention/detail-convention.model';
+import { DetailConventionService } from 'app/entities/detail-convention/service/detail-convention.service';
 import { StatutConvention } from 'app/entities/enumerations/statut-convention.model';
+import { PeriodeEcheance } from 'app/entities/enumerations/periode-echeance.model';
 import { ConventionService } from '../service/convention.service';
 import { IConvention } from '../convention.model';
 import { ConventionFormGroup, ConventionFormService } from './convention-form.service';
+
+interface LigneConvention {
+  id?: number | null;
+  designation: string;
+  prixUnitaire: number;
+  quantite: number;
+  montantTotal: number;
+  observations: string;
+  _deleted?: boolean;
+}
 
 @Component({
   selector: 'jhi-convention-update',
@@ -23,12 +36,16 @@ export class ConventionUpdateComponent implements OnInit {
   isSaving = false;
   convention: IConvention | null = null;
   statutConventionValues = Object.keys(StatutConvention);
+  periodeEcheanceValues = Object.keys(PeriodeEcheance);
 
   clientsSharedCollection: IClient[] = [];
+  lignes: LigneConvention[] = [];
 
+  protected http = inject(HttpClient);
   protected conventionService = inject(ConventionService);
   protected conventionFormService = inject(ConventionFormService);
   protected clientService = inject(ClientService);
+  protected detailConventionService = inject(DetailConventionService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -41,10 +58,47 @@ export class ConventionUpdateComponent implements OnInit {
       this.convention = convention;
       if (convention) {
         this.updateForm(convention);
+        if (convention.id) {
+          this.http.get<IDetailConvention[]>(`/api/detail-conventions/by-convention/${convention.id}`).subscribe(details => {
+            this.lignes = details.map(d => ({
+              id: d.id,
+              designation: d.designation ?? '',
+              prixUnitaire: Number(d.prixUnitaire ?? 0),
+              quantite: d.quantite ?? 1,
+              montantTotal: Number(d.montantTotal ?? 0),
+              observations: d.observations ?? '',
+            }));
+          });
+        }
       }
 
       this.loadRelationshipsOptions();
     });
+  }
+
+  addLigne(): void {
+    this.lignes.push({ designation: '', prixUnitaire: 0, quantite: 1, montantTotal: 0, observations: '' });
+  }
+
+  removeLigne(index: number): void {
+    const ligne = this.lignes[index];
+    if (ligne.id) {
+      ligne._deleted = true;
+    } else {
+      this.lignes.splice(index, 1);
+    }
+  }
+
+  calcLigne(ligne: LigneConvention): void {
+    ligne.montantTotal = Math.round(ligne.prixUnitaire * ligne.quantite * 100) / 100;
+  }
+
+  get lignesActives(): LigneConvention[] {
+    return this.lignes.filter(l => !l._deleted);
+  }
+
+  get totalConvention(): number {
+    return this.lignesActives.reduce((s, l) => s + l.montantTotal, 0);
   }
 
   previousState(): void {
@@ -54,18 +108,48 @@ export class ConventionUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const convention = this.conventionFormService.getConvention(this.editForm);
-    if (convention.id !== null) {
-      this.subscribeToSaveResponse(this.conventionService.update(convention));
-    } else {
-      this.subscribeToSaveResponse(this.conventionService.create(convention));
-    }
-  }
+    const save$ = convention.id !== null ? this.conventionService.update(convention) : this.conventionService.create(convention);
 
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<IConvention>>): void {
-    result.pipe(finalize(() => this.onSaveFinalize())).subscribe({
-      next: () => this.onSaveSuccess(),
-      error: () => this.onSaveError(),
-    });
+    save$
+      .pipe(
+        switchMap((res: HttpResponse<IConvention>) => {
+          const savedConvention = res.body!;
+          const ops: Observable<any>[] = [];
+          for (const ligne of this.lignes) {
+            if (ligne._deleted && ligne.id) {
+              ops.push(this.detailConventionService.delete(ligne.id));
+            } else if (!ligne._deleted && ligne.id) {
+              const dto: IDetailConvention = {
+                id: ligne.id,
+                designation: ligne.designation,
+                prixUnitaire: ligne.prixUnitaire,
+                quantite: ligne.quantite,
+                montantTotal: ligne.montantTotal,
+                observations: ligne.observations,
+                convention: { id: savedConvention.id! },
+              };
+              ops.push(this.detailConventionService.update(dto));
+            } else if (!ligne._deleted && !ligne.id) {
+              const dto: NewDetailConvention = {
+                id: null,
+                designation: ligne.designation,
+                prixUnitaire: ligne.prixUnitaire,
+                quantite: ligne.quantite,
+                montantTotal: ligne.montantTotal,
+                observations: ligne.observations,
+                convention: { id: savedConvention.id! },
+              };
+              ops.push(this.detailConventionService.create(dto));
+            }
+          }
+          return ops.length > 0 ? forkJoin(ops) : of([]);
+        }),
+        finalize(() => this.onSaveFinalize()),
+      )
+      .subscribe({
+        next: () => this.onSaveSuccess(),
+        error: () => this.onSaveError(),
+      });
   }
 
   protected onSaveSuccess(): void {

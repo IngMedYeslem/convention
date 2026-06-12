@@ -80,7 +80,9 @@ import { AlertService } from 'app/core/util/alert.service';
                       <div class="col-md-6" *ngIf="scannedData.dateDebutConv">
                         <strong>Date début:</strong> {{ scannedData.dateDebutConv }}
                       </div>
-                      <div class="col-md-6" *ngIf="scannedData.echeanceConv"><strong>Échéance:</strong> {{ scannedData.echeanceConv }}</div>
+                      <div class="col-md-6" *ngIf="scannedData.periodeEcheance">
+                        <strong>Période d'échéance:</strong> {{ scannedData.periodeEcheance === 'MENSUEL' ? 'Mensuel' : 'Annuel' }}
+                      </div>
                       <div class="col-md-6" *ngIf="scannedData.redevance">
                         <strong>Redevance:</strong> {{ scannedData.redevance | currency: 'MRU' }}
                       </div>

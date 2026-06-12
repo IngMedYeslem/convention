@@ -122,8 +122,15 @@
               <input type="date" class="form-control" id="field_dateDebutConv" formControlName="dateDebutConv" />
             </div>
             <div class="col-md-3">
-              <label class="form-label" for="field_echeanceConv">Échéance <span class="text-danger">*</span></label>
-              <input type="date" class="form-control" id="field_echeanceConv" formControlName="echeanceConv" />
+              <label class="form-label" for="field_periodeEcheance">Période d'échéance <span class="text-danger">*</span></label>
+              <select class="form-select" id="field_periodeEcheance" formControlName="periodeEcheance">
+                <option value="">— Sélectionner —</option>
+                <option value="MENSUEL">Mensuel (m)</option>
+                <option value="ANNUEL">Annuel (yyyy)</option>
+              </select>
+              @if (editForm.get('periodeEcheance')?.invalid && editForm.get('periodeEcheance')?.touched) {
+                <div class="invalid-feedback d-block">Obligatoire.</div>
+              }
             </div>
             <div class="col-md-3">
               <label class="form-label" for="field_dateVisaControleur">Visa contrôleur financier</label>
@@ -219,6 +226,105 @@
                 placeholder="Décrire les pénalités applicables…"
               ></textarea>
             </div>
+          </div>
+        </div>
+
+        <!-- Section : Lignes de la convention -->
+        <div class="form-section">
+          <div class="form-section-title d-flex justify-content-between align-items-center">
+            <span><fa-icon icon="list" class="me-2 text-primary"></fa-icon>Lignes de la convention (prestations)</span>
+            <button type="button" class="btn btn-success btn-sm" (click)="addLigne()">
+              <fa-icon icon="plus"></fa-icon> Ajouter une ligne
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle mb-1">
+              <thead class="table-dark">
+                <tr>
+                  <th>Désignation <span class="text-danger">*</span></th>
+                  <th class="text-end">P.U. (MRU)</th>
+                  <th class="text-end">Qté</th>
+                  <th class="text-end">Montant (MRU)</th>
+                  <th>Observations</th>
+                  <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (ligne of lignes; track $index) {
+                  @if (!ligne._deleted) {
+                    <tr>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control form-control-sm"
+                          [(ngModel)]="ligne.designation"
+                          [ngModelOptions]="{ standalone: true }"
+                          placeholder="Désignation"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="form-control form-control-sm text-end"
+                          [(ngModel)]="ligne.prixUnitaire"
+                          [ngModelOptions]="{ standalone: true }"
+                          min="0"
+                          title="Prix unitaire"
+                          placeholder="0"
+                          (input)="calcLigne(ligne)"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="form-control form-control-sm text-end"
+                          [(ngModel)]="ligne.quantite"
+                          [ngModelOptions]="{ standalone: true }"
+                          min="1"
+                          title="Quantité"
+                          placeholder="1"
+                          (input)="calcLigne(ligne)"
+                        />
+                      </td>
+                      <td class="text-end fw-semibold">{{ ligne.montantTotal | number: '1.2-2' }}</td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control form-control-sm"
+                          [(ngModel)]="ligne.observations"
+                          [ngModelOptions]="{ standalone: true }"
+                          placeholder="Note…"
+                          title="Observations"
+                        />
+                      </td>
+                      <td class="text-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-danger btn-sm py-0 px-1"
+                          (click)="removeLigne($index)"
+                          title="Supprimer"
+                        >
+                          <fa-icon icon="times"></fa-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                }
+                @if (lignesActives.length === 0) {
+                  <tr>
+                    <td colspan="6" class="text-center text-muted py-2"><small>Aucune ligne. Cliquez sur "Ajouter une ligne".</small></td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="table-light fw-semibold">
+                <tr>
+                  <td colspan="3" class="text-end">Total convention :</td>
+                  <td class="text-end">{{ totalConvention | number: '1.2-2' }} MRU</td>
+                  <td colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
 

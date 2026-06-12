@@ -45,6 +45,34 @@
               </span>
             </a>
           </li>
+          <li ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active">
+            <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="rapport-menu">
+              <span>
+                <fa-icon icon="file-alt"></fa-icon>
+                <span>Rapports</span>
+              </span>
+            </a>
+            <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="rapport-menu">
+              <li>
+                <a class="dropdown-item" routerLink="/rapport/factures-par-client" routerLinkActive="active" (click)="collapseNavbar()">
+                  <fa-icon icon="file-invoice-dollar" [fixedWidth]="true"></fa-icon>
+                  Factures par client
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/rapport/conventions-par-client" routerLinkActive="active" (click)="collapseNavbar()">
+                  <fa-icon icon="file-contract" [fixedWidth]="true"></fa-icon>
+                  Conventions par client
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/rapport/etat-facturation" routerLinkActive="active" (click)="collapseNavbar()">
+                  <fa-icon icon="clipboard-list" [fixedWidth]="true"></fa-icon>
+                  État général facturation
+                </a>
+              </li>
+            </ul>
+          </li>
         }
         <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
         @if (account() !== null) {

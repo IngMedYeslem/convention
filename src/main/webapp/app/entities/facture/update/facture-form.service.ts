@@ -78,7 +78,7 @@ export class FactureFormService {
       }),
       observations: new FormControl(factureRawValue.observations),
       ancienneRef: new FormControl(factureRawValue.ancienneRef, {
-        validators: [Validators.maxLength(50)],
+        validators: [Validators.maxLength(50), Validators.pattern(/^\d{4}\/CV\/\d{3}$/)],
       }),
       typeFacture: new FormControl(factureRawValue.typeFacture, {
         validators: [Validators.required],

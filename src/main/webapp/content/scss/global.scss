@@ -376,4 +376,55 @@ Form page — carte moderne (create/edit)
   gap: 0.75rem;
 }
 
+.progress-sm {
+  height: 18px;
+}
+
+/* Rapport table column widths */
+.col-num {
+  width: 3%;
+}
+.col-pu {
+  width: 12%;
+}
+.col-qte {
+  width: 6%;
+}
+.col-taux {
+  width: 8%;
+}
+.col-montant {
+  width: 13%;
+}
+
+/* Print styles for rapport pages */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .navbar,
+  .footer,
+  jhi-navbar,
+  jhi-footer {
+    display: none !important;
+  }
+  .print-container {
+    padding: 0 !important;
+  }
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #dee2e6 !important;
+  }
+  .progress-bar {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    font-size: 11px;
+  }
+  .table {
+    font-size: 10px;
+  }
+}
+
 /* jhipster-needle-scss-add-main JHipster will add new css style */

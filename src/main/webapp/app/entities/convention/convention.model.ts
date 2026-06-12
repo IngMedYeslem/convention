@@ -3,13 +3,14 @@ import { IClient } from 'app/entities/client/client.model';
 import { StatutConvention } from 'app/entities/enumerations/statut-convention.model';
 import { TypeConvention } from 'app/entities/enumerations/type-convention.model';
 import { EtapeApprobation } from 'app/entities/enumerations/etape-approbation.model';
+import { PeriodeEcheance } from 'app/entities/enumerations/periode-echeance.model';
 
 export interface IConvention {
   id: number;
   numConvention?: number | null;
   dateSignConv?: dayjs.Dayjs | null;
   dateDebutConv?: dayjs.Dayjs | null;
-  echeanceConv?: dayjs.Dayjs | null;
+  periodeEcheance?: keyof typeof PeriodeEcheance | null;
   redevance?: number | null;
   nomResponsable?: string | null;
   statut?: keyof typeof StatutConvention | null;

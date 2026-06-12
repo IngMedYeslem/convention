@@ -12,7 +12,6 @@ const requireRestSample: RestConvention = {
   ...sampleWithRequiredData,
   dateSignConv: sampleWithRequiredData.dateSignConv?.format(DATE_FORMAT),
   dateDebutConv: sampleWithRequiredData.dateDebutConv?.format(DATE_FORMAT),
-  echeanceConv: sampleWithRequiredData.echeanceConv?.format(DATE_FORMAT),
   dateCreation: sampleWithRequiredData.dateCreation?.toJSON(),
   dateModification: sampleWithRequiredData.dateModification?.toJSON(),
 };

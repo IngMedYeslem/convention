@@ -1,6 +1,7 @@
 package com.convention.service;
 
 import com.convention.service.dto.DetailConventionDTO;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +49,14 @@ public interface DetailConventionService {
      * @return the entity.
      */
     Optional<DetailConventionDTO> findOne(Long id);
+
+    /**
+     * Get all detailConventions for a given convention.
+     *
+     * @param conventionId the convention id.
+     * @return the list of entities.
+     */
+    List<DetailConventionDTO> findByConventionId(Long conventionId);
 
     /**
      * Delete the "id" detailConvention.

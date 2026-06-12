@@ -1,77 +1,206 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (convention(); as conventionRef) {
-      <div>
-        <h2 data-cy="conventionDetailsHeading"><span jhiTranslate="conventionApp.convention.detail.title">Convention</span></h2>
+<div class="form-page">
+  <div class="form-card-wrapper">
+    @if (convention(); as conv) {
+      <!-- En-tête carte -->
+      <div class="form-card-header">
+        <div class="d-flex align-items-center gap-3">
+          <div class="form-card-icon">
+            <fa-icon icon="file-contract" class="fa-lg"></fa-icon>
+          </div>
+          <div>
+            <h5 class="mb-0 fw-bold">Convention N° {{ conv.numConvention }}</h5>
+            <small class="opacity-75">{{ conv.client?.nomClient ?? conv.client?.id }}</small>
+          </div>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" (click)="previousState()" class="btn btn-outline-light btn-sm">
+            <fa-icon icon="arrow-left"></fa-icon> Retour
+          </button>
+          <button type="button" [routerLink]="['/convention', conv.id, 'edit']" class="btn btn-warning btn-sm">
+            <fa-icon icon="pencil-alt"></fa-icon> Éditer
+          </button>
+        </div>
+      </div>
 
-        <hr />
-
+      <div class="form-card-body">
         <jhi-alert-error />
-
         <jhi-alert />
 
-        <dl class="row-md jh-entity-details">
-          <dt><span jhiTranslate="global.field.id">ID</span></dt>
-          <dd>
-            <span>{{ conventionRef.id }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.numConvention">Num Convention</span></dt>
-          <dd>
-            <span>{{ conventionRef.numConvention }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.dateSignConv">Date Sign Conv</span></dt>
-          <dd>
-            <span>{{ conventionRef.dateSignConv | formatMediumDate }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.dateDebutConv">Date Debut Conv</span></dt>
-          <dd>
-            <span>{{ conventionRef.dateDebutConv | formatMediumDate }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.echeanceConv">Echeance Conv</span></dt>
-          <dd>
-            <span>{{ conventionRef.echeanceConv | formatMediumDate }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.redevance">Redevance</span></dt>
-          <dd>
-            <span>{{ conventionRef.redevance }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.nomResponsable">Nom Responsable</span></dt>
-          <dd>
-            <span>{{ conventionRef.nomResponsable }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.statut">Statut</span></dt>
-          <dd>
-            <span [jhiTranslate]="'conventionApp.StatutConvention.' + (conventionRef.statut ?? 'null')">{{
-              { null: '', BROUILLON: 'BROUILLON', ACTIVE: 'ACTIVE', SUSPENDUE: 'SUSPENDUE', TERMINEE: 'TERMINEE', ANNULEE: 'ANNULEE' }[
-                conventionRef.statut ?? 'null'
-              ]
-            }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.dateCreation">Date Creation</span></dt>
-          <dd>
-            <span>{{ conventionRef.dateCreation | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.dateModification">Date Modification</span></dt>
-          <dd>
-            <span>{{ conventionRef.dateModification | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span jhiTranslate="conventionApp.convention.client">Client</span></dt>
-          <dd>
-            @if (convention()!.client) {
-              <div>
-                <a [routerLink]="['/client', convention()!.client?.id, 'view']">{{ conventionRef.client?.id }}</a>
+        <!-- Section : Identification -->
+        <div class="form-section">
+          <div class="form-section-title"><fa-icon icon="hashtag" class="me-2 text-primary"></fa-icon>Identification</div>
+          <dl class="row">
+            <dt class="col-sm-4">N° Convention</dt>
+            <dd class="col-sm-8 fw-semibold">{{ conv.numConvention }}</dd>
+            <dt class="col-sm-4">Partenaire</dt>
+            <dd class="col-sm-8">
+              @if (conv.client) {
+                <a [routerLink]="['/client', conv.client.id, 'view']">{{ conv.client.nomClient ?? conv.client.id }}</a>
+              }
+            </dd>
+            <dt class="col-sm-4">Statut</dt>
+            <dd class="col-sm-8">
+              <span
+                class="badge"
+                [class.bg-success]="conv.statut === 'ACTIVE'"
+                [class.bg-warning]="conv.statut === 'BROUILLON'"
+                [class.bg-danger]="conv.statut === 'SUSPENDUE' || conv.statut === 'ANNULEE'"
+                [class.bg-secondary]="conv.statut === 'TERMINEE'"
+                [class.text-dark]="conv.statut === 'BROUILLON'"
+              >
+                {{ conv.statut }}
+              </span>
+            </dd>
+            <dt class="col-sm-4">Période d'échéance</dt>
+            <dd class="col-sm-8">
+              @if (conv.periodeEcheance === 'MENSUEL') {
+                <span class="badge bg-info text-dark">Mensuel</span>
+              } @else if (conv.periodeEcheance === 'ANNUEL') {
+                <span class="badge bg-primary">Annuel</span>
+              } @else {
+                <span class="text-muted">—</span>
+              }
+            </dd>
+            <dt class="col-sm-4">Date de signature</dt>
+            <dd class="col-sm-8">{{ conv.dateSignConv | formatMediumDate }}</dd>
+            <dt class="col-sm-4">Date de début</dt>
+            <dd class="col-sm-8">{{ conv.dateDebutConv | formatMediumDate }}</dd>
+            <dt class="col-sm-4">Responsable</dt>
+            <dd class="col-sm-8">{{ conv.nomResponsable }}</dd>
+            <dt class="col-sm-4">Type</dt>
+            <dd class="col-sm-8">{{ conv.typeConvention ?? '—' }}</dd>
+            <dt class="col-sm-4">Objet</dt>
+            <dd class="col-sm-8">{{ conv.objet ?? '—' }}</dd>
+          </dl>
+        </div>
+
+        <!-- Section : Synthèse financière -->
+        <div class="form-section">
+          <div class="form-section-title"><fa-icon icon="chart-bar" class="me-2 text-primary"></fa-icon>Synthèse financière</div>
+          <div class="row g-3">
+            <div class="col-sm-6 col-md-3">
+              <div class="card border-0 bg-light text-center py-3">
+                <div class="fs-4 fw-bold text-primary">{{ conv.redevance | number: '1.2-2' }}</div>
+                <small class="text-muted">Redevance / période (MRU)</small>
               </div>
-            }
-          </dd>
-        </dl>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <div class="card border-0 bg-light text-center py-3">
+                <div class="fs-4 fw-bold text-info">{{ totalDetailConvention | number: '1.2-2' }}</div>
+                <small class="text-muted">Autres montants (MRU)</small>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <div class="card border-0 bg-light text-center py-3">
+                <div class="fs-4 fw-bold text-danger">{{ totalImpaye | number: '1.2-2' }}</div>
+                <small class="text-muted">Impayé (MRU)</small>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <div class="card border-0 bg-light text-center py-3">
+                <div class="fs-4 fw-bold text-success">{{ totalPaye | number: '1.2-2' }}</div>
+                <small class="text-muted">Payé (MRU)</small>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
-        </button>
+        <!-- Section : Lignes de la convention -->
+        @if (detailConventions.length > 0) {
+          <div class="form-section">
+            <div class="form-section-title"><fa-icon icon="list" class="me-2 text-primary"></fa-icon>Lignes de la convention</div>
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Désignation</th>
+                    <th class="text-end">P.U. (MRU)</th>
+                    <th class="text-end">Qté</th>
+                    <th class="text-end">Montant (MRU)</th>
+                    <th>Observations</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (ligne of detailConventions; track ligne.id) {
+                    <tr>
+                      <td>{{ ligne.designation }}</td>
+                      <td class="text-end">{{ ligne.prixUnitaire | number: '1.2-2' }}</td>
+                      <td class="text-end">{{ ligne.quantite }}</td>
+                      <td class="text-end fw-semibold">{{ ligne.montantTotal | number: '1.2-2' }}</td>
+                      <td>{{ ligne.observations ?? '—' }}</td>
+                    </tr>
+                  }
+                </tbody>
+                <tfoot class="table-light fw-semibold">
+                  <tr>
+                    <td colspan="3" class="text-end">Total :</td>
+                    <td class="text-end">{{ totalDetailConvention | number: '1.2-2' }} MRU</td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        }
 
-        <button type="button" [routerLink]="['/convention', conventionRef.id, 'edit']" class="btn btn-primary">
-          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
-        </button>
+        <!-- Section : État des factures -->
+        <div class="form-section">
+          <div class="form-section-title d-flex justify-content-between align-items-center">
+            <span><fa-icon icon="file-invoice-dollar" class="me-2 text-primary"></fa-icon>État des factures</span>
+            <span class="badge bg-secondary">{{ factures.length }} facture(s)</span>
+          </div>
+          @if (factures.length === 0) {
+            <p class="text-muted text-center py-3"><small>Aucune facture associée à cette convention.</small></p>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th>N° Facture</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th class="text-end">Montant HT (MRU)</th>
+                    <th class="text-end">Montant TTC (MRU)</th>
+                    <th>Échéance</th>
+                    <th>Statut</th>
+                    <th><span class="visually-hidden">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (facture of factures; track facture.id) {
+                    <tr>
+                      <td class="fw-semibold">{{ facture.numFacture }}</td>
+                      <td>{{ facture.dateFacture | formatMediumDate }}</td>
+                      <td>{{ facture.typeFacture }}</td>
+                      <td class="text-end">{{ facture.montantTotal | number: '1.2-2' }}</td>
+                      <td class="text-end">{{ facture.montantTTC | number: '1.2-2' }}</td>
+                      <td>{{ facture.dateEcheance | formatMediumDate }}</td>
+                      <td>
+                        <span class="badge {{ statutBadge(facture.statut) }}">
+                          {{ statutLabel(facture.statut) }}
+                        </span>
+                      </td>
+                      <td class="text-center">
+                        <a [routerLink]="['/facture', facture.id, 'view']" class="btn btn-sm btn-outline-secondary py-0 px-1" title="Voir">
+                          <fa-icon icon="eye"></fa-icon>
+                        </a>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+                <tfoot class="table-light fw-semibold">
+                  <tr>
+                    <td colspan="3" class="text-end">Total :</td>
+                    <td class="text-end">{{ totalFactures | number: '1.2-2' }} MRU</td>
+                    <td class="text-end text-success">{{ totalPaye | number: '1.2-2' }} ✓</td>
+                    <td></td>
+                    <td colspan="2" class="text-end text-danger">Impayé : {{ totalImpaye | number: '1.2-2' }} MRU</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          }
+        </div>
       </div>
     }
   </div>

@@ -51,7 +51,7 @@ public class ConventionEntityAsserts {
             .satisfies(a -> assertThat(a.getNumConvention()).as("check numConvention").isEqualTo(expected.getNumConvention()))
             .satisfies(a -> assertThat(a.getDateSignConv()).as("check dateSignConv").isEqualTo(expected.getDateSignConv()))
             .satisfies(a -> assertThat(a.getDateDebutConv()).as("check dateDebutConv").isEqualTo(expected.getDateDebutConv()))
-            .satisfies(a -> assertThat(a.getEcheanceConv()).as("check echeanceConv").isEqualTo(expected.getEcheanceConv()))
+            .satisfies(a -> assertThat(a.getPeriodeEcheance()).as("check periodeEcheance").isEqualTo(expected.getPeriodeEcheance()))
             .satisfies(a ->
                 assertThat(a.getRedevance()).as("check redevance").usingComparator(bigDecimalCompareTo).isEqualTo(expected.getRedevance())
             )

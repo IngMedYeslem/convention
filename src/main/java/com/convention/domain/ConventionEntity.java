@@ -1,6 +1,7 @@
 package com.convention.domain;
 
 import com.convention.domain.enumeration.EtapeApprobation;
+import com.convention.domain.enumeration.PeriodeEcheance;
 import com.convention.domain.enumeration.StatutConvention;
 import com.convention.domain.enumeration.TypeConvention;
 import jakarta.persistence.*;
@@ -41,8 +42,9 @@ public class ConventionEntity implements Serializable {
     private LocalDate dateDebutConv;
 
     @NotNull
-    @Column(name = "echeance_conv", nullable = false)
-    private LocalDate echeanceConv;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "periode_echeance", nullable = false)
+    private PeriodeEcheance periodeEcheance;
 
     @NotNull
     @DecimalMin(value = "0")
@@ -172,17 +174,17 @@ public class ConventionEntity implements Serializable {
         this.dateDebutConv = dateDebutConv;
     }
 
-    public LocalDate getEcheanceConv() {
-        return this.echeanceConv;
+    public PeriodeEcheance getPeriodeEcheance() {
+        return this.periodeEcheance;
     }
 
-    public ConventionEntity echeanceConv(LocalDate echeanceConv) {
-        this.setEcheanceConv(echeanceConv);
+    public ConventionEntity periodeEcheance(PeriodeEcheance periodeEcheance) {
+        this.setPeriodeEcheance(periodeEcheance);
         return this;
     }
 
-    public void setEcheanceConv(LocalDate echeanceConv) {
-        this.echeanceConv = echeanceConv;
+    public void setPeriodeEcheance(PeriodeEcheance periodeEcheance) {
+        this.periodeEcheance = periodeEcheance;
     }
 
     public BigDecimal getRedevance() {
@@ -394,7 +396,7 @@ public class ConventionEntity implements Serializable {
             ", numConvention=" + getNumConvention() +
             ", dateSignConv='" + getDateSignConv() + "'" +
             ", dateDebutConv='" + getDateDebutConv() + "'" +
-            ", echeanceConv='" + getEcheanceConv() + "'" +
+            ", periodeEcheance='" + getPeriodeEcheance() + "'" +
             ", redevance=" + getRedevance() +
             ", nomResponsable='" + getNomResponsable() + "'" +
             ", statut='" + getStatut() + "'" +

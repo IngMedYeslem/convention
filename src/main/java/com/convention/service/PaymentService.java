@@ -1,6 +1,7 @@
 package com.convention.service;
 
 import com.convention.service.dto.PaymentDTO;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,4 +56,6 @@ public interface PaymentService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    List<PaymentDTO> findByFactureId(Long factureId);
 }

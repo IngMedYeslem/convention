@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.convention.IntegrationTest;
 import com.convention.domain.ClientEntity;
 import com.convention.domain.ConventionEntity;
+import com.convention.domain.enumeration.PeriodeEcheance;
 import com.convention.domain.enumeration.StatutConvention;
 import com.convention.repository.ConventionRepository;
 import com.convention.service.dto.ConventionDTO;
@@ -54,9 +55,8 @@ class ConventionResourceIT {
     private static final LocalDate UPDATED_DATE_DEBUT_CONV = LocalDate.now(ZoneId.systemDefault());
     private static final LocalDate SMALLER_DATE_DEBUT_CONV = LocalDate.ofEpochDay(-1L);
 
-    private static final LocalDate DEFAULT_ECHEANCE_CONV = LocalDate.ofEpochDay(0L);
-    private static final LocalDate UPDATED_ECHEANCE_CONV = LocalDate.now(ZoneId.systemDefault());
-    private static final LocalDate SMALLER_ECHEANCE_CONV = LocalDate.ofEpochDay(-1L);
+    private static final PeriodeEcheance DEFAULT_PERIODE_ECHEANCE = PeriodeEcheance.MENSUEL;
+    private static final PeriodeEcheance UPDATED_PERIODE_ECHEANCE = PeriodeEcheance.ANNUEL;
 
     private static final BigDecimal DEFAULT_REDEVANCE = new BigDecimal(0);
     private static final BigDecimal UPDATED_REDEVANCE = new BigDecimal(1);
@@ -110,7 +110,7 @@ class ConventionResourceIT {
             .numConvention(DEFAULT_NUM_CONVENTION)
             .dateSignConv(DEFAULT_DATE_SIGN_CONV)
             .dateDebutConv(DEFAULT_DATE_DEBUT_CONV)
-            .echeanceConv(DEFAULT_ECHEANCE_CONV)
+            .periodeEcheance(DEFAULT_PERIODE_ECHEANCE)
             .redevance(DEFAULT_REDEVANCE)
             .nomResponsable(DEFAULT_NOM_RESPONSABLE)
             .statut(DEFAULT_STATUT)
@@ -140,7 +140,7 @@ class ConventionResourceIT {
             .numConvention(UPDATED_NUM_CONVENTION)
             .dateSignConv(UPDATED_DATE_SIGN_CONV)
             .dateDebutConv(UPDATED_DATE_DEBUT_CONV)
-            .echeanceConv(UPDATED_ECHEANCE_CONV)
+            .periodeEcheance(UPDATED_PERIODE_ECHEANCE)
             .redevance(UPDATED_REDEVANCE)
             .nomResponsable(UPDATED_NOM_RESPONSABLE)
             .statut(UPDATED_STATUT)
@@ -267,10 +267,10 @@ class ConventionResourceIT {
 
     @Test
     @Transactional
-    void checkEcheanceConvIsRequired() throws Exception {
+    void checkPeriodeEcheanceIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
-        conventionEntity.setEcheanceConv(null);
+        conventionEntity.setPeriodeEcheance(null);
 
         // Create the Convention, which fails.
         ConventionDTO conventionDTO = conventionMapper.toDto(conventionEntity);
@@ -348,7 +348,7 @@ class ConventionResourceIT {
             .andExpect(jsonPath("$.[*].numConvention").value(hasItem(DEFAULT_NUM_CONVENTION.intValue())))
             .andExpect(jsonPath("$.[*].dateSignConv").value(hasItem(DEFAULT_DATE_SIGN_CONV.toString())))
             .andExpect(jsonPath("$.[*].dateDebutConv").value(hasItem(DEFAULT_DATE_DEBUT_CONV.toString())))
-            .andExpect(jsonPath("$.[*].echeanceConv").value(hasItem(DEFAULT_ECHEANCE_CONV.toString())))
+            .andExpect(jsonPath("$.[*].periodeEcheance").value(hasItem(DEFAULT_PERIODE_ECHEANCE.toString())))
             .andExpect(jsonPath("$.[*].redevance").value(hasItem(sameNumber(DEFAULT_REDEVANCE))))
             .andExpect(jsonPath("$.[*].nomResponsable").value(hasItem(DEFAULT_NOM_RESPONSABLE)))
             .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.toString())))
@@ -371,7 +371,7 @@ class ConventionResourceIT {
             .andExpect(jsonPath("$.numConvention").value(DEFAULT_NUM_CONVENTION.intValue()))
             .andExpect(jsonPath("$.dateSignConv").value(DEFAULT_DATE_SIGN_CONV.toString()))
             .andExpect(jsonPath("$.dateDebutConv").value(DEFAULT_DATE_DEBUT_CONV.toString()))
-            .andExpect(jsonPath("$.echeanceConv").value(DEFAULT_ECHEANCE_CONV.toString()))
+            .andExpect(jsonPath("$.periodeEcheance").value(DEFAULT_PERIODE_ECHEANCE.toString()))
             .andExpect(jsonPath("$.redevance").value(sameNumber(DEFAULT_REDEVANCE)))
             .andExpect(jsonPath("$.nomResponsable").value(DEFAULT_NOM_RESPONSABLE))
             .andExpect(jsonPath("$.statut").value(DEFAULT_STATUT.toString()))
@@ -645,84 +645,38 @@ class ConventionResourceIT {
 
     @Test
     @Transactional
-    void getAllConventionsByEcheanceConvIsEqualToSomething() throws Exception {
+    void getAllConventionsByPeriodeEcheanceIsEqualToSomething() throws Exception {
         // Initialize the database
         insertedConventionEntity = conventionRepository.saveAndFlush(conventionEntity);
 
-        // Get all the conventionList where echeanceConv equals to
-        defaultConventionFiltering("echeanceConv.equals=" + DEFAULT_ECHEANCE_CONV, "echeanceConv.equals=" + UPDATED_ECHEANCE_CONV);
-    }
-
-    @Test
-    @Transactional
-    void getAllConventionsByEcheanceConvIsInShouldWork() throws Exception {
-        // Initialize the database
-        insertedConventionEntity = conventionRepository.saveAndFlush(conventionEntity);
-
-        // Get all the conventionList where echeanceConv in
+        // Get all the conventionList where periodeEcheance equals to
         defaultConventionFiltering(
-            "echeanceConv.in=" + DEFAULT_ECHEANCE_CONV + "," + UPDATED_ECHEANCE_CONV,
-            "echeanceConv.in=" + UPDATED_ECHEANCE_CONV
+            "periodeEcheance.equals=" + DEFAULT_PERIODE_ECHEANCE,
+            "periodeEcheance.equals=" + UPDATED_PERIODE_ECHEANCE
         );
     }
 
     @Test
     @Transactional
-    void getAllConventionsByEcheanceConvIsNullOrNotNull() throws Exception {
+    void getAllConventionsByPeriodeEcheanceIsInShouldWork() throws Exception {
         // Initialize the database
         insertedConventionEntity = conventionRepository.saveAndFlush(conventionEntity);
 
-        // Get all the conventionList where echeanceConv is not null
-        defaultConventionFiltering("echeanceConv.specified=true", "echeanceConv.specified=false");
-    }
-
-    @Test
-    @Transactional
-    void getAllConventionsByEcheanceConvIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        insertedConventionEntity = conventionRepository.saveAndFlush(conventionEntity);
-
-        // Get all the conventionList where echeanceConv is greater than or equal to
+        // Get all the conventionList where periodeEcheance in
         defaultConventionFiltering(
-            "echeanceConv.greaterThanOrEqual=" + DEFAULT_ECHEANCE_CONV,
-            "echeanceConv.greaterThanOrEqual=" + UPDATED_ECHEANCE_CONV
+            "periodeEcheance.in=" + DEFAULT_PERIODE_ECHEANCE + "," + UPDATED_PERIODE_ECHEANCE,
+            "periodeEcheance.in=" + UPDATED_PERIODE_ECHEANCE
         );
     }
 
     @Test
     @Transactional
-    void getAllConventionsByEcheanceConvIsLessThanOrEqualToSomething() throws Exception {
+    void getAllConventionsByPeriodeEcheanceIsNullOrNotNull() throws Exception {
         // Initialize the database
         insertedConventionEntity = conventionRepository.saveAndFlush(conventionEntity);
 
-        // Get all the conventionList where echeanceConv is less than or equal to
-        defaultConventionFiltering(
-            "echeanceConv.lessThanOrEqual=" + DEFAULT_ECHEANCE_CONV,
-            "echeanceConv.lessThanOrEqual=" + SMALLER_ECHEANCE_CONV
-        );
-    }
-
-    @Test
-    @Transactional
-    void getAllConventionsByEcheanceConvIsLessThanSomething() throws Exception {
-        // Initialize the database
-        insertedConventionEntity = conventionRepository.saveAndFlush(conventionEntity);
-
-        // Get all the conventionList where echeanceConv is less than
-        defaultConventionFiltering("echeanceConv.lessThan=" + UPDATED_ECHEANCE_CONV, "echeanceConv.lessThan=" + DEFAULT_ECHEANCE_CONV);
-    }
-
-    @Test
-    @Transactional
-    void getAllConventionsByEcheanceConvIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        insertedConventionEntity = conventionRepository.saveAndFlush(conventionEntity);
-
-        // Get all the conventionList where echeanceConv is greater than
-        defaultConventionFiltering(
-            "echeanceConv.greaterThan=" + SMALLER_ECHEANCE_CONV,
-            "echeanceConv.greaterThan=" + DEFAULT_ECHEANCE_CONV
-        );
+        // Get all the conventionList where periodeEcheance is not null
+        defaultConventionFiltering("periodeEcheance.specified=true", "periodeEcheance.specified=false");
     }
 
     @Test
@@ -995,7 +949,7 @@ class ConventionResourceIT {
             .andExpect(jsonPath("$.[*].numConvention").value(hasItem(DEFAULT_NUM_CONVENTION.intValue())))
             .andExpect(jsonPath("$.[*].dateSignConv").value(hasItem(DEFAULT_DATE_SIGN_CONV.toString())))
             .andExpect(jsonPath("$.[*].dateDebutConv").value(hasItem(DEFAULT_DATE_DEBUT_CONV.toString())))
-            .andExpect(jsonPath("$.[*].echeanceConv").value(hasItem(DEFAULT_ECHEANCE_CONV.toString())))
+            .andExpect(jsonPath("$.[*].periodeEcheance").value(hasItem(DEFAULT_PERIODE_ECHEANCE.toString())))
             .andExpect(jsonPath("$.[*].redevance").value(hasItem(sameNumber(DEFAULT_REDEVANCE))))
             .andExpect(jsonPath("$.[*].nomResponsable").value(hasItem(DEFAULT_NOM_RESPONSABLE)))
             .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.toString())))
@@ -1052,7 +1006,7 @@ class ConventionResourceIT {
             .numConvention(UPDATED_NUM_CONVENTION)
             .dateSignConv(UPDATED_DATE_SIGN_CONV)
             .dateDebutConv(UPDATED_DATE_DEBUT_CONV)
-            .echeanceConv(UPDATED_ECHEANCE_CONV)
+            .periodeEcheance(UPDATED_PERIODE_ECHEANCE)
             .redevance(UPDATED_REDEVANCE)
             .nomResponsable(UPDATED_NOM_RESPONSABLE)
             .statut(UPDATED_STATUT)
@@ -1150,7 +1104,7 @@ class ConventionResourceIT {
         partialUpdatedConventionEntity
             .numConvention(UPDATED_NUM_CONVENTION)
             .dateDebutConv(UPDATED_DATE_DEBUT_CONV)
-            .echeanceConv(UPDATED_ECHEANCE_CONV)
+            .periodeEcheance(UPDATED_PERIODE_ECHEANCE)
             .dateModification(UPDATED_DATE_MODIFICATION);
 
         restConventionMockMvc
@@ -1186,7 +1140,7 @@ class ConventionResourceIT {
             .numConvention(UPDATED_NUM_CONVENTION)
             .dateSignConv(UPDATED_DATE_SIGN_CONV)
             .dateDebutConv(UPDATED_DATE_DEBUT_CONV)
-            .echeanceConv(UPDATED_ECHEANCE_CONV)
+            .periodeEcheance(UPDATED_PERIODE_ECHEANCE)
             .redevance(UPDATED_REDEVANCE)
             .nomResponsable(UPDATED_NOM_RESPONSABLE)
             .statut(UPDATED_STATUT)

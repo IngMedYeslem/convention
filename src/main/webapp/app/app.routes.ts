@@ -44,6 +44,31 @@ const routes: Routes = [
     title: 'Statistiques',
   },
   {
+    path: 'facture/:id/imprimer',
+    loadComponent: () => import('./entities/facture/print/facture-imprimer.component').then(m => m.FactureImprimerComponent),
+    title: 'Imprimer la facture',
+  },
+  {
+    path: 'facture/:id/lettre-paiement',
+    loadComponent: () => import('./entities/facture/print/facture-lettre-paiement.component').then(m => m.FactureLettreComponent),
+    title: 'Lettre de paiement',
+  },
+  {
+    path: 'rapport/factures-par-client',
+    loadComponent: () => import('./rapport/rapport-factures-client.component').then(m => m.RapportFacturesClientComponent),
+    title: 'Rapport — Factures par client',
+  },
+  {
+    path: 'rapport/conventions-par-client',
+    loadComponent: () => import('./rapport/rapport-conventions-client.component').then(m => m.RapportConventionsClientComponent),
+    title: 'Rapport — Conventions par client',
+  },
+  {
+    path: 'rapport/etat-facturation',
+    loadComponent: () => import('./rapport/rapport-etat-facturation.component').then(m => m.RapportEtatFacturationComponent),
+    title: 'État général de contrôle facturation',
+  },
+  {
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },

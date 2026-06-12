@@ -137,6 +137,15 @@ public class DetailFactureResource {
     }
 
     /**
+     * {@code GET  /detail-factures/by-facture/:factureId} : get all detailFactures for a facture.
+     */
+    @GetMapping("/by-facture/{factureId}")
+    public ResponseEntity<List<DetailFactureDTO>> getDetailFacturesByFacture(@PathVariable Long factureId) {
+        LOG.debug("REST request to get DetailFactures for facture : {}", factureId);
+        return ResponseEntity.ok(detailFactureService.findByFactureId(factureId));
+    }
+
+    /**
      * {@code GET  /detail-factures} : get all the detailFactures.
      *
      * @param pageable the pagination information.

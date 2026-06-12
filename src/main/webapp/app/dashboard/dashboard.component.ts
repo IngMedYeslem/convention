@@ -47,14 +47,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadConventionsAlerte(): void {
-    this.http.get<any[]>('/api/conventions?statut=ACTIVE&size=100').subscribe({
+    this.http.get<any[]>('/api/conventions?statut.equals=SUSPENDUE&size=10').subscribe({
       next: data => {
-        const dans90j = new Date();
-        dans90j.setDate(dans90j.getDate() + 90);
-        this.conventionsAlerte = (data ?? [])
-          .filter((c: any) => c.echeanceConv && new Date(c.echeanceConv) <= dans90j)
-          .sort((a: any, b: any) => new Date(a.echeanceConv).getTime() - new Date(b.echeanceConv).getTime())
-          .slice(0, 10);
+        this.conventionsAlerte = data ?? [];
       },
       error: () => {
         this.conventionsAlerte = [];
@@ -73,18 +68,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  alertClass(echeance: string): string {
-    const j = Math.ceil((new Date(echeance).getTime() - Date.now()) / 86400000);
-    if (j < 0) return 'table-danger';
-    if (j <= 30) return 'table-warning';
-    return 'table-info';
-  }
-
-  joursLabel(echeance: string): string {
-    const j = Math.ceil((new Date(echeance).getTime() - Date.now()) / 86400000);
-    if (j < 0) return `Expirée (${Math.abs(j)} j)`;
-    if (j === 0) return "Expire aujourd'hui";
-    return `${j} j restant${j > 1 ? 's' : ''}`;
+  periodeLabel(periode: string): string {
+    if (periode === 'MENSUEL') return 'Mensuel';
+    if (periode === 'ANNUEL') return 'Annuel';
+    return '—';
   }
 
   private buildCharts(): void {

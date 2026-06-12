@@ -71,7 +71,7 @@ public class ConventionGatlingTest extends Simulation {
                                 "\"numConvention\": 0" +
                                 ", \"dateSignConv\": \"2020-01-01T00:00:00.000Z\"" +
                                 ", \"dateDebutConv\": \"2020-01-01T00:00:00.000Z\"" +
-                                ", \"echeanceConv\": \"2020-01-01T00:00:00.000Z\"" +
+                                ", \"periodeEcheance\": \"MENSUEL\"" +
                                 ", \"redevance\": 0" +
                                 ", \"nomResponsable\": \"SAMPLE_TEXT\"" +
                                 ", \"statut\": \"BROUILLON\"" +

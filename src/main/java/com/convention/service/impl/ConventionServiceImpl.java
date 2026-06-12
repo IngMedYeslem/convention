@@ -1,6 +1,7 @@
 package com.convention.service.impl;
 
 import com.convention.domain.ConventionEntity;
+import com.convention.repository.ClientRepository;
 import com.convention.repository.ConventionRepository;
 import com.convention.service.ConventionService;
 import com.convention.service.dto.ConventionDTO;
@@ -21,11 +22,16 @@ public class ConventionServiceImpl implements ConventionService {
     private static final Logger LOG = LoggerFactory.getLogger(ConventionServiceImpl.class);
 
     private final ConventionRepository conventionRepository;
-
+    private final ClientRepository clientRepository;
     private final ConventionMapper conventionMapper;
 
-    public ConventionServiceImpl(ConventionRepository conventionRepository, ConventionMapper conventionMapper) {
+    public ConventionServiceImpl(
+        ConventionRepository conventionRepository,
+        ClientRepository clientRepository,
+        ConventionMapper conventionMapper
+    ) {
         this.conventionRepository = conventionRepository;
+        this.clientRepository = clientRepository;
         this.conventionMapper = conventionMapper;
     }
 
@@ -33,6 +39,9 @@ public class ConventionServiceImpl implements ConventionService {
     public ConventionDTO save(ConventionDTO conventionDTO) {
         LOG.debug("Request to save Convention : {}", conventionDTO);
         ConventionEntity conventionEntity = conventionMapper.toEntity(conventionDTO);
+        if (conventionDTO.getClient() != null && conventionDTO.getClient().getId() != null) {
+            conventionEntity.setClient(clientRepository.getReferenceById(conventionDTO.getClient().getId()));
+        }
         conventionEntity = conventionRepository.save(conventionEntity);
         return conventionMapper.toDto(conventionEntity);
     }
@@ -41,6 +50,9 @@ public class ConventionServiceImpl implements ConventionService {
     public ConventionDTO update(ConventionDTO conventionDTO) {
         LOG.debug("Request to update Convention : {}", conventionDTO);
         ConventionEntity conventionEntity = conventionMapper.toEntity(conventionDTO);
+        if (conventionDTO.getClient() != null && conventionDTO.getClient().getId() != null) {
+            conventionEntity.setClient(clientRepository.getReferenceById(conventionDTO.getClient().getId()));
+        }
         conventionEntity = conventionRepository.save(conventionEntity);
         return conventionMapper.toDto(conventionEntity);
     }

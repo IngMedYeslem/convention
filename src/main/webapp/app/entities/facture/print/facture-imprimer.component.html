@@ -1,0 +1,357 @@
+<!-- Boutons hors impression -->
+<div class="no-print d-flex gap-2 p-3">
+  <button type="button" class="btn btn-secondary btn-sm" (click)="goBack()">← Retour</button>
+  <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">🖨 Imprimer / Enregistrer PDF</button>
+</div>
+
+@if (loading) {
+  <div class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+}
+
+@if (!loading && facture) {
+  <div class="facture-page">
+    <!-- En-tête ANRPTS -->
+    <div class="facture-header">
+      <div class="header-left">
+        <div class="org-name">AGENCE NATIONALE DU REGISTRE DE LA POPULATION<br />ET DES TITRES SÉCURISÉS</div>
+        <div class="org-subtitle">ANRPTS</div>
+        <div class="org-address">Nouakchott — République Islamique de Mauritanie</div>
+      </div>
+      <div class="header-right">
+        <div class="doc-title">FACTURE</div>
+        <div class="doc-num">N° {{ facture.numFacture }}</div>
+        @if (facture.ancienneRef) {
+          <div class="doc-ancref">Réf. précédente : {{ facture.ancienneRef }}</div>
+        }
+        <div class="doc-date">Date : {{ fmtDate(facture.dateFacture) }}</div>
+        @if (convention) {
+          <div class="doc-conv">Convention N° {{ convention.numConvention }}</div>
+        }
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Bloc client -->
+    <div class="client-block">
+      <div class="client-label">DESTINATAIRE</div>
+      <div class="client-name">{{ client?.nomClient ?? '—' }}</div>
+      @if (client?.adresseClient) {
+        <div>{{ client!.adresseClient }}</div>
+      }
+      @if (client?.emailClient) {
+        <div>Email : {{ client!.emailClient }}</div>
+      }
+      @if (client?.nif) {
+        <div>NIF : {{ client!.nif }}</div>
+      }
+      @if (client?.rc) {
+        <div>RC : {{ client!.rc }}</div>
+      }
+      @if (client?.nomRepresentant) {
+        <div>
+          À l'attention de : {{ client!.nomRepresentant }}
+          @if (client!.fonctionRepresentant) {
+            — {{ client!.fonctionRepresentant }}
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Objet convention -->
+    @if (convention?.objet) {
+      <div class="objet-block"><strong>Objet :</strong> {{ convention!.objet }}</div>
+    }
+
+    <!-- Tableau lignes -->
+    <table class="lignes-table">
+      <thead>
+        <tr>
+          <th class="col-num">#</th>
+          <th class="col-designation">Désignation</th>
+          <th class="col-pu">Prix unitaire</th>
+          <th class="col-qte">Qté</th>
+          <th class="col-ht">Montant HT</th>
+          <th class="col-tva">TVA %</th>
+          <th class="col-tva">TVA</th>
+          <th class="col-ttc">Montant TTC</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (ligne of lignes; track ligne.id; let i = $index) {
+          <tr>
+            <td class="text-center">{{ i + 1 }}</td>
+            <td>{{ ligne.designation }}</td>
+            <td class="text-end">{{ ligne.prixUnitaire | number: '1.2-2' }}</td>
+            <td class="text-center">{{ ligne.quantite }}</td>
+            <td class="text-end">{{ ligne.montantHT | number: '1.2-2' }}</td>
+            <td class="text-center">{{ ligne.tauxTVA ?? 0 }}%</td>
+            <td class="text-end">{{ ligne.montantTVA | number: '1.2-2' }}</td>
+            <td class="text-end fw-bold">{{ ligne.montantTTC | number: '1.2-2' }}</td>
+          </tr>
+        }
+        @if (lignes.length === 0) {
+          <tr>
+            <td colspan="8" class="text-center text-muted py-3">Aucune ligne de détail</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Totaux -->
+    <div class="totaux-block">
+      <table class="totaux-table">
+        <tr>
+          <td class="totaux-label">Total Hors Taxes :</td>
+          <td class="totaux-val">{{ totalHT | number: '1.2-2' }} MRU</td>
+        </tr>
+        <tr>
+          <td class="totaux-label">TVA :</td>
+          <td class="totaux-val">{{ totalTVA | number: '1.2-2' }} MRU</td>
+        </tr>
+        <tr class="totaux-ttc">
+          <td class="totaux-label"><strong>TOTAL TTC :</strong></td>
+          <td class="totaux-val">
+            <strong>{{ totalTTC | number: '1.2-2' }} MRU</strong>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Montant en lettres -->
+    <div class="montant-lettres-block">
+      Arrêté la présente facture à la somme de : <strong>{{ montantNetEnLettres }}</strong>
+    </div>
+
+    <!-- Observations -->
+    @if (facture.observations) {
+      <div class="obs-block"><strong>Observations :</strong> {{ facture.observations }}</div>
+    }
+
+    <!-- Conditions -->
+    <div class="conditions-block">
+      <p>
+        Conformément aux dispositions de la convention en vigueur, nous vous prions de bien vouloir régler le montant de la présente facture
+        dans les délais impartis.
+      </p>
+      <p>Le paiement peut être effectué par virement bancaire, chèque ou espèces auprès de nos services.</p>
+    </div>
+
+    <!-- Pied de page -->
+    <div class="facture-footer">
+      <div class="footer-left">
+        <div class="footer-org">ANRPTS — Agence Nationale du Registre de la Population et des Titres Sécurisés</div>
+        <div>Nouakchott, Mauritanie</div>
+      </div>
+      <div class="footer-right">
+        <div class="signature-block">
+          <div>Le Directeur Général</div>
+          <div class="signature-line"></div>
+          <div>Signature et cachet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<style>
+  @media screen {
+    .facture-page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      font-family: 'Times New Roman', serif;
+      font-size: 12px;
+      border: 1px solid #ddd;
+      background: #fff;
+    }
+  }
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    .facture-page {
+      padding: 1cm;
+      font-size: 11px;
+    }
+    body {
+      margin: 0;
+    }
+  }
+  .facture-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  .header-left .org-name {
+    font-weight: bold;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .header-left .org-subtitle {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1a3a6c;
+    margin-top: 4px;
+  }
+  .header-left .org-address {
+    font-size: 10px;
+    color: #666;
+    margin-top: 4px;
+  }
+  .header-right {
+    text-align: right;
+  }
+  .header-right .doc-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1a3a6c;
+    letter-spacing: 2px;
+  }
+  .header-right .doc-num {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .header-right .doc-ancref {
+    font-size: 10px;
+    color: #666;
+  }
+  .header-right .doc-date {
+    margin-top: 4px;
+  }
+  .header-right .doc-conv {
+    color: #555;
+    font-size: 11px;
+  }
+  .divider {
+    border-top: 2px solid #1a3a6c;
+    margin: 0.5rem 0 1rem;
+  }
+  .client-block {
+    border: 1px solid #ccc;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .client-label {
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 4px;
+  }
+  .client-name {
+    font-size: 13px;
+    font-weight: bold;
+  }
+  .objet-block {
+    margin-bottom: 1rem;
+    font-size: 11px;
+  }
+  .lignes-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0.5rem;
+    font-size: 11px;
+  }
+  .lignes-table th {
+    background: #1a3a6c;
+    color: white;
+    padding: 5px 6px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .lignes-table td {
+    border: 1px solid #ddd;
+    padding: 4px 6px;
+  }
+  .lignes-table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+  }
+  .col-num {
+    width: 3%;
+  }
+  .col-designation {
+    width: 30%;
+  }
+  .col-pu,
+  .col-ht,
+  .col-ttc {
+    width: 12%;
+  }
+  .col-qte,
+  .col-tva {
+    width: 8%;
+  }
+  .text-end {
+    text-align: right;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .fw-bold {
+    font-weight: bold;
+  }
+  .totaux-block {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0.5rem 0 1rem;
+  }
+  .totaux-table {
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .totaux-table td {
+    padding: 3px 8px;
+  }
+  .totaux-label {
+    text-align: right;
+    min-width: 150px;
+  }
+  .totaux-val {
+    text-align: right;
+    min-width: 120px;
+    border-left: 1px solid #ddd;
+  }
+  .totaux-ttc td {
+    background: #f0f2f5;
+    border-top: 2px solid #1a3a6c;
+  }
+  .montant-lettres-block {
+    border: 1px solid #1a3a6c;
+    border-radius: 3px;
+    padding: 0.5rem 0.8rem;
+    margin-bottom: 0.8rem;
+    background: #f0f4ff;
+    font-size: 11px;
+  }
+  .obs-block {
+    border-left: 3px solid #1a3a6c;
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 1rem;
+    font-size: 11px;
+    background: #f8f9fa;
+  }
+  .conditions-block {
+    font-size: 10px;
+    color: #555;
+    margin-bottom: 1rem;
+  }
+  .facture-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid #ddd;
+    padding-top: 0.8rem;
+    font-size: 10px;
+    color: #666;
+  }
+  .signature-block {
+    text-align: center;
+  }
+  .signature-line {
+    border-bottom: 1px solid #333;
+    width: 150px;
+    margin: 2rem auto 0.3rem;
+  }
+</style>

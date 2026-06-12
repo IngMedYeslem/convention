@@ -76,9 +76,13 @@
                 id="field_ancienneRef"
                 data-cy="ancienneRef"
                 formControlName="ancienneRef"
-                placeholder="Réf. précédente"
+                placeholder="AAAA/CV/NNN"
               />
-              @if (editForm.get('ancienneRef')?.errors?.maxlength) {
+              <div class="form-text text-muted">Format : AAAA/CV/NNN (ex: 2025/CV/001)</div>
+              @if (editForm.get('ancienneRef')?.errors?.['pattern'] && editForm.get('ancienneRef')?.touched) {
+                <div class="invalid-feedback d-block">Format requis : AAAA/CV/NNN (ex: 2025/CV/001)</div>
+              }
+              @if (editForm.get('ancienneRef')?.errors?.['maxlength']) {
                 <div class="invalid-feedback d-block">Max 50 caractères.</div>
               }
             </div>
@@ -208,7 +212,7 @@
               <select class="form-select" id="field_client" data-cy="client" formControlName="client" [compareWith]="compareClient">
                 <option [ngValue]="null">— Sélectionner un partenaire —</option>
                 @for (clientOption of clientsSharedCollection; track $index) {
-                  <option [ngValue]="clientOption">{{ clientOption.id }}</option>
+                  <option [ngValue]="clientOption">{{ clientOption.nomClient ?? clientOption.id }}</option>
                 }
               </select>
               @if (editForm.get('client')?.invalid && editForm.get('client')?.touched) {
@@ -226,10 +230,118 @@
               >
                 <option [ngValue]="null">— Sélectionner une convention —</option>
                 @for (conventionOption of conventionsSharedCollection; track $index) {
-                  <option [ngValue]="conventionOption">{{ conventionOption.id }}</option>
+                  <option [ngValue]="conventionOption">
+                    Conv. N° {{ conventionOption.numConvention ?? conventionOption.id }} — {{ conventionOption.client?.nomClient ?? '' }}
+                  </option>
                 }
               </select>
             </div>
+          </div>
+        </div>
+
+        <!-- Section : Lignes de facturation -->
+        <div class="form-section">
+          <div class="form-section-title d-flex justify-content-between align-items-center">
+            <span><fa-icon icon="list" class="me-2 text-primary"></fa-icon>Lignes de facturation</span>
+            <button type="button" class="btn btn-success btn-sm" (click)="addLigne()">
+              <fa-icon icon="plus"></fa-icon> Ajouter une ligne
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle mb-1">
+              <thead class="table-dark">
+                <tr>
+                  <th>Désignation <span class="text-danger">*</span></th>
+                  <th class="text-end">P.U. (MRU)</th>
+                  <th class="text-end">Qté</th>
+                  <th class="text-end">Montant HT</th>
+                  <th class="text-end">TVA (%)</th>
+                  <th class="text-end">Montant TTC</th>
+                  <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (ligne of lignes; track $index) {
+                  @if (!ligne._deleted) {
+                    <tr>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control form-control-sm"
+                          [(ngModel)]="ligne.designation"
+                          [ngModelOptions]="{ standalone: true }"
+                          placeholder="Désignation"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="form-control form-control-sm text-end"
+                          [(ngModel)]="ligne.prixUnitaire"
+                          [ngModelOptions]="{ standalone: true }"
+                          min="0"
+                          title="Prix unitaire"
+                          placeholder="0"
+                          (input)="calcLigne(ligne)"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="form-control form-control-sm text-end"
+                          [(ngModel)]="ligne.quantite"
+                          [ngModelOptions]="{ standalone: true }"
+                          min="1"
+                          title="Quantité"
+                          placeholder="1"
+                          (input)="calcLigne(ligne)"
+                        />
+                      </td>
+                      <td class="text-end fw-semibold">{{ ligne.montantHT | number: '1.2-2' }}</td>
+                      <td>
+                        <input
+                          type="number"
+                          class="form-control form-control-sm text-end"
+                          [(ngModel)]="ligne.tauxTVA"
+                          [ngModelOptions]="{ standalone: true }"
+                          min="0"
+                          max="100"
+                          title="Taux TVA %"
+                          placeholder="0"
+                          (input)="calcLigne(ligne)"
+                        />
+                      </td>
+                      <td class="text-end fw-semibold">{{ ligne.montantTTC | number: '1.2-2' }}</td>
+                      <td class="text-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-danger btn-sm py-0 px-1"
+                          (click)="removeLigne($index)"
+                          title="Supprimer"
+                        >
+                          <fa-icon icon="times"></fa-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                }
+                @if (lignesActives.length === 0) {
+                  <tr>
+                    <td colspan="7" class="text-center text-muted py-2"><small>Aucune ligne. Cliquez sur "Ajouter une ligne".</small></td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="table-light fw-semibold">
+                <tr>
+                  <td colspan="3" class="text-end">Total :</td>
+                  <td class="text-end">{{ totalHT | number: '1.2-2' }} MRU</td>
+                  <td></td>
+                  <td class="text-end">{{ totalTTC | number: '1.2-2' }} MRU</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
 

@@ -1,0 +1,147 @@
+<div class="container-fluid py-4 print-container">
+  <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+    <div>
+      <h4 class="mb-0 fw-bold"><fa-icon icon="clipboard-list" class="me-2 text-primary"></fa-icon>État général de contrôle facturation</h4>
+      <small class="text-muted">Vue consolidée de l'ensemble des partenaires</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-outline-primary btn-sm" (click)="load()" [disabled]="loading">
+        <fa-icon icon="sync"></fa-icon> Actualiser
+      </button>
+      @if (lignes.length > 0) {
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="print()"><fa-icon icon="print"></fa-icon> Imprimer</button>
+      }
+    </div>
+  </div>
+
+  <!-- En-tête impression -->
+  <div class="d-none d-print-block mb-4">
+    <h5 class="fw-bold">AGENCE NATIONALE DU REGISTRE DE LA POPULATION ET DES TITRES SÉCURISÉS</h5>
+    <h6>État général de contrôle facturation</h6>
+    <p class="mb-0">Date d'impression : {{ today }}</p>
+    <hr />
+  </div>
+
+  @if (loading) {
+    <div class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  }
+
+  @if (!loading && lignes.length > 0) {
+    <!-- Bilan global -->
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-md-2">
+        <div class="card border-0 bg-primary text-white text-center py-3">
+          <div class="fs-4 fw-bold">{{ lignes.length }}</div>
+          <small>Partenaires</small>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-2">
+        <div class="card border-0 bg-dark text-white text-center py-3">
+          <div class="fs-5 fw-bold">{{ grandNbFactures }}</div>
+          <small>Factures</small>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-2">
+        <div class="card border-0 bg-secondary text-white text-center py-3">
+          <div class="fs-6 fw-bold">{{ grandMontantDu | number: '1.0-0' }}</div>
+          <small>Montant dû (MRU)</small>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-2">
+        <div class="card border-0 text-white text-center py-3" [class.bg-warning]="grandEcart > 0" [class.bg-success]="grandEcart <= 0">
+          <div class="fs-6 fw-bold">{{ grandEcart | number: '1.0-0' }}</div>
+          <small>Écart (MRU)</small>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-2">
+        <div class="card border-0 bg-success text-white text-center py-3">
+          <div class="fs-6 fw-bold">{{ grandTotalPaye | number: '1.0-0' }}</div>
+          <small>Total payé (MRU)</small>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-2">
+        <div class="card border-0 bg-danger text-white text-center py-3">
+          <div class="fs-6 fw-bold">{{ grandTotalImpaye | number: '1.0-0' }}</div>
+          <small>Total impayé (MRU)</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau principal -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-dark text-white fw-bold">Tableau de bord — Contrôle facturation</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Partenaire</th>
+              <th class="text-center">Conv.</th>
+              <th class="text-center">Fact.</th>
+              <th class="text-end">Montant dû (MRU)</th>
+              <th class="text-end">Facturé (MRU)</th>
+              <th class="text-end">Écart (MRU)</th>
+              <th class="text-end">Payé (MRU)</th>
+              <th class="text-end">Impayé (MRU)</th>
+              <th class="text-center">Recouvrement</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ligne of lignes; track ligne.client.id; let i = $index) {
+              <tr [class.table-danger]="ligne.totalImpaye > 0">
+                <td class="text-muted">{{ i + 1 }}</td>
+                <td class="fw-semibold">{{ ligne.client.nomClient }}</td>
+                <td class="text-center">{{ ligne.nbConventions }}</td>
+                <td class="text-center">{{ ligne.nbFactures }}</td>
+                <td class="text-end">{{ ligne.montantDu | number: '1.0-0' }}</td>
+                <td class="text-end">{{ ligne.totalFacture | number: '1.0-0' }}</td>
+                <td class="text-end fw-semibold" [class.text-warning]="ligne.ecart > 0" [class.text-success]="ligne.ecart <= 0">
+                  {{ ligne.ecart | number: '1.0-0' }}
+                </td>
+                <td class="text-end text-success fw-semibold">{{ ligne.totalPaye | number: '1.0-0' }}</td>
+                <td class="text-end" [class.text-danger]="ligne.totalImpaye > 0" [class.fw-bold]="ligne.totalImpaye > 0">
+                  {{ ligne.totalImpaye | number: '1.0-0' }}
+                </td>
+                <td class="text-center">
+                  @if (ligne.totalFacture > 0) {
+                    <div class="progress progress-sm">
+                      <div class="progress-bar bg-success" [style.width]="(ligne.totalPaye / ligne.totalFacture) * 100 + '%'">
+                        {{ (ligne.totalPaye / ligne.totalFacture) * 100 | number: '1.0-0' }}%
+                      </div>
+                    </div>
+                  } @else {
+                    <span class="text-muted">—</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+          <tfoot class="table-dark fw-bold">
+            <tr>
+              <td colspan="4" class="text-end">TOTAL GÉNÉRAL :</td>
+              <td class="text-end">{{ grandMontantDu | number: '1.0-0' }}</td>
+              <td class="text-end">{{ grandTotalFacture | number: '1.0-0' }}</td>
+              <td class="text-end" [class.text-warning]="grandEcart > 0">{{ grandEcart | number: '1.0-0' }}</td>
+              <td class="text-end text-success">{{ grandTotalPaye | number: '1.0-0' }}</td>
+              <td class="text-end text-warning">{{ grandTotalImpaye | number: '1.0-0' }}</td>
+              <td class="text-center">
+                @if (grandTotalFacture > 0) {
+                  {{ (grandTotalPaye / grandTotalFacture) * 100 | number: '1.0-0' }}%
+                }
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-3 text-muted small no-print">
+      <fa-icon icon="check-circle"></fa-icon>
+      <em> Montant dû = (redevance × périodes écoulées) + autres montants convention. Écart positif = sous-facturation.</em>
+    </div>
+  }
+
+  @if (!loading && lignes.length === 0) {
+    <div class="alert alert-info text-center">Aucune donnée disponible.</div>
+  }
+</div>

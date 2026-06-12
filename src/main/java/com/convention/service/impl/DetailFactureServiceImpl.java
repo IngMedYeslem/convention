@@ -2,9 +2,11 @@ package com.convention.service.impl;
 
 import com.convention.domain.DetailFactureEntity;
 import com.convention.repository.DetailFactureRepository;
+import com.convention.repository.FactureRepository;
 import com.convention.service.DetailFactureService;
 import com.convention.service.dto.DetailFactureDTO;
 import com.convention.service.mapper.DetailFactureMapper;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +25,16 @@ public class DetailFactureServiceImpl implements DetailFactureService {
     private static final Logger LOG = LoggerFactory.getLogger(DetailFactureServiceImpl.class);
 
     private final DetailFactureRepository detailFactureRepository;
-
+    private final FactureRepository factureRepository;
     private final DetailFactureMapper detailFactureMapper;
 
-    public DetailFactureServiceImpl(DetailFactureRepository detailFactureRepository, DetailFactureMapper detailFactureMapper) {
+    public DetailFactureServiceImpl(
+        DetailFactureRepository detailFactureRepository,
+        FactureRepository factureRepository,
+        DetailFactureMapper detailFactureMapper
+    ) {
         this.detailFactureRepository = detailFactureRepository;
+        this.factureRepository = factureRepository;
         this.detailFactureMapper = detailFactureMapper;
     }
 
@@ -35,6 +42,9 @@ public class DetailFactureServiceImpl implements DetailFactureService {
     public DetailFactureDTO save(DetailFactureDTO detailFactureDTO) {
         LOG.debug("Request to save DetailFacture : {}", detailFactureDTO);
         DetailFactureEntity detailFactureEntity = detailFactureMapper.toEntity(detailFactureDTO);
+        if (detailFactureDTO.getFacture() != null && detailFactureDTO.getFacture().getId() != null) {
+            detailFactureEntity.setFacture(factureRepository.getReferenceById(detailFactureDTO.getFacture().getId()));
+        }
         detailFactureEntity = detailFactureRepository.save(detailFactureEntity);
         return detailFactureMapper.toDto(detailFactureEntity);
     }
@@ -43,6 +53,9 @@ public class DetailFactureServiceImpl implements DetailFactureService {
     public DetailFactureDTO update(DetailFactureDTO detailFactureDTO) {
         LOG.debug("Request to update DetailFacture : {}", detailFactureDTO);
         DetailFactureEntity detailFactureEntity = detailFactureMapper.toEntity(detailFactureDTO);
+        if (detailFactureDTO.getFacture() != null && detailFactureDTO.getFacture().getId() != null) {
+            detailFactureEntity.setFacture(factureRepository.getReferenceById(detailFactureDTO.getFacture().getId()));
+        }
         detailFactureEntity = detailFactureRepository.save(detailFactureEntity);
         return detailFactureMapper.toDto(detailFactureEntity);
     }
@@ -74,6 +87,13 @@ public class DetailFactureServiceImpl implements DetailFactureService {
     public Optional<DetailFactureDTO> findOne(Long id) {
         LOG.debug("Request to get DetailFacture : {}", id);
         return detailFactureRepository.findById(id).map(detailFactureMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DetailFactureDTO> findByFactureId(Long factureId) {
+        LOG.debug("Request to get DetailFactures for facture : {}", factureId);
+        return detailFactureRepository.findByFactureId(factureId).stream().map(detailFactureMapper::toDto).toList();
     }
 
     @Override

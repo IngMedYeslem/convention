@@ -1,0 +1,175 @@
+<!-- Boutons hors impression -->
+<div class="no-print d-flex gap-2 p-3">
+  <button type="button" class="btn btn-secondary btn-sm" (click)="goBack()">← Retour</button>
+  <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">🖨 Imprimer / Enregistrer PDF</button>
+</div>
+
+@if (loading) {
+  <div class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+}
+
+@if (!loading && facture) {
+  <div class="lettre-page">
+    <!-- En-tête ANRPTS -->
+    <div class="lettre-header">
+      <div class="header-left">
+        <div class="org-name">AGENCE NATIONALE DU REGISTRE DE LA POPULATION<br />ET DES TITRES SÉCURISÉS</div>
+        <div class="org-subtitle">ANRPTS</div>
+        <div class="org-address">Nouakchott — République Islamique de Mauritanie</div>
+      </div>
+      <div class="header-right">
+        <div>Nouakchott, le {{ fmtDateLong(today) }}</div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Destinataire -->
+    <div class="destinataire-block">
+      <p><strong>A</strong></p>
+      <p>
+        Monsieur Le Directeur Général de<br />
+        <strong>{{ client?.nomClient ?? '—' }}</strong>
+      </p>
+    </div>
+
+    <!-- Objet & Référence -->
+    <div class="objet-ref-block">
+      <p><strong>Objet :</strong> Lettre de payement</p>
+      @if (facture.ancienneRef) {
+        <p><strong>Réf :</strong> {{ facture.ancienneRef }}</p>
+      }
+    </div>
+
+    <!-- Corps -->
+    <div class="corps-lettre">
+      <p>
+        En application de la convention entre nos deux institutions signée le
+        <strong>{{ fmtDate(convention?.dateSignConv) }}</strong
+        >, notamment l'article 5 et 6. J'ai l'honneur de vous demander de bien vouloir instruire vos services compétents à l'effet de
+        procéder au paiement du montant de <strong>{{ montant | number: '1.0-0' }} MRU ({{ montantLettres }} MRU)</strong> au profit de
+        l'ANRPTS au compte N° <strong>430300855</strong> ouvert dans les livres du Trésor Publique à travers le compte d'opération N° :
+        <strong>3211001</strong> au nom du trésor public dans les livres de la Banque Centrale de Mauritanie.
+      </p>
+    </div>
+
+    <!-- Signature -->
+    <div class="signature-section">
+      <div class="signature-block">
+        <div class="sig-space"></div>
+        <div class="sig-name">Mohamed Lemine Sid'Elmoustaphe</div>
+      </div>
+    </div>
+
+    <!-- Pièces jointes -->
+    <div class="pieces-jointes">
+      <p><strong>Pièces jointes :</strong></p>
+      <ul>
+        <li>Facture</li>
+        <li>Copie de l'article (5 et 6)</li>
+      </ul>
+    </div>
+  </div>
+}
+
+<style>
+  @media screen {
+    .lettre-page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 3rem;
+      font-family: 'Times New Roman', serif;
+      font-size: 13px;
+      line-height: 1.6;
+      border: 1px solid #ddd;
+      background: #fff;
+      min-height: 1100px;
+    }
+  }
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    .lettre-page {
+      padding: 2cm 2.5cm;
+      font-size: 12px;
+      min-height: unset;
+    }
+    body {
+      margin: 0;
+    }
+  }
+  .lettre-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  .header-left .org-name {
+    font-weight: bold;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .header-left .org-subtitle {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1a3a6c;
+    margin-top: 4px;
+  }
+  .header-left .org-address {
+    font-size: 11px;
+    color: #555;
+    margin-top: 4px;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 12px;
+  }
+  .divider {
+    border-top: 2px solid #1a3a6c;
+    margin: 0.5rem 0 2rem;
+  }
+  .destinataire-block {
+    margin-bottom: 1.5rem;
+  }
+  .destinataire-block p {
+    margin: 0 0 0.3rem;
+  }
+  .objet-ref-block {
+    margin-bottom: 1.5rem;
+  }
+  .objet-ref-block p {
+    margin: 0 0 0.3rem;
+  }
+  .corps-lettre p {
+    text-align: justify;
+    margin-bottom: 1rem;
+  }
+  .signature-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+  }
+  .signature-block {
+    text-align: center;
+  }
+  .sig-space {
+    height: 70px;
+  }
+  .sig-name {
+    font-weight: bold;
+    font-size: 13px;
+  }
+  .pieces-jointes {
+    margin-top: 1rem;
+    font-size: 12px;
+  }
+  .pieces-jointes ul {
+    margin: 0.3rem 0 0 1.5rem;
+    padding: 0;
+  }
+  .pieces-jointes li {
+    margin-bottom: 0.2rem;
+  }
+</style>

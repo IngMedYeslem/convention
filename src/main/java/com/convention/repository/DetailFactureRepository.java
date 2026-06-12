@@ -1,6 +1,7 @@
 package com.convention.repository;
 
 import com.convention.domain.DetailFactureEntity;
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface DetailFactureRepository extends JpaRepository<DetailFactureEntity, Long> {}
+public interface DetailFactureRepository extends JpaRepository<DetailFactureEntity, Long> {
+    List<DetailFactureEntity> findByFactureId(Long factureId);
+}

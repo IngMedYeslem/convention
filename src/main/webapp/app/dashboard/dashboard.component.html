@@ -104,11 +104,11 @@
     </div>
   </div>
 
-  <!-- Alertes échéances -->
+  <!-- Conventions suspendues nécessitant attention -->
   @if (conventionsAlerte.length > 0) {
     <div class="card mb-4 border-warning">
       <div class="card-header bg-warning text-dark fw-semibold py-2">
-        <fa-icon icon="bell"></fa-icon> Conventions arrivant à échéance (90 jours) — {{ conventionsAlerte.length }}
+        <fa-icon icon="bell"></fa-icon> Conventions suspendues — {{ conventionsAlerte.length }}
       </div>
       <div class="table-responsive">
         <table class="table table-sm table-hover mb-0">
@@ -116,20 +116,18 @@
             <tr>
               <th>N°</th>
               <th>Partenaire</th>
-              <th>Échéance</th>
-              <th>Délai</th>
+              <th>Période</th>
+              <th>Redevance (MRU)</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             @for (conv of conventionsAlerte; track conv.id) {
-              <tr [class]="alertClass(conv.echeanceConv)">
+              <tr class="table-warning">
                 <td>{{ conv.numConvention }}</td>
                 <td>{{ conv.client?.nomClient ?? '—' }}</td>
-                <td>{{ conv.echeanceConv | date: 'dd/MM/yyyy' }}</td>
-                <td>
-                  <span class="fw-semibold">{{ joursLabel(conv.echeanceConv) }}</span>
-                </td>
+                <td>{{ periodeLabel(conv.periodeEcheance) }}</td>
+                <td class="text-end">{{ conv.redevance | number: '1.0-0' }}</td>
                 <td>
                   <a class="btn btn-xs btn-outline-primary btn-sm py-0 px-2" [routerLink]="['/convention', conv.id, 'view']">Voir</a>
                 </td>

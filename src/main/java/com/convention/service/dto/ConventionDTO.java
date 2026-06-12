@@ -1,6 +1,7 @@
 package com.convention.service.dto;
 
 import com.convention.domain.enumeration.EtapeApprobation;
+import com.convention.domain.enumeration.PeriodeEcheance;
 import com.convention.domain.enumeration.StatutConvention;
 import com.convention.domain.enumeration.TypeConvention;
 import jakarta.validation.constraints.*;
@@ -28,7 +29,7 @@ public class ConventionDTO implements Serializable {
     private LocalDate dateDebutConv;
 
     @NotNull
-    private LocalDate echeanceConv;
+    private PeriodeEcheance periodeEcheance;
 
     @NotNull
     @DecimalMin(value = "0")
@@ -112,12 +113,12 @@ public class ConventionDTO implements Serializable {
         this.dateDebutConv = dateDebutConv;
     }
 
-    public LocalDate getEcheanceConv() {
-        return echeanceConv;
+    public PeriodeEcheance getPeriodeEcheance() {
+        return periodeEcheance;
     }
 
-    public void setEcheanceConv(LocalDate echeanceConv) {
-        this.echeanceConv = echeanceConv;
+    public void setPeriodeEcheance(PeriodeEcheance periodeEcheance) {
+        this.periodeEcheance = periodeEcheance;
     }
 
     public BigDecimal getRedevance() {
@@ -301,7 +302,7 @@ public class ConventionDTO implements Serializable {
             ", numConvention=" + getNumConvention() +
             ", dateSignConv='" + getDateSignConv() + "'" +
             ", dateDebutConv='" + getDateDebutConv() + "'" +
-            ", echeanceConv='" + getEcheanceConv() + "'" +
+            ", periodeEcheance='" + getPeriodeEcheance() + "'" +
             ", redevance=" + getRedevance() +
             ", nomResponsable='" + getNomResponsable() + "'" +
             ", statut='" + getStatut() + "'" +

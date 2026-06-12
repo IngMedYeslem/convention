@@ -155,6 +155,12 @@ public class PaymentResource {
      * @param id the id of the paymentDTO to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the paymentDTO, or with status {@code 404 (Not Found)}.
      */
+    @GetMapping("/by-facture/{factureId}")
+    public ResponseEntity<List<PaymentDTO>> getPaymentsByFacture(@PathVariable Long factureId) {
+        LOG.debug("REST request to get Payments for Facture : {}", factureId);
+        return ResponseEntity.ok(paymentService.findByFactureId(factureId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PaymentDTO> getPayment(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Payment : {}", id);

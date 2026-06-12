@@ -23,6 +23,7 @@
     <include file="config/liquibase/changelog/20260605000003_added_entity_Avenant.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260605000004_added_entity_ConventionDocument.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260605000005_added_entity_BudgetEngagement.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260611000001_update_convention_echeance.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20251118195132_added_entity_constraints_Convention.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251118195133_added_entity_constraints_DetailConvention.xml" relativeToChangelogFile="false"/>

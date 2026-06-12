@@ -1,6 +1,7 @@
 package com.convention.service;
 
 import com.convention.service.dto.DetailFactureDTO;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +49,14 @@ public interface DetailFactureService {
      * @return the entity.
      */
     Optional<DetailFactureDTO> findOne(Long id);
+
+    /**
+     * Get all detailFactures for a given facture.
+     *
+     * @param factureId the id of the facture.
+     * @return the list of entities.
+     */
+    List<DetailFactureDTO> findByFactureId(Long factureId);
 
     /**
      * Delete the "id" detailFacture.
