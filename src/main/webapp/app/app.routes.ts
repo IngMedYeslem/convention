@@ -3,6 +3,8 @@ import { Routes } from '@angular/router';
 import { Authority } from 'app/config/authority.constants';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { HierarchyRouteAccessService } from 'app/core/auth/hierarchy-route-access.service';
+import { AdminOrHierarchyRouteAccessService } from 'app/core/auth/admin-or-hierarchy-route-access.service';
 import { errorRoute } from './layouts/error/error.route';
 
 const routes: Routes = [
@@ -18,10 +20,7 @@ const routes: Routes = [
   },
   {
     path: 'admin',
-    data: {
-      authorities: [Authority.ADMIN],
-    },
-    canActivate: [UserRouteAccessService],
+    canActivate: [AdminOrHierarchyRouteAccessService],
     loadChildren: () => import('./admin/admin.routes'),
   },
   {
@@ -36,11 +35,15 @@ const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [HierarchyRouteAccessService],
+    data: { niveaux: ['DEPARTEMENT', 'DIRECTION'] },
     title: 'Tableau de bord',
   },
   {
     path: 'statistiques',
     loadComponent: () => import('./statistiques/statistiques.component').then(m => m.StatistiquesComponent),
+    canActivate: [HierarchyRouteAccessService],
+    data: { niveaux: ['DEPARTEMENT', 'DIRECTION'] },
     title: 'Statistiques',
   },
   {
@@ -56,16 +59,22 @@ const routes: Routes = [
   {
     path: 'rapport/factures-par-client',
     loadComponent: () => import('./rapport/rapport-factures-client.component').then(m => m.RapportFacturesClientComponent),
+    canActivate: [HierarchyRouteAccessService],
+    data: { niveaux: ['DEPARTEMENT', 'DIRECTION'] },
     title: 'Rapport — Factures par client',
   },
   {
     path: 'rapport/conventions-par-client',
     loadComponent: () => import('./rapport/rapport-conventions-client.component').then(m => m.RapportConventionsClientComponent),
+    canActivate: [HierarchyRouteAccessService],
+    data: { niveaux: ['DEPARTEMENT', 'DIRECTION'] },
     title: 'Rapport — Conventions par client',
   },
   {
     path: 'rapport/etat-facturation',
     loadComponent: () => import('./rapport/rapport-etat-facturation.component').then(m => m.RapportEtatFacturationComponent),
+    canActivate: [HierarchyRouteAccessService],
+    data: { niveaux: ['DEPARTEMENT', 'DIRECTION'] },
     title: 'État général de contrôle facturation',
   },
   {

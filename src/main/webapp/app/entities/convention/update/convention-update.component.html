@@ -51,14 +51,36 @@
               </select>
             </div>
             <div class="col-md-4">
-              <label class="form-label" for="field_statut">Statut <span class="text-danger">*</span></label>
-              <select class="form-select" id="field_statut" formControlName="statut">
-                <option value="BROUILLON">Brouillon</option>
-                <option value="ACTIVE">Active</option>
-                <option value="SUSPENDUE">Suspendue</option>
-                <option value="TERMINEE">Terminée</option>
-                <option value="ANNULEE">Annulée</option>
-              </select>
+              <label class="form-label">Statut</label>
+              @if ($any(account())?.niveauHierarchique === 'SERVICE' || $any(account())?.niveauHierarchique) {
+                <!-- SERVICE et tous les niveaux hiérarchiques : statut en lecture seule -->
+                <div class="form-control-plaintext">
+                  <span
+                    class="badge fs-6"
+                    [class.bg-secondary]="editForm.get('statut')?.value === 'BROUILLON'"
+                    [class.bg-danger]="editForm.get('statut')?.value === 'REJETE'"
+                    [class.bg-primary]="editForm.get('statut')?.value === 'SOUMIS'"
+                    [class.bg-info]="editForm.get('statut')?.value === 'APPROUVE_DEPT'"
+                    [class.bg-success]="editForm.get('statut')?.value === 'ACTIVE'"
+                    [class.bg-warning]="editForm.get('statut')?.value === 'SUSPENDUE'"
+                    [class.text-dark]="editForm.get('statut')?.value === 'SUSPENDUE' || editForm.get('statut')?.value === 'APPROUVE_DEPT'"
+                  >
+                    {{ editForm.get('statut')?.value || 'BROUILLON' }}
+                  </span>
+                </div>
+              } @else {
+                <!-- ADMIN : toutes les options -->
+                <select class="form-select" id="field_statut" formControlName="statut">
+                  <option value="BROUILLON">Brouillon</option>
+                  <option value="SOUMIS">Soumis</option>
+                  <option value="APPROUVE_DEPT">Approuvé département</option>
+                  <option value="ACTIVE">Active</option>
+                  <option value="SUSPENDUE">Suspendue</option>
+                  <option value="TERMINEE">Terminée</option>
+                  <option value="ANNULEE">Annulée</option>
+                  <option value="REJETE">Rejeté</option>
+                </select>
+              }
             </div>
             <div class="col-12">
               <label class="form-label" for="field_objet">Objet de la convention</label>
@@ -82,7 +104,7 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label" for="field_client">Partenaire <span class="text-danger">*</span></label>
-              <select class="form-select" id="field_client" formControlName="client">
+              <select class="form-select" id="field_client" formControlName="client" [compareWith]="compareClient">
                 <option [ngValue]="null">— Sélectionner un partenaire —</option>
                 @for (option of clientsSharedCollection; track option.id) {
                   <option [ngValue]="option">{{ option.nomClient }}</option>
@@ -328,37 +350,18 @@
           </div>
         </div>
 
-        <!-- Section : Approbation -->
-        <div class="form-section">
-          <div class="form-section-title">
-            <fa-icon icon="check-double" class="me-2 text-primary"></fa-icon>
-            Circuit d'approbation
-          </div>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label" for="field_etapeApprobation">Étape actuelle</label>
-              <select class="form-select" id="field_etapeApprobation" formControlName="etapeApprobation">
-                <option value="">— Sélectionner —</option>
-                <option value="REDACTION">Rédaction</option>
-                <option value="REVUE_JURIDIQUE">Revue juridique</option>
-                <option value="VISA_FINANCIER">Visa financier</option>
-                <option value="SIGNATURE_DIRECTION">Signature direction</option>
-                <option value="PUBLIE">Publié / Actif</option>
-                <option value="REJETE">Rejeté</option>
-              </select>
+        <!-- Commentaire de rejet (lecture seule, visible si rejeté) -->
+        @if (editForm.get('commentaireRejet')?.value) {
+          <div class="form-section border-danger">
+            <div class="form-section-title text-danger">
+              <fa-icon icon="times" class="me-2"></fa-icon>
+              Motif du rejet
             </div>
-            <div class="col-md-6">
-              <label class="form-label" for="field_commentaireRejet">Commentaire / Motif de rejet</label>
-              <input
-                type="text"
-                class="form-control"
-                id="field_commentaireRejet"
-                formControlName="commentaireRejet"
-                placeholder="Renseigner si rejeté…"
-              />
+            <div class="alert alert-danger mb-0">
+              {{ editForm.get('commentaireRejet')?.value }}
             </div>
           </div>
-        </div>
+        }
       </div>
 
       <!-- Pied de carte -->

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, forkJoin, of } from 'rxjs';
 import { finalize, map, switchMap } from 'rxjs/operators';
 
@@ -16,6 +16,7 @@ import { PeriodeEcheance } from 'app/entities/enumerations/periode-echeance.mode
 import { ConventionService } from '../service/convention.service';
 import { IConvention } from '../convention.model';
 import { ConventionFormGroup, ConventionFormService } from './convention-form.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 interface LigneConvention {
   id?: number | null;
@@ -41,12 +42,15 @@ export class ConventionUpdateComponent implements OnInit {
   clientsSharedCollection: IClient[] = [];
   lignes: LigneConvention[] = [];
 
+  readonly account = inject(AccountService).trackCurrentAccount();
+
   protected http = inject(HttpClient);
   protected conventionService = inject(ConventionService);
   protected conventionFormService = inject(ConventionFormService);
   protected clientService = inject(ClientService);
   protected detailConventionService = inject(DetailConventionService);
   protected activatedRoute = inject(ActivatedRoute);
+  protected router = inject(Router);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: ConventionFormGroup = this.conventionFormService.createConventionFormGroup();
@@ -70,10 +74,37 @@ export class ConventionUpdateComponent implements OnInit {
             }));
           });
         }
+      } else {
+        // Nouvelle convention : SERVICE → forcer BROUILLON
+        const niveau = (this.account() as any)?.niveauHierarchique;
+        if (niveau === 'SERVICE' || niveau) {
+          this.editForm.patchValue({ statut: StatutConvention.BROUILLON });
+        }
       }
 
       this.loadRelationshipsOptions();
+
+      // Pré-remplir depuis les données scannées (router state)
+      const scanned = this.router.getCurrentNavigation()?.extras?.state?.['scannedData'] ?? history.state?.scannedData;
+      if (scanned && !convention) {
+        setTimeout(() => this.prefillFromScanned(scanned), 300);
+      }
     });
+  }
+
+  private prefillFromScanned(scanned: IConvention): void {
+    const patch: Record<string, unknown> = {};
+    if (scanned.numConvention != null) patch['numConvention'] = scanned.numConvention;
+    if (scanned.dateSignConv) patch['dateSignConv'] = scanned.dateSignConv;
+    if (scanned.dateDebutConv) patch['dateDebutConv'] = scanned.dateDebutConv;
+    if (scanned.periodeEcheance) patch['periodeEcheance'] = scanned.periodeEcheance;
+    if (scanned.redevance != null) patch['redevance'] = scanned.redevance;
+    if (scanned.nomResponsable) patch['nomResponsable'] = scanned.nomResponsable;
+    if (scanned.client) {
+      const found = this.clientsSharedCollection.find(c => c.id === scanned.client!.id);
+      if (found) patch['client'] = found;
+    }
+    this.editForm.patchValue(patch as any);
   }
 
   addLigne(): void {

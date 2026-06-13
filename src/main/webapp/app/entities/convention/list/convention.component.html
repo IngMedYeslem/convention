@@ -1,22 +1,31 @@
 <div>
   <h2 id="page-heading" data-cy="ConventionHeading">
-    <span>Conventions</span>
+    <span>
+      @if (account()?.niveauHierarchique === 'SERVICE') {
+        Mes Conventions
+        <small class="text-muted fs-6 ms-2">— {{ account()?.uniteOrgNom }}</small>
+      } @else if (account()?.niveauHierarchique === 'DEPARTEMENT') {
+        Conventions du département
+        <small class="text-muted fs-6 ms-2">— {{ account()?.uniteOrgNom }}</small>
+      } @else {
+        Conventions
+      }
+    </span>
     <div class="d-flex justify-content-end gap-2">
       <button type="button" class="btn btn-info btn-sm" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon> Actualiser
       </button>
-      <button type="button" class="btn btn-outline-success btn-sm" [routerLink]="['/convention/scan']">
-        <fa-icon icon="file-pdf"></fa-icon> Scanner PDF
-      </button>
-      <button
-        type="button"
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary btn-sm"
-        [routerLink]="['/convention/new']"
-      >
-        <fa-icon icon="plus"></fa-icon> Nouvelle Convention
-      </button>
+      @if (account()?.niveauHierarchique === 'SERVICE' || !account()?.niveauHierarchique) {
+        <button
+          type="button"
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary btn-sm"
+          [routerLink]="['/convention/new']"
+        >
+          <fa-icon icon="plus"></fa-icon> Nouvelle Convention
+        </button>
+      }
     </div>
   </h2>
 
@@ -67,20 +76,35 @@
               <td>{{ convention.client?.nomClient ?? '—' }}</td>
               <td>
                 @switch (convention.statut) {
-                  @case ('ACTIVE') {
-                    <span class="badge bg-success">Active</span>
-                  }
                   @case ('BROUILLON') {
                     <span class="badge bg-secondary">Brouillon</span>
+                  }
+                  @case ('SOUMIS') {
+                    <span class="badge bg-primary">En attente dept.</span>
+                  }
+                  @case ('APPROUVE_DEPT') {
+                    <span class="badge bg-info text-dark">En attente dir.</span>
+                  }
+                  @case ('ACTIVE') {
+                    <span class="badge bg-success">Active</span>
                   }
                   @case ('SUSPENDUE') {
                     <span class="badge bg-warning text-dark">Suspendue</span>
                   }
                   @case ('TERMINEE') {
-                    <span class="badge bg-info text-dark">Terminée</span>
+                    <span class="badge bg-dark">Terminée</span>
                   }
                   @case ('ANNULEE') {
                     <span class="badge bg-danger">Annulée</span>
+                  }
+                  @case ('REJETE') {
+                    <span class="badge bg-danger">Rejeté</span>
+                    @if (account()?.niveauHierarchique === 'SERVICE' && convention.commentaireRejet) {
+                      <div class="text-danger small mt-1" title="{{ convention.commentaireRejet }}">
+                        <fa-icon icon="exclamation-circle" class="me-1"></fa-icon>{{ convention.commentaireRejet | slice: 0 : 60
+                        }}{{ convention.commentaireRejet.length > 60 ? '…' : '' }}
+                      </div>
+                    }
                   }
                   @default {
                     <span class="badge bg-light text-muted border">—</span>
@@ -116,35 +140,99 @@
               </td>
               <td class="text-end">
                 <div class="btn-group btn-group-sm flex-nowrap">
+                  <!-- Voir — disponible pour tous -->
                   <a [routerLink]="['/convention', convention.id, 'view']" class="btn btn-outline-info btn-sm" title="Voir">
                     <fa-icon icon="eye"></fa-icon>
                   </a>
-                  <a [routerLink]="['/convention', convention.id, 'edit']" class="btn btn-outline-primary btn-sm" title="Éditer">
-                    <fa-icon icon="pencil-alt"></fa-icon>
-                  </a>
-                  @if (convention.statut === 'BROUILLON') {
-                    <button type="button" (click)="activateConvention(convention.id!)" class="btn btn-success btn-sm" title="Activer">
-                      <fa-icon icon="play"></fa-icon>
-                    </button>
+
+                  <!-- ─── SERVICE ───────────────────────────────────────────── -->
+                  @if (account()?.niveauHierarchique === 'SERVICE' || !account()?.niveauHierarchique) {
+                    @if (convention.statut === 'BROUILLON' || convention.statut === 'REJETE') {
+                      <a [routerLink]="['/convention', convention.id, 'edit']" class="btn btn-outline-primary btn-sm" title="Modifier">
+                        <fa-icon icon="pencil-alt"></fa-icon>
+                      </a>
+                      <button
+                        type="button"
+                        (click)="soumettre(convention.id!)"
+                        class="btn btn-primary btn-sm"
+                        title="Soumettre pour approbation"
+                      >
+                        <fa-icon icon="paper-plane"></fa-icon>
+                      </button>
+                      <button type="button" (click)="delete(convention)" class="btn btn-outline-danger btn-sm" title="Supprimer">
+                        <fa-icon icon="times"></fa-icon>
+                      </button>
+                    }
+                    @if (convention.statut === 'SOUMIS') {
+                      <button
+                        type="button"
+                        (click)="rappeler(convention.id!)"
+                        class="btn btn-outline-warning btn-sm"
+                        title="Rappeler (retirer la soumission)"
+                      >
+                        <fa-icon icon="undo"></fa-icon>
+                      </button>
+                    }
+                    @if (convention.statut === 'ACTIVE') {
+                      <button type="button" (click)="suspendConvention(convention.id!)" class="btn btn-warning btn-sm" title="Suspendre">
+                        <fa-icon icon="pause"></fa-icon>
+                      </button>
+                      <button
+                        type="button"
+                        (click)="generateInvoice(convention.id!)"
+                        class="btn btn-outline-info btn-sm"
+                        title="Générer Facture"
+                      >
+                        <fa-icon icon="file-invoice"></fa-icon>
+                      </button>
+                    }
+                    @if (convention.statut === 'SUSPENDUE') {
+                      <button type="button" (click)="reactivateConvention(convention.id!)" class="btn btn-success btn-sm" title="Réactiver">
+                        <fa-icon icon="play"></fa-icon>
+                      </button>
+                    }
                   }
-                  @if (convention.statut === 'ACTIVE') {
-                    <button type="button" (click)="suspendConvention(convention.id!)" class="btn btn-warning btn-sm" title="Suspendre">
-                      <fa-icon icon="pause"></fa-icon>
-                    </button>
-                    <button
-                      type="button"
-                      (click)="generateInvoice(convention.id!)"
-                      class="btn btn-outline-info btn-sm"
-                      title="Générer Facture"
-                    >
-                      <fa-icon icon="file-invoice"></fa-icon>
-                    </button>
+
+                  <!-- ─── DEPARTEMENT ────────────────────────────────────────── -->
+                  @if (account()?.niveauHierarchique === 'DEPARTEMENT') {
+                    @if (convention.statut === 'SOUMIS') {
+                      <button type="button" (click)="approuverDept(convention.id!)" class="btn btn-success btn-sm" title="Approuver">
+                        <fa-icon icon="check"></fa-icon>
+                      </button>
+                      <button type="button" (click)="rejeter(convention.id!)" class="btn btn-danger btn-sm" title="Rejeter">
+                        <fa-icon icon="times"></fa-icon>
+                      </button>
+                    }
                   }
-                  @if (convention.statut === 'SUSPENDUE') {
-                    <button type="button" (click)="reactivateConvention(convention.id!)" class="btn btn-success btn-sm" title="Réactiver">
-                      <fa-icon icon="play"></fa-icon>
-                    </button>
+
+                  <!-- ─── DIRECTION ──────────────────────────────────────────── -->
+                  @if (account()?.niveauHierarchique === 'DIRECTION') {
+                    @if (convention.statut === 'APPROUVE_DEPT') {
+                      <button
+                        type="button"
+                        (click)="approuverDirection(convention.id!)"
+                        class="btn btn-success btn-sm"
+                        title="Approuver (activation finale)"
+                      >
+                        <fa-icon icon="check-double"></fa-icon>
+                      </button>
+                      <button type="button" (click)="rejeter(convention.id!)" class="btn btn-danger btn-sm" title="Rejeter">
+                        <fa-icon icon="times"></fa-icon>
+                      </button>
+                    }
+                    @if (convention.statut === 'ACTIVE') {
+                      <button type="button" (click)="suspendConvention(convention.id!)" class="btn btn-warning btn-sm" title="Suspendre">
+                        <fa-icon icon="pause"></fa-icon>
+                      </button>
+                    }
+                    @if (convention.statut === 'SUSPENDUE') {
+                      <button type="button" (click)="reactivateConvention(convention.id!)" class="btn btn-success btn-sm" title="Réactiver">
+                        <fa-icon icon="play"></fa-icon>
+                      </button>
+                    }
                   }
+
+                  <!-- PDF — disponible pour tous -->
                   <button
                     type="button"
                     (click)="downloadPdf(convention.id!)"
@@ -152,9 +240,6 @@
                     title="Télécharger PDF"
                   >
                     <fa-icon icon="file-pdf"></fa-icon>
-                  </button>
-                  <button type="button" (click)="delete(convention)" class="btn btn-outline-danger btn-sm" title="Supprimer">
-                    <fa-icon icon="times"></fa-icon>
                   </button>
                 </div>
               </td>

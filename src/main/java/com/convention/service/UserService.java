@@ -4,6 +4,7 @@ import com.convention.config.Constants;
 import com.convention.domain.Authority;
 import com.convention.domain.UserEntity;
 import com.convention.repository.AuthorityRepository;
+import com.convention.repository.UniteOrganisationnelleRepository;
 import com.convention.repository.UserRepository;
 import com.convention.security.AuthoritiesConstants;
 import com.convention.security.SecurityUtils;
@@ -41,16 +42,20 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    private final UniteOrganisationnelleRepository uniteOrganisationnelleRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        CacheManager cacheManager,
+        UniteOrganisationnelleRepository uniteOrganisationnelleRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.uniteOrganisationnelleRepository = uniteOrganisationnelleRepository;
     }
 
     public Optional<UserEntity> activateRegistration(String key) {
@@ -174,6 +179,9 @@ public class UserService {
                 .collect(Collectors.toSet());
             user.setAuthorities(authorities);
         }
+        if (userDTO.getUniteOrgId() != null) {
+            uniteOrganisationnelleRepository.findById(userDTO.getUniteOrgId()).ifPresent(user::setUniteOrg);
+        }
         userRepository.save(user);
         this.clearUserCaches(user);
         LOG.debug("Created Information for User: {}", user);
@@ -210,6 +218,11 @@ public class UserService {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
+                if (userDTO.getUniteOrgId() != null) {
+                    uniteOrganisationnelleRepository.findById(userDTO.getUniteOrgId()).ifPresent(user::setUniteOrg);
+                } else {
+                    user.setUniteOrg(null);
+                }
                 userRepository.save(user);
                 this.clearUserCaches(user);
                 LOG.debug("Changed Information for User: {}", user);

@@ -1,6 +1,7 @@
 package com.convention.domain;
 
 import com.convention.config.Constants;
+import com.convention.domain.UniteOrganisationnelleEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -80,6 +81,10 @@ public class UserEntity extends AbstractAuditingEntity<Long> implements Serializ
 
     @Column(name = "reset_date")
     private Instant resetDate = null;
+
+    @ManyToOne
+    @JoinColumn(name = "unite_org_id")
+    private UniteOrganisationnelleEntity uniteOrg;
 
     @JsonIgnore
     @ManyToMany
@@ -195,6 +200,14 @@ public class UserEntity extends AbstractAuditingEntity<Long> implements Serializ
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public UniteOrganisationnelleEntity getUniteOrg() {
+        return uniteOrg;
+    }
+
+    public void setUniteOrg(UniteOrganisationnelleEntity uniteOrg) {
+        this.uniteOrg = uniteOrg;
     }
 
     @Override

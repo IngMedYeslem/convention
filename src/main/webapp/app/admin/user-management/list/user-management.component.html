@@ -30,6 +30,7 @@
               <span jhiTranslate="userManagement.langKey">Langue</span> <fa-icon icon="sort"></fa-icon>
             </th>
             <th scope="col"><span jhiTranslate="userManagement.profiles">Droits</span></th>
+            <th scope="col">Unité organisationnelle</th>
             <th scope="col" jhiSortBy="createdDate">
               <span jhiTranslate="userManagement.createdDate">Créé le</span> <fa-icon icon="sort"></fa-icon>
             </th>
@@ -72,6 +73,21 @@
                   <div>
                     <span class="badge bg-info">{{ authority }}</span>
                   </div>
+                }
+              </td>
+              <td>
+                @if (user.uniteOrgNom) {
+                  <span
+                    class="badge"
+                    [class.bg-danger]="user.niveauHierarchique === 'SERVICE'"
+                    [class.bg-warning]="user.niveauHierarchique === 'DEPARTEMENT'"
+                    [class.bg-primary]="user.niveauHierarchique === 'DIRECTION'"
+                    [class.text-dark]="user.niveauHierarchique === 'DEPARTEMENT'"
+                  >
+                    {{ user.uniteOrgNom }}
+                  </span>
+                } @else {
+                  <span class="text-muted small">—</span>
                 }
               </td>
               <td>{{ user.createdDate | date: 'dd/MM/yy HH:mm' }}</td>

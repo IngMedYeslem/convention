@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import Chart from 'chart.js/auto';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-dashboard',
@@ -12,8 +13,11 @@ import Chart from 'chart.js/auto';
   imports: [CommonModule, CurrencyPipe, RouterModule, FontAwesomeModule],
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+  readonly account = inject(AccountService).trackCurrentAccount();
+
   statistics: any = {};
   conventionsAlerte: any[] = [];
+  conventionsPendingApproval: any[] = [];
   chartsReady = false;
   today = new Date();
 
@@ -25,6 +29,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.loadStatistics();
     this.loadConventionsAlerte();
+    this.loadConventionsPendingApproval();
   }
 
   ngAfterViewInit(): void {
@@ -48,14 +53,55 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loadConventionsAlerte(): void {
     this.http.get<any[]>('/api/conventions?statut.equals=SUSPENDUE&size=10').subscribe({
-      next: data => {
-        this.conventionsAlerte = data ?? [];
-      },
-      error: () => {
-        this.conventionsAlerte = [];
+      next: data => (this.conventionsAlerte = data ?? []),
+      error: () => (this.conventionsAlerte = []),
+    });
+  }
+
+  loadConventionsPendingApproval(): void {
+    const niveau = this.account()?.niveauHierarchique;
+    let statut: string | null = null;
+    if (niveau === 'DEPARTEMENT') statut = 'SOUMIS';
+    else if (niveau === 'DIRECTION') statut = 'APPROUVE_DEPT';
+    if (!statut) return;
+
+    this.http.get<any[]>(`/api/conventions?statut.equals=${statut}&size=50`).subscribe({
+      next: data => (this.conventionsPendingApproval = data ?? []),
+      error: () => (this.conventionsPendingApproval = []),
+    });
+  }
+
+  // ─── Actions workflow ────────────────────────────────────────────────────────
+
+  approuverDept(id: number): void {
+    this.http.put(`/api/convention-workflow/${id}/approuver-dept`, {}).subscribe({
+      next: () => {
+        this.loadConventionsPendingApproval();
+        this.loadStatistics();
       },
     });
   }
+
+  approuverDirection(id: number): void {
+    this.http.put(`/api/convention-workflow/${id}/approuver-direction`, {}).subscribe({
+      next: () => {
+        this.loadConventionsPendingApproval();
+        this.loadStatistics();
+      },
+    });
+  }
+
+  rejeter(id: number): void {
+    const commentaire = prompt('Motif du rejet (optionnel) :') ?? '';
+    this.http.put(`/api/convention-workflow/${id}/rejeter?commentaire=${encodeURIComponent(commentaire)}`, {}).subscribe({
+      next: () => {
+        this.loadConventionsPendingApproval();
+        this.loadStatistics();
+      },
+    });
+  }
+
+  // ─── Autres actions ──────────────────────────────────────────────────────────
 
   generateAllInvoices(): void {
     this.http.post('/api/facture-generation/active-conventions', {}).subscribe({

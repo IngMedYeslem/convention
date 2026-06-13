@@ -3,6 +3,9 @@ package com.convention.service.impl;
 import com.convention.domain.ConventionEntity;
 import com.convention.repository.ClientRepository;
 import com.convention.repository.ConventionRepository;
+import com.convention.repository.UniteOrganisationnelleRepository;
+import com.convention.repository.UserRepository;
+import com.convention.security.SecurityUtils;
 import com.convention.service.ConventionService;
 import com.convention.service.dto.ConventionDTO;
 import com.convention.service.mapper.ConventionMapper;
@@ -12,9 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service Implementation for managing {@link com.convention.domain.ConventionEntity}.
- */
 @Service
 @Transactional
 public class ConventionServiceImpl implements ConventionService {
@@ -24,15 +24,21 @@ public class ConventionServiceImpl implements ConventionService {
     private final ConventionRepository conventionRepository;
     private final ClientRepository clientRepository;
     private final ConventionMapper conventionMapper;
+    private final UserRepository userRepository;
+    private final UniteOrganisationnelleRepository uniteRepository;
 
     public ConventionServiceImpl(
         ConventionRepository conventionRepository,
         ClientRepository clientRepository,
-        ConventionMapper conventionMapper
+        ConventionMapper conventionMapper,
+        UserRepository userRepository,
+        UniteOrganisationnelleRepository uniteRepository
     ) {
         this.conventionRepository = conventionRepository;
         this.clientRepository = clientRepository;
         this.conventionMapper = conventionMapper;
+        this.userRepository = userRepository;
+        this.uniteRepository = uniteRepository;
     }
 
     @Override
@@ -42,6 +48,15 @@ public class ConventionServiceImpl implements ConventionService {
         if (conventionDTO.getClient() != null && conventionDTO.getClient().getId() != null) {
             conventionEntity.setClient(clientRepository.getReferenceById(conventionDTO.getClient().getId()));
         }
+        // Auto-assign createdByUnite from the current user's unit (only on creation)
+        if (conventionDTO.getId() == null) {
+            SecurityUtils.getCurrentUserLogin()
+                .flatMap(userRepository::findOneWithAuthoritiesByLogin)
+                .map(u -> u.getUniteOrg())
+                .ifPresent(conventionEntity::setCreatedByUnite);
+        } else if (conventionDTO.getCreatedByUniteId() != null) {
+            uniteRepository.findById(conventionDTO.getCreatedByUniteId()).ifPresent(conventionEntity::setCreatedByUnite);
+        }
         conventionEntity = conventionRepository.save(conventionEntity);
         return conventionMapper.toDto(conventionEntity);
     }
@@ -49,12 +64,19 @@ public class ConventionServiceImpl implements ConventionService {
     @Override
     public ConventionDTO update(ConventionDTO conventionDTO) {
         LOG.debug("Request to update Convention : {}", conventionDTO);
-        ConventionEntity conventionEntity = conventionMapper.toEntity(conventionDTO);
-        if (conventionDTO.getClient() != null && conventionDTO.getClient().getId() != null) {
-            conventionEntity.setClient(clientRepository.getReferenceById(conventionDTO.getClient().getId()));
-        }
-        conventionEntity = conventionRepository.save(conventionEntity);
-        return conventionMapper.toDto(conventionEntity);
+        // Load existing entity first so that createdByUnite (and other managed refs) are preserved
+        return conventionRepository
+            .findById(conventionDTO.getId())
+            .map(existing -> {
+                conventionMapper.partialUpdate(existing, conventionDTO);
+                if (conventionDTO.getClient() != null && conventionDTO.getClient().getId() != null) {
+                    existing.setClient(clientRepository.getReferenceById(conventionDTO.getClient().getId()));
+                }
+                // createdByUnite intentionally NOT overwritten — preserved from DB
+                return conventionRepository.save(existing);
+            })
+            .map(conventionMapper::toDto)
+            .orElseThrow(() -> new RuntimeException("Convention introuvable: " + conventionDTO.getId()));
     }
 
     @Override
@@ -65,7 +87,6 @@ public class ConventionServiceImpl implements ConventionService {
             .findById(conventionDTO.getId())
             .map(existingConvention -> {
                 conventionMapper.partialUpdate(existingConvention, conventionDTO);
-
                 return existingConvention;
             })
             .map(conventionRepository::save)

@@ -7,6 +7,7 @@ import { FormatMediumDatePipe } from 'app/shared/date';
 import { IConvention } from '../convention.model';
 import { IFacture } from 'app/entities/facture/facture.model';
 import { IDetailConvention } from 'app/entities/detail-convention/detail-convention.model';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-convention-detail',
@@ -20,6 +21,22 @@ export class ConventionDetailComponent implements OnInit {
   detailConventions: IDetailConvention[] = [];
 
   protected http = inject(HttpClient);
+  private accountService = inject(AccountService);
+  readonly currentAccount = inject(AccountService).trackCurrentAccount();
+
+  get canEdit(): boolean {
+    const account = this.currentAccount();
+    if (!account) return false;
+    if (account.authorities.includes('ROLE_ADMIN')) return true;
+    const conv = this.convention();
+    if (!conv) return false;
+    // SERVICE: can only edit conventions created by their own unit
+    if (account.niveauHierarchique === 'SERVICE') {
+      return conv.createdByUniteId === account.uniteOrgId;
+    }
+    // DEPARTEMENT and DIRECTION: read-only (approval workflow, not direct edit)
+    return false;
+  }
 
   constructor() {
     effect(() => {

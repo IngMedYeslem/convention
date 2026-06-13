@@ -1,0 +1,53 @@
+<div class="form-page">
+  <div class="form-card-wrapper">
+    <div class="form-card-header">
+      <div class="form-card-icon"><fa-icon icon="sitemap" class="text-white fs-5"></fa-icon></div>
+      <div class="ms-3">
+        <h5 class="mb-0">{{ unite.id ? 'Modifier' : 'Créer' }} une unité organisationnelle</h5>
+      </div>
+    </div>
+
+    <div class="form-card-body pt-3">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Nom <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="unite.nom" required maxlength="150" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Code</label>
+        <input type="text" class="form-control" [(ngModel)]="unite.code" maxlength="30" placeholder="ex: DIR-01" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Niveau hiérarchique <span class="text-danger">*</span></label>
+        <select class="form-select" [(ngModel)]="unite.niveau" title="Niveau hiérarchique">
+          @for (n of niveaux; track n) {
+            <option [value]="n">{{ niveauLabel(n) }}</option>
+          }
+        </select>
+      </div>
+
+      @if (parentUnites().length > 0) {
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Unité parente</label>
+          <select class="form-select" [(ngModel)]="unite.parentId" title="Unité parente">
+            <option [ngValue]="null">— Aucune —</option>
+            @for (p of parentUnites(); track p.id) {
+              <option [ngValue]="p.id">{{ p.nom }}</option>
+            }
+          </select>
+        </div>
+      }
+    </div>
+
+    <div class="form-card-footer">
+      <a routerLink="/unite-organisationnelle" class="btn btn-secondary btn-sm">Annuler</a>
+      <button type="button" class="btn btn-primary btn-sm" (click)="save()" [disabled]="isSaving || !unite.nom">
+        @if (isSaving) {
+          <span class="spinner-border spinner-border-sm me-1"></span>
+        }
+        Enregistrer
+      </button>
+    </div>
+  </div>
+</div>

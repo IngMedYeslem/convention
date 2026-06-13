@@ -17,6 +17,7 @@ import { IConvention } from '../convention.model';
 import { ConventionService, EntityArrayResponseType } from '../service/convention.service';
 import { ConventionDeleteDialogComponent } from '../delete/convention-delete-dialog.component';
 import { HttpClient } from '@angular/common/http';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-convention',
@@ -52,6 +53,7 @@ export class ConventionComponent implements OnInit {
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
   protected http = inject(HttpClient);
+  readonly account = inject(AccountService).trackCurrentAccount();
 
   trackId = (item: IConvention): number => this.conventionService.getConventionIdentifier(item);
 
@@ -158,23 +160,37 @@ export class ConventionComponent implements OnInit {
     });
   }
 
-  // Méthodes pour le workflow des conventions
-  activateConvention(id: number): void {
-    this.http.put(`/api/convention-workflow/${id}/activate`, {}).subscribe(() => {
-      this.load();
-    });
+  // ─── Workflow d'approbation hiérarchique ─────────────────────────────────
+
+  soumettre(id: number): void {
+    this.http.put(`/api/convention-workflow/${id}/soumettre`, {}).subscribe({ next: () => this.load() });
+  }
+
+  rappeler(id: number): void {
+    this.http.put(`/api/convention-workflow/${id}/rappeler`, {}).subscribe({ next: () => this.load() });
+  }
+
+  approuverDept(id: number): void {
+    this.http.put(`/api/convention-workflow/${id}/approuver-dept`, {}).subscribe({ next: () => this.load() });
+  }
+
+  approuverDirection(id: number): void {
+    this.http.put(`/api/convention-workflow/${id}/approuver-direction`, {}).subscribe({ next: () => this.load() });
+  }
+
+  rejeter(id: number): void {
+    const commentaire = prompt('Motif du rejet (optionnel) :') ?? '';
+    this.http
+      .put(`/api/convention-workflow/${id}/rejeter?commentaire=${encodeURIComponent(commentaire)}`, {})
+      .subscribe({ next: () => this.load() });
   }
 
   suspendConvention(id: number): void {
-    this.http.put(`/api/convention-workflow/${id}/suspend`, {}).subscribe(() => {
-      this.load();
-    });
+    this.http.put(`/api/convention-workflow/${id}/suspend`, {}).subscribe({ next: () => this.load() });
   }
 
   reactivateConvention(id: number): void {
-    this.http.put(`/api/convention-workflow/${id}/reactivate`, {}).subscribe(() => {
-      this.load();
-    });
+    this.http.put(`/api/convention-workflow/${id}/reactivate`, {}).subscribe({ next: () => this.load() });
   }
 
   // Génération de facture

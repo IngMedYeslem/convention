@@ -133,6 +133,21 @@
           }
         </select>
       </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold" for="field_unite_org">
+          <fa-icon icon="sitemap" class="me-1 text-primary"></fa-icon>
+          Unité organisationnelle
+        </label>
+        <select class="form-select" id="field_unite_org" formControlName="uniteOrgId" title="Unité organisationnelle">
+          <option [ngValue]="null">— Aucune (accès global) —</option>
+          @for (unite of unites; track unite.id) {
+            <option [ngValue]="unite.id">[{{ niveauLabel(unite.niveau) }}] {{ unite.nom }}</option>
+          }
+        </select>
+        <small class="text-muted"> Service = voit ses propres conventions · Département = voit ses services · Direction = voit tout </small>
+      </div>
+
       <button type="button" class="btn btn-secondary" (click)="previousState()">
         <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
       </button>

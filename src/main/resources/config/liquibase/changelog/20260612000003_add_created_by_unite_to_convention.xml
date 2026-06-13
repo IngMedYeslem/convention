@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260612000003-1" author="convention">
+        <addColumn tableName="convention">
+            <column name="created_by_unite_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint
+            baseTableName="convention"
+            baseColumnNames="created_by_unite_id"
+            constraintName="fk_convention_created_by_unite"
+            referencedTableName="unite_organisationnelle"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

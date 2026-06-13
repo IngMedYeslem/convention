@@ -1,11 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 import SharedModule from 'app/shared/shared.module';
 import { LANGUAGES } from 'app/config/language.constants';
 import { IUser } from '../user-management.model';
 import { UserManagementService } from '../service/user-management.service';
+import { IUniteOrganisationnelle } from 'app/entities/unite-organisationnelle/unite-organisationnelle.model';
 
 const userTemplate = {} as IUser;
 
@@ -23,6 +25,7 @@ export default class UserManagementUpdateComponent implements OnInit {
   languages = LANGUAGES;
   authorities = signal<string[]>([]);
   isSaving = signal(false);
+  unites: IUniteOrganisationnelle[] = [];
 
   editForm = new FormGroup({
     id: new FormControl(userTemplate.id),
@@ -44,20 +47,36 @@ export default class UserManagementUpdateComponent implements OnInit {
     activated: new FormControl(userTemplate.activated, { nonNullable: true }),
     langKey: new FormControl(userTemplate.langKey, { nonNullable: true }),
     authorities: new FormControl(userTemplate.authorities, { nonNullable: true }),
+    uniteOrgId: new FormControl<number | null>(null),
   });
 
   private readonly userService = inject(UserManagementService);
   private readonly route = inject(ActivatedRoute);
+  private readonly http = inject(HttpClient);
 
   ngOnInit(): void {
     this.route.data.subscribe(({ user }) => {
       if (user) {
-        this.editForm.reset(user);
+        this.editForm.reset({ ...user, uniteOrgId: user.uniteOrgId ?? null });
       } else {
         this.editForm.reset(newUser);
       }
     });
     this.userService.authorities().subscribe(authorities => this.authorities.set(authorities));
+    this.http.get<IUniteOrganisationnelle[]>('/api/unite-organisationnelles').subscribe(u => (this.unites = u));
+  }
+
+  niveauLabel(niveau: string | null | undefined): string {
+    switch (niveau) {
+      case 'SERVICE':
+        return 'Service';
+      case 'DEPARTEMENT':
+        return 'Département';
+      case 'DIRECTION':
+        return 'Direction';
+      default:
+        return niveau ?? '';
+    }
   }
 
   previousState(): void {

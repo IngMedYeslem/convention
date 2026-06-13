@@ -1,10 +1,14 @@
 package com.convention.web.rest;
 
+import com.convention.domain.enumeration.NiveauHierarchique;
 import com.convention.repository.ConventionRepository;
+import com.convention.repository.UserRepository;
+import com.convention.security.SecurityUtils;
 import com.convention.service.ConventionQueryService;
 import com.convention.service.ConventionService;
 import com.convention.service.criteria.ConventionCriteria;
 import com.convention.service.dto.ConventionDTO;
+import com.convention.service.mapper.ConventionMapper;
 import com.convention.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -46,14 +51,22 @@ public class ConventionResource {
 
     private final ConventionQueryService conventionQueryService;
 
+    private final UserRepository userRepository;
+
+    private final ConventionMapper conventionMapper;
+
     public ConventionResource(
         ConventionService conventionService,
         ConventionRepository conventionRepository,
-        ConventionQueryService conventionQueryService
+        ConventionQueryService conventionQueryService,
+        UserRepository userRepository,
+        ConventionMapper conventionMapper
     ) {
         this.conventionService = conventionService;
         this.conventionRepository = conventionRepository;
         this.conventionQueryService = conventionQueryService;
+        this.userRepository = userRepository;
+        this.conventionMapper = conventionMapper;
     }
 
     /**
@@ -158,7 +171,30 @@ public class ConventionResource {
     ) {
         LOG.debug("REST request to get Conventions by criteria: {}", criteria);
 
-        Page<ConventionDTO> page = conventionQueryService.findByCriteria(criteria, pageable);
+        // Apply data-scoping based on the current user's hierarchical level
+        Page<ConventionDTO> page = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .filter(u -> u.getUniteOrg() != null)
+            .map(u -> {
+                NiveauHierarchique niveau = u.getUniteOrg().getNiveau();
+                if (niveau == NiveauHierarchique.SERVICE) {
+                    // SERVICE: only sees conventions it created
+                    return conventionRepository.findByCreatedByUniteId(u.getUniteOrg().getId(), pageable).map(conventionMapper::toDto);
+                } else if (niveau == NiveauHierarchique.DEPARTEMENT) {
+                    // DEPARTEMENT: sees conventions created by its subordinate SERVICE units
+                    return conventionRepository
+                        .findByCreatedByUniteParentId(u.getUniteOrg().getId(), pageable)
+                        .map(conventionMapper::toDto);
+                }
+                // DIRECTION: fall through to see all
+                return (Page<ConventionDTO>) null;
+            })
+            .orElse(null);
+
+        if (page == null) {
+            page = conventionQueryService.findByCriteria(criteria, pageable);
+        }
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

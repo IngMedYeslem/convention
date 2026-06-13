@@ -1,8 +1,10 @@
 package com.convention.web.rest;
 
 import com.convention.repository.PaymentRepository;
+import com.convention.service.DataScopeService;
 import com.convention.service.PaymentService;
 import com.convention.service.dto.PaymentDTO;
+import com.convention.service.mapper.PaymentMapper;
 import com.convention.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -39,12 +41,20 @@ public class PaymentResource {
     private String applicationName;
 
     private final PaymentService paymentService;
-
     private final PaymentRepository paymentRepository;
+    private final DataScopeService dataScopeService;
+    private final PaymentMapper paymentMapper;
 
-    public PaymentResource(PaymentService paymentService, PaymentRepository paymentRepository) {
+    public PaymentResource(
+        PaymentService paymentService,
+        PaymentRepository paymentRepository,
+        DataScopeService dataScopeService,
+        PaymentMapper paymentMapper
+    ) {
         this.paymentService = paymentService;
         this.paymentRepository = paymentRepository;
+        this.dataScopeService = dataScopeService;
+        this.paymentMapper = paymentMapper;
     }
 
     /**
@@ -144,7 +154,12 @@ public class PaymentResource {
     @GetMapping("")
     public ResponseEntity<List<PaymentDTO>> getAllPayments(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         LOG.debug("REST request to get a page of Payments");
-        Page<PaymentDTO> page = paymentService.findAll(pageable);
+        Page<PaymentDTO> page = dataScopeService.scopedPage(
+            pageable,
+            (uniteId, p) -> paymentRepository.findByFacture_Convention_CreatedByUnite_Id(uniteId, p).map(paymentMapper::toDto),
+            (parentId, p) -> paymentRepository.findByFacture_Convention_CreatedByUnite_Parent_Id(parentId, p).map(paymentMapper::toDto),
+            paymentService::findAll
+        );
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

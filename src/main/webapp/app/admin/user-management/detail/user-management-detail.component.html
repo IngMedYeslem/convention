@@ -52,6 +52,24 @@
               }
             </ul>
           </dd>
+
+          <dt>Unité organisationnelle</dt>
+          <dd>
+            @if (userRef.uniteOrgNom) {
+              <span
+                class="badge"
+                [class.bg-danger]="userRef.niveauHierarchique === 'SERVICE'"
+                [class.bg-warning]="userRef.niveauHierarchique === 'DEPARTEMENT'"
+                [class.bg-primary]="userRef.niveauHierarchique === 'DIRECTION'"
+                [class.text-dark]="userRef.niveauHierarchique === 'DEPARTEMENT'"
+              >
+                {{ userRef.uniteOrgNom }}
+              </span>
+              <small class="text-muted ms-2">{{ userRef.niveauHierarchique }}</small>
+            } @else {
+              <span class="text-muted">— Accès global</span>
+            }
+          </dd>
         </dl>
 
         <button type="submit" routerLink="../../" class="btn btn-info">

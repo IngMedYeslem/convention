@@ -1,8 +1,10 @@
 package com.convention.web.rest;
 
 import com.convention.repository.DetailConventionRepository;
+import com.convention.service.DataScopeService;
 import com.convention.service.DetailConventionService;
 import com.convention.service.dto.DetailConventionDTO;
+import com.convention.service.mapper.DetailConventionMapper;
 import com.convention.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -39,15 +41,20 @@ public class DetailConventionResource {
     private String applicationName;
 
     private final DetailConventionService detailConventionService;
-
     private final DetailConventionRepository detailConventionRepository;
+    private final DataScopeService dataScopeService;
+    private final DetailConventionMapper detailConventionMapper;
 
     public DetailConventionResource(
         DetailConventionService detailConventionService,
-        DetailConventionRepository detailConventionRepository
+        DetailConventionRepository detailConventionRepository,
+        DataScopeService dataScopeService,
+        DetailConventionMapper detailConventionMapper
     ) {
         this.detailConventionService = detailConventionService;
         this.detailConventionRepository = detailConventionRepository;
+        this.dataScopeService = dataScopeService;
+        this.detailConventionMapper = detailConventionMapper;
     }
 
     /**
@@ -159,7 +166,13 @@ public class DetailConventionResource {
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         LOG.debug("REST request to get a page of DetailConventions");
-        Page<DetailConventionDTO> page = detailConventionService.findAll(pageable);
+        Page<DetailConventionDTO> page = dataScopeService.scopedPage(
+            pageable,
+            (uniteId, p) -> detailConventionRepository.findByConvention_CreatedByUnite_Id(uniteId, p).map(detailConventionMapper::toDto),
+            (parentId, p) ->
+                detailConventionRepository.findByConvention_CreatedByUnite_Parent_Id(parentId, p).map(detailConventionMapper::toDto),
+            detailConventionService::findAll
+        );
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

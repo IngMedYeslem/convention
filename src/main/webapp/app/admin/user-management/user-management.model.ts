@@ -11,6 +11,9 @@ export interface IUser {
   createdDate?: Date;
   lastModifiedBy?: string;
   lastModifiedDate?: Date;
+  uniteOrgId?: number | null;
+  uniteOrgNom?: string | null;
+  niveauHierarchique?: string | null;
 }
 
 export class User implements IUser {
@@ -27,5 +30,8 @@ export class User implements IUser {
     public createdDate?: Date,
     public lastModifiedBy?: string,
     public lastModifiedDate?: Date,
+    public uniteOrgId?: number | null,
+    public uniteOrgNom?: string | null,
+    public niveauHierarchique?: string | null,
   ) {}
 }

@@ -2,7 +2,6 @@ package com.convention.web.rest;
 
 import com.convention.domain.ConventionEntity;
 import com.convention.service.ConventionWorkflowService;
-import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -20,42 +19,44 @@ public class ConventionWorkflowResource {
         this.workflowService = workflowService;
     }
 
-    // ─── Approbation ──────────────────────────────────────────────────────────
+    // ─── Approbation hiérarchique ─────────────────────────────────────────────
 
-    @PutMapping("/{id}/soumettre-juridique")
-    public ResponseEntity<ConventionEntity> soumettreJuridique(@PathVariable Long id) {
-        LOG.debug("Soumission revue juridique: {}", id);
-        return ResponseEntity.ok(workflowService.soumettrePourRevueJuridique(id));
+    /** SERVICE: BROUILLON/REJETE → SOUMIS */
+    @PutMapping("/{id}/soumettre")
+    public ResponseEntity<ConventionEntity> soumettre(@PathVariable Long id) {
+        LOG.debug("Soumission convention: {}", id);
+        return ResponseEntity.ok(workflowService.soumettre(id));
     }
 
-    @PutMapping("/{id}/valider-juridique")
-    public ResponseEntity<ConventionEntity> validerJuridique(@PathVariable Long id) {
-        LOG.debug("Validation juridique: {}", id);
-        return ResponseEntity.ok(workflowService.validerRevueJuridique(id));
+    /** SERVICE: SOUMIS → BROUILLON (retrait de la soumission) */
+    @PutMapping("/{id}/rappeler")
+    public ResponseEntity<ConventionEntity> rappeler(@PathVariable Long id) {
+        LOG.debug("Rappel convention: {}", id);
+        return ResponseEntity.ok(workflowService.rappeler(id));
     }
 
-    @PutMapping("/{id}/visa-financier")
-    public ResponseEntity<ConventionEntity> visaFinancier(@PathVariable Long id, @RequestParam String dateVisa) {
-        LOG.debug("Visa financier: {}", id);
-        return ResponseEntity.ok(workflowService.apposerVisaFinancier(id, LocalDate.parse(dateVisa)));
+    /** DEPARTEMENT: SOUMIS → APPROUVE_DEPT */
+    @PutMapping("/{id}/approuver-dept")
+    public ResponseEntity<ConventionEntity> approuverDept(@PathVariable Long id) {
+        LOG.debug("Approbation département: {}", id);
+        return ResponseEntity.ok(workflowService.approuverDept(id));
     }
 
-    @PutMapping("/{id}/signer-publier")
-    public ResponseEntity<ConventionEntity> signerEtPublier(@PathVariable Long id) {
-        LOG.debug("Signature + publication: {}", id);
-        return ResponseEntity.ok(workflowService.signerEtPublier(id));
+    /** DIRECTION: APPROUVE_DEPT → ACTIVE */
+    @PutMapping("/{id}/approuver-direction")
+    public ResponseEntity<ConventionEntity> approuverDirection(@PathVariable Long id) {
+        LOG.debug("Approbation direction: {}", id);
+        return ResponseEntity.ok(workflowService.approuverDirection(id));
     }
 
+    /** Any approver: SOUMIS|APPROUVE_DEPT → REJETE */
     @PutMapping("/{id}/rejeter")
-    public ResponseEntity<ConventionEntity> rejeter(@PathVariable Long id, @RequestParam String commentaire) {
+    public ResponseEntity<ConventionEntity> rejeter(
+        @PathVariable Long id,
+        @RequestParam(required = false, defaultValue = "") String commentaire
+    ) {
         LOG.debug("Rejet convention: {}", id);
         return ResponseEntity.ok(workflowService.rejeter(id, commentaire));
-    }
-
-    @PutMapping("/{id}/reprendre")
-    public ResponseEntity<ConventionEntity> reprendre(@PathVariable Long id) {
-        LOG.debug("Reprise après rejet: {}", id);
-        return ResponseEntity.ok(workflowService.reprendreApresRejet(id));
     }
 
     // ─── Statut opérationnel ──────────────────────────────────────────────────
@@ -79,7 +80,10 @@ public class ConventionWorkflowResource {
     }
 
     @PutMapping("/{id}/annuler")
-    public ResponseEntity<ConventionEntity> annuler(@PathVariable Long id, @RequestParam String motif) {
+    public ResponseEntity<ConventionEntity> annuler(
+        @PathVariable Long id,
+        @RequestParam(required = false, defaultValue = "") String motif
+    ) {
         LOG.debug("Annulation: {}", id);
         return ResponseEntity.ok(workflowService.annulerConvention(id, motif));
     }

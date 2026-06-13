@@ -53,10 +53,15 @@ export default class SettingsComponent implements OnInit {
   save(): void {
     this.success.set(false);
 
-    const account = this.settingsForm.getRawValue();
+    const currentAccount = this.accountService.trackCurrentAccount()();
+    const formValues = this.settingsForm.getRawValue();
+    const account: Account = {
+      ...currentAccount,
+      ...formValues,
+    } as Account;
+
     this.accountService.save(account).subscribe(() => {
       this.success.set(true);
-
       this.accountService.authenticate(account);
 
       if (account.langKey !== this.translateService.currentLang) {

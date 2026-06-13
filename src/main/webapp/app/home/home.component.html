@@ -11,11 +11,11 @@
       </div>
     </div>
     <div>
-      @if (account() !== null) {
+      @if (account() !== null && $any(account())?.niveauHierarchique !== 'SERVICE') {
         <a routerLink="/dashboard" class="btn btn-outline-light btn-sm fw-semibold">
           <fa-icon icon="tachometer-alt" class="me-1"></fa-icon> Tableau de bord
         </a>
-      } @else {
+      } @else if (account() === null) {
         <span (click)="login()" class="btn btn-outline-light btn-sm fw-semibold login-btn">
           <fa-icon icon="sign-in-alt" class="me-1"></fa-icon> Se connecter
         </span>
@@ -43,9 +43,11 @@
 
           @if (account() !== null) {
             <div class="d-flex gap-3 flex-wrap">
-              <a routerLink="/dashboard" class="btn btn-white btn-hero">
-                <fa-icon icon="tachometer-alt" class="me-2"></fa-icon> Tableau de bord
-              </a>
+              @if ($any(account())?.niveauHierarchique !== 'SERVICE') {
+                <a routerLink="/dashboard" class="btn btn-white btn-hero">
+                  <fa-icon icon="tachometer-alt" class="me-2"></fa-icon> Tableau de bord
+                </a>
+              }
               <a routerLink="/convention" class="btn btn-outline-light btn-hero">
                 <fa-icon icon="list" class="me-2"></fa-icon> Conventions
               </a>

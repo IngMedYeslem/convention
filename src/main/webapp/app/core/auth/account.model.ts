@@ -8,5 +8,8 @@ export class Account {
     public lastName: string | null,
     public login: string,
     public imageUrl: string | null,
+    public uniteOrgId: number | null = null,
+    public uniteOrgNom: string | null = null,
+    public niveauHierarchique: 'SERVICE' | 'DEPARTEMENT' | 'DIRECTION' | null = null,
   ) {}
 }

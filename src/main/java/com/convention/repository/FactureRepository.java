@@ -4,6 +4,8 @@ import com.convention.domain.FactureEntity;
 import com.convention.domain.enumeration.StatutFacture;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -25,4 +27,7 @@ public interface FactureRepository extends JpaRepository<FactureEntity, Long>, J
         @Param("endDate") LocalDate endDate,
         @Param("statut") StatutFacture statut
     );
+
+    Page<FactureEntity> findByConvention_CreatedByUnite_Id(Long uniteId, Pageable pageable);
+    Page<FactureEntity> findByConvention_CreatedByUnite_Parent_Id(Long parentId, Pageable pageable);
 }

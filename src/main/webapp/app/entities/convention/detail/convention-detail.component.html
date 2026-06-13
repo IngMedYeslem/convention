@@ -16,9 +16,11 @@
           <button type="button" (click)="previousState()" class="btn btn-outline-light btn-sm">
             <fa-icon icon="arrow-left"></fa-icon> Retour
           </button>
-          <button type="button" [routerLink]="['/convention', conv.id, 'edit']" class="btn btn-warning btn-sm">
-            <fa-icon icon="pencil-alt"></fa-icon> Éditer
-          </button>
+          @if (canEdit) {
+            <button type="button" [routerLink]="['/convention', conv.id, 'edit']" class="btn btn-warning btn-sm">
+              <fa-icon icon="pencil-alt"></fa-icon> Éditer
+            </button>
+          }
         </div>
       </div>
 
@@ -26,12 +28,31 @@
         <jhi-alert-error />
         <jhi-alert />
 
+        <!-- Motif de rejet -->
+        @if (conv.statut === 'REJETE' && conv.commentaireRejet) {
+          <div class="alert alert-danger d-flex align-items-start gap-2 mb-3">
+            <fa-icon icon="exclamation-triangle" class="mt-1 flex-shrink-0"></fa-icon>
+            <div>
+              <strong>Convention rejetée — Motif :</strong>
+              <div class="mt-1">{{ conv.commentaireRejet }}</div>
+            </div>
+          </div>
+        }
+
         <!-- Section : Identification -->
         <div class="form-section">
           <div class="form-section-title"><fa-icon icon="hashtag" class="me-2 text-primary"></fa-icon>Identification</div>
           <dl class="row">
             <dt class="col-sm-4">N° Convention</dt>
             <dd class="col-sm-8 fw-semibold">{{ conv.numConvention }}</dd>
+            <dt class="col-sm-4">Unité créatrice</dt>
+            <dd class="col-sm-8">
+              @if (conv.createdByUniteNom) {
+                <span class="badge bg-secondary">{{ conv.createdByUniteNom }}</span>
+              } @else {
+                <span class="text-muted">—</span>
+              }
+            </dd>
             <dt class="col-sm-4">Partenaire</dt>
             <dd class="col-sm-8">
               @if (conv.client) {

@@ -1,10 +1,12 @@
 package com.convention.web.rest;
 
 import com.convention.repository.FactureRepository;
+import com.convention.service.DataScopeService;
 import com.convention.service.FactureQueryService;
 import com.convention.service.FactureService;
 import com.convention.service.criteria.FactureCriteria;
 import com.convention.service.dto.FactureDTO;
+import com.convention.service.mapper.FactureMapper;
 import com.convention.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -41,15 +43,23 @@ public class FactureResource {
     private String applicationName;
 
     private final FactureService factureService;
-
     private final FactureRepository factureRepository;
-
     private final FactureQueryService factureQueryService;
+    private final DataScopeService dataScopeService;
+    private final FactureMapper factureMapper;
 
-    public FactureResource(FactureService factureService, FactureRepository factureRepository, FactureQueryService factureQueryService) {
+    public FactureResource(
+        FactureService factureService,
+        FactureRepository factureRepository,
+        FactureQueryService factureQueryService,
+        DataScopeService dataScopeService,
+        FactureMapper factureMapper
+    ) {
         this.factureService = factureService;
         this.factureRepository = factureRepository;
         this.factureQueryService = factureQueryService;
+        this.dataScopeService = dataScopeService;
+        this.factureMapper = factureMapper;
     }
 
     /**
@@ -153,8 +163,12 @@ public class FactureResource {
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         LOG.debug("REST request to get Factures by criteria: {}", criteria);
-
-        Page<FactureDTO> page = factureQueryService.findByCriteria(criteria, pageable);
+        Page<FactureDTO> page = dataScopeService.scopedPage(
+            pageable,
+            (uniteId, p) -> factureRepository.findByConvention_CreatedByUnite_Id(uniteId, p).map(factureMapper::toDto),
+            (parentId, p) -> factureRepository.findByConvention_CreatedByUnite_Parent_Id(parentId, p).map(factureMapper::toDto),
+            p -> factureQueryService.findByCriteria(criteria, p)
+        );
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

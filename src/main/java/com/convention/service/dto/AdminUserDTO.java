@@ -3,6 +3,7 @@ package com.convention.service.dto;
 import com.convention.config.Constants;
 import com.convention.domain.Authority;
 import com.convention.domain.UserEntity;
+import com.convention.domain.enumeration.NiveauHierarchique;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -51,6 +52,12 @@ public class AdminUserDTO implements Serializable {
 
     private Set<String> authorities;
 
+    private Long uniteOrgId;
+
+    private String uniteOrgNom;
+
+    private NiveauHierarchique niveauHierarchique;
+
     public AdminUserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -69,6 +76,11 @@ public class AdminUserDTO implements Serializable {
         this.lastModifiedBy = user.getLastModifiedBy();
         this.lastModifiedDate = user.getLastModifiedDate();
         this.authorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
+        if (user.getUniteOrg() != null) {
+            this.uniteOrgId = user.getUniteOrg().getId();
+            this.uniteOrgNom = user.getUniteOrg().getNom();
+            this.niveauHierarchique = user.getUniteOrg().getNiveau();
+        }
     }
 
     public Long getId() {
@@ -173,6 +185,30 @@ public class AdminUserDTO implements Serializable {
 
     public void setAuthorities(Set<String> authorities) {
         this.authorities = authorities;
+    }
+
+    public Long getUniteOrgId() {
+        return uniteOrgId;
+    }
+
+    public void setUniteOrgId(Long uniteOrgId) {
+        this.uniteOrgId = uniteOrgId;
+    }
+
+    public String getUniteOrgNom() {
+        return uniteOrgNom;
+    }
+
+    public void setUniteOrgNom(String uniteOrgNom) {
+        this.uniteOrgNom = uniteOrgNom;
+    }
+
+    public NiveauHierarchique getNiveauHierarchique() {
+        return niveauHierarchique;
+    }
+
+    public void setNiveauHierarchique(NiveauHierarchique niveauHierarchique) {
+        this.niveauHierarchique = niveauHierarchique;
     }
 
     // prettier-ignore

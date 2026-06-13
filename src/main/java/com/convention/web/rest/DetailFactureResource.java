@@ -1,8 +1,10 @@
 package com.convention.web.rest;
 
 import com.convention.repository.DetailFactureRepository;
+import com.convention.service.DataScopeService;
 import com.convention.service.DetailFactureService;
 import com.convention.service.dto.DetailFactureDTO;
+import com.convention.service.mapper.DetailFactureMapper;
 import com.convention.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -39,12 +41,20 @@ public class DetailFactureResource {
     private String applicationName;
 
     private final DetailFactureService detailFactureService;
-
     private final DetailFactureRepository detailFactureRepository;
+    private final DataScopeService dataScopeService;
+    private final DetailFactureMapper detailFactureMapper;
 
-    public DetailFactureResource(DetailFactureService detailFactureService, DetailFactureRepository detailFactureRepository) {
+    public DetailFactureResource(
+        DetailFactureService detailFactureService,
+        DetailFactureRepository detailFactureRepository,
+        DataScopeService dataScopeService,
+        DetailFactureMapper detailFactureMapper
+    ) {
         this.detailFactureService = detailFactureService;
         this.detailFactureRepository = detailFactureRepository;
+        this.dataScopeService = dataScopeService;
+        this.detailFactureMapper = detailFactureMapper;
     }
 
     /**
@@ -154,7 +164,13 @@ public class DetailFactureResource {
     @GetMapping("")
     public ResponseEntity<List<DetailFactureDTO>> getAllDetailFactures(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         LOG.debug("REST request to get a page of DetailFactures");
-        Page<DetailFactureDTO> page = detailFactureService.findAll(pageable);
+        Page<DetailFactureDTO> page = dataScopeService.scopedPage(
+            pageable,
+            (uniteId, p) -> detailFactureRepository.findByFacture_Convention_CreatedByUnite_Id(uniteId, p).map(detailFactureMapper::toDto),
+            (parentId, p) ->
+                detailFactureRepository.findByFacture_Convention_CreatedByUnite_Parent_Id(parentId, p).map(detailFactureMapper::toDto),
+            detailFactureService::findAll
+        );
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

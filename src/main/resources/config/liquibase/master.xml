@@ -24,6 +24,9 @@
     <include file="config/liquibase/changelog/20260605000004_added_entity_ConventionDocument.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260605000005_added_entity_BudgetEngagement.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260611000001_update_convention_echeance.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260612000001_added_entity_UniteOrganisationnelle.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260612000002_add_unite_org_to_user.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260612000003_add_created_by_unite_to_convention.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20251118195132_added_entity_constraints_Convention.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251118195133_added_entity_constraints_DetailConvention.xml" relativeToChangelogFile="false"/>

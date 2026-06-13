@@ -11,20 +11,106 @@
     </a>
   </div>
 
-  <!-- Actions rapides -->
+  <!-- Actions rapides (adaptées au niveau) -->
   <div class="card mb-4">
     <div class="card-body py-2">
       <div class="d-flex gap-2 flex-wrap">
-        <button type="button" class="btn btn-primary btn-sm" (click)="generateAllInvoices()">
-          <fa-icon icon="file-invoice"></fa-icon> Générer les factures
-        </button>
-        <a class="btn btn-success btn-sm" routerLink="/convention/scan"> <fa-icon icon="qrcode"></fa-icon> Scanner PDF </a>
-        <a class="btn btn-warning btn-sm" routerLink="/convention/new"> <fa-icon icon="plus"></fa-icon> Nouvelle Convention </a>
-        <a class="btn btn-outline-primary btn-sm" routerLink="/client/new"> <fa-icon icon="user-plus"></fa-icon> Nouveau Partenaire </a>
+        @if (account()?.niveauHierarchique === 'DIRECTION' || !account()?.niveauHierarchique) {
+          <button type="button" class="btn btn-primary btn-sm" (click)="generateAllInvoices()">
+            <fa-icon icon="file-invoice"></fa-icon> Générer les factures
+          </button>
+        }
+        @if (!account()?.niveauHierarchique) {
+          <a class="btn btn-warning btn-sm" routerLink="/convention/new"> <fa-icon icon="plus"></fa-icon> Nouvelle Convention </a>
+          <a class="btn btn-outline-primary btn-sm" routerLink="/client/new"> <fa-icon icon="user-plus"></fa-icon> Nouveau Partenaire </a>
+        }
         <a class="btn btn-outline-secondary btn-sm" routerLink="/convention"> <fa-icon icon="list"></fa-icon> Toutes les Conventions </a>
       </div>
     </div>
   </div>
+
+  <!-- ─── En attente d'approbation (DEPARTEMENT / DIRECTION) ─────────────── -->
+  @if (account()?.niveauHierarchique === 'DEPARTEMENT' || account()?.niveauHierarchique === 'DIRECTION') {
+    <div
+      class="card mb-4"
+      [class.border-primary]="account()?.niveauHierarchique === 'DEPARTEMENT'"
+      [class.border-info]="account()?.niveauHierarchique === 'DIRECTION'"
+    >
+      <div
+        class="card-header fw-semibold py-2 d-flex justify-content-between align-items-center"
+        [class.bg-primary]="account()?.niveauHierarchique === 'DEPARTEMENT'"
+        [class.bg-info]="account()?.niveauHierarchique === 'DIRECTION'"
+        [class.text-white]="true"
+      >
+        @if (account()?.niveauHierarchique === 'DEPARTEMENT') {
+          <span><fa-icon icon="check-circle"></fa-icon> Conventions en attente de votre approbation (Département)</span>
+        } @else {
+          <span><fa-icon icon="check-double"></fa-icon> Conventions en attente de votre approbation (Direction)</span>
+        }
+        <span class="badge bg-white text-dark ms-2">{{ conventionsPendingApproval.length }}</span>
+      </div>
+
+      @if (conventionsPendingApproval.length === 0) {
+        <div class="card-body text-center text-muted py-3">
+          <fa-icon icon="check-circle"></fa-icon> Aucune convention en attente d'approbation
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>N°</th>
+                <th>Partenaire</th>
+                <th>Responsable</th>
+                <th>Période</th>
+                <th class="text-end">Redevance (MRU)</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (conv of conventionsPendingApproval; track conv.id) {
+                <tr>
+                  <td>
+                    <a [routerLink]="['/convention', conv.id, 'view']" class="fw-semibold text-decoration-none">
+                      {{ conv.numConvention ?? '#' + conv.id }}
+                    </a>
+                  </td>
+                  <td>{{ conv.client?.nomClient ?? '—' }}</td>
+                  <td>{{ conv.nomResponsable ?? '—' }}</td>
+                  <td>{{ periodeLabel(conv.periodeEcheance) }}</td>
+                  <td class="text-end">{{ conv.redevance | number: '1.0-0' }}</td>
+                  <td class="text-end">
+                    <div class="btn-group btn-group-sm">
+                      <a [routerLink]="['/convention', conv.id, 'view']" class="btn btn-outline-secondary btn-sm" title="Voir">
+                        <fa-icon icon="eye"></fa-icon>
+                      </a>
+                      @if (account()?.niveauHierarchique === 'DEPARTEMENT') {
+                        <button type="button" (click)="approuverDept(conv.id)" class="btn btn-success btn-sm" title="Approuver">
+                          <fa-icon icon="check"></fa-icon> Approuver
+                        </button>
+                      } @else {
+                        <button
+                          type="button"
+                          (click)="approuverDirection(conv.id)"
+                          class="btn btn-success btn-sm"
+                          title="Approuver (activation finale)"
+                        >
+                          <fa-icon icon="check-double"></fa-icon> Approuver
+                        </button>
+                      }
+                      <button type="button" (click)="rejeter(conv.id)" class="btn btn-danger btn-sm" title="Rejeter">
+                        <fa-icon icon="times"></fa-icon> Rejeter
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
 
   <!-- KPIs -->
   <div class="row mb-4 g-3">
@@ -44,6 +130,36 @@
         </div>
       </div>
     </div>
+    <!-- KPI en attente (visible pour les approbateurs) -->
+    @if (account()?.niveauHierarchique === 'DEPARTEMENT' || account()?.niveauHierarchique === 'DIRECTION') {
+      <div class="col-md-2 col-sm-4">
+        <div
+          class="card text-center h-100"
+          [class.border-primary]="account()?.niveauHierarchique === 'DEPARTEMENT'"
+          [class.border-info]="account()?.niveauHierarchique === 'DIRECTION'"
+        >
+          <div class="card-body py-3">
+            <div class="text-muted small mb-1">En attente</div>
+            <h2
+              class="mb-0"
+              [class.text-primary]="account()?.niveauHierarchique === 'DEPARTEMENT'"
+              [class.text-info]="account()?.niveauHierarchique === 'DIRECTION'"
+            >
+              {{ conventionsPendingApproval.length }}
+            </h2>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="col-md-2 col-sm-4">
+        <div class="card text-center border-warning h-100">
+          <div class="card-body py-3">
+            <div class="text-muted small mb-1">Suspendues</div>
+            <h2 class="text-warning mb-0">{{ statistics.conventionsSuspendues || 0 }}</h2>
+          </div>
+        </div>
+      </div>
+    }
     <div class="col-md-2 col-sm-4">
       <div class="card text-center border-warning h-100">
         <div class="card-body py-3">
@@ -117,7 +233,7 @@
               <th>N°</th>
               <th>Partenaire</th>
               <th>Période</th>
-              <th>Redevance (MRU)</th>
+              <th class="text-end">Redevance (MRU)</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -148,7 +264,9 @@
           <p class="text-muted small">Gérer les informations des partenaires et institutions.</p>
           <div class="d-grid gap-2">
             <a class="btn btn-outline-primary btn-sm" routerLink="/client"> <fa-icon icon="list"></fa-icon> Liste des partenaires </a>
-            <a class="btn btn-outline-success btn-sm" routerLink="/client/new"> <fa-icon icon="plus"></fa-icon> Nouveau partenaire </a>
+            @if (!account()?.niveauHierarchique) {
+              <a class="btn btn-outline-success btn-sm" routerLink="/client/new"> <fa-icon icon="plus"></fa-icon> Nouveau partenaire </a>
+            }
           </div>
         </div>
       </div>
@@ -161,8 +279,11 @@
           <p class="text-muted small">Créer, gérer et suivre le cycle de vie des conventions.</p>
           <div class="d-grid gap-2">
             <a class="btn btn-outline-primary btn-sm" routerLink="/convention"> <fa-icon icon="list"></fa-icon> Liste des conventions </a>
-            <a class="btn btn-outline-success btn-sm" routerLink="/convention/new"> <fa-icon icon="plus"></fa-icon> Nouvelle convention </a>
-            <a class="btn btn-outline-info btn-sm" routerLink="/convention/scan"> <fa-icon icon="qrcode"></fa-icon> Scanner un PDF </a>
+            @if (!account()?.niveauHierarchique) {
+              <a class="btn btn-outline-success btn-sm" routerLink="/convention/new">
+                <fa-icon icon="plus"></fa-icon> Nouvelle convention
+              </a>
+            }
           </div>
         </div>
       </div>
@@ -176,7 +297,9 @@
           <div class="d-grid gap-2">
             <a class="btn btn-outline-primary btn-sm" routerLink="/facture"> <fa-icon icon="file-invoice"></fa-icon> Liste des factures </a>
             <a class="btn btn-outline-success btn-sm" routerLink="/payment"> <fa-icon icon="credit-card"></fa-icon> Liste des paiements </a>
-            <a class="btn btn-outline-secondary btn-sm" routerLink="/payment/new"> <fa-icon icon="plus"></fa-icon> Nouveau paiement </a>
+            @if (!account()?.niveauHierarchique) {
+              <a class="btn btn-outline-secondary btn-sm" routerLink="/payment/new"> <fa-icon icon="plus"></fa-icon> Nouveau paiement </a>
+            }
           </div>
         </div>
       </div>

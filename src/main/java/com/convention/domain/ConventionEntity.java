@@ -1,5 +1,6 @@
 package com.convention.domain;
 
+import com.convention.domain.UniteOrganisationnelleEntity;
 import com.convention.domain.enumeration.EtapeApprobation;
 import com.convention.domain.enumeration.PeriodeEcheance;
 import com.convention.domain.enumeration.StatutConvention;
@@ -119,6 +120,10 @@ public class ConventionEntity implements Serializable {
     @ManyToOne(optional = false)
     @NotNull
     private ClientEntity client;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by_unite_id")
+    private UniteOrganisationnelleEntity createdByUnite;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -367,6 +372,14 @@ public class ConventionEntity implements Serializable {
 
     public void setCommentaireRejet(String commentaireRejet) {
         this.commentaireRejet = commentaireRejet;
+    }
+
+    public UniteOrganisationnelleEntity getCreatedByUnite() {
+        return createdByUnite;
+    }
+
+    public void setCreatedByUnite(UniteOrganisationnelleEntity createdByUnite) {
+        this.createdByUnite = createdByUnite;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

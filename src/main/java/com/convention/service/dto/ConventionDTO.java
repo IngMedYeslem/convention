@@ -81,6 +81,10 @@ public class ConventionDTO implements Serializable {
     @Size(max = 500)
     private String commentaireRejet;
 
+    private Long createdByUniteId;
+
+    private String createdByUniteNom;
+
     public Long getId() {
         return id;
     }
@@ -271,6 +275,22 @@ public class ConventionDTO implements Serializable {
 
     public void setCommentaireRejet(String commentaireRejet) {
         this.commentaireRejet = commentaireRejet;
+    }
+
+    public Long getCreatedByUniteId() {
+        return createdByUniteId;
+    }
+
+    public void setCreatedByUniteId(Long createdByUniteId) {
+        this.createdByUniteId = createdByUniteId;
+    }
+
+    public String getCreatedByUniteNom() {
+        return createdByUniteNom;
+    }
+
+    public void setCreatedByUniteNom(String createdByUniteNom) {
+        this.createdByUniteNom = createdByUniteNom;
     }
 
     @Override

@@ -30,6 +30,8 @@ export interface IConvention {
   penalites?: string | null;
   etapeApprobation?: keyof typeof EtapeApprobation | null;
   commentaireRejet?: string | null;
+  createdByUniteId?: number | null;
+  createdByUniteNom?: string | null;
 }
 
 export type NewConvention = Omit<IConvention, 'id'> & { id: null };
